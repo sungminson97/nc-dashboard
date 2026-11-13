@@ -449,7 +449,7 @@ aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 240px)
 
 /* 사이드: 귀책 상위 미니 막대 */
 .nav button{position:relative;border-radius:8px;overflow:hidden;isolation:isolate}
-.nav button[data-v][style*="--p"]::before{content:"";position:absolute;inset:0 auto 0 0;width:var(--p);background:linear-gradient(90deg,rgba(61,123,255,.22),rgba(61,123,255,.04));z-index:-1;border-radius:8px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+.nav button[data-v][style*="--p"]::before,.nav button[data-c1][style*="--p"]::before{content:"";position:absolute;inset:0 auto 0 0;width:var(--p);background:linear-gradient(90deg,rgba(61,123,255,.22),rgba(61,123,255,.04));z-index:-1;border-radius:8px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
 .nav button[aria-current="true"]{box-shadow:inset 0 0 0 1px var(--line2)}
 .side-foot{display:flex;align-items:center;gap:0;padding:12px 10px 2px;border-top:1px solid var(--line);margin-top:auto}
 
@@ -757,6 +757,15 @@ html.boot body{background:var(--bg)}
 .an-warn{margin:0 0 14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(232,163,60,.45);background:rgba(232,163,60,.09);color:var(--fg2);font-size:13px;line-height:1.6}.an-warn b{color:#f0b95a;font-weight:600;margin-right:6px}
 
 .ver{padding:0 16px 14px;font-size:11px;color:var(--fg4);letter-spacing:0;font-variant-numeric:tabular-nums}
+
+/* 화면 위쪽을 줄여서 데이터가 한눈에 먼저 보이게 */
+@media(min-width:761px){
+  .headline{padding:26px 6px 18px}
+  .headline h1{font-size:clamp(28px,2.7vw,42px);letter-spacing:-.04em}
+  .hl-row{margin-top:10px}
+  .app{margin-top:2px}
+}
+.nav button[data-c1]{font-weight:600}
 </style>
 </head>
 <body>
@@ -1315,7 +1324,7 @@ function renderLedger(){
   var vc={};rows.forEach(function(x){if(x.ven!=="N/A")vc[x.ven]=(vc[x.ven]||0)+1});
   var tv=Object.keys(vc).sort(function(a,b){return vc[b]-vc[a]})[0];
   var st=[["불량 수량",qty,"개","필터 반영 합계",""]];
-  if(SRC==="qc"){var mf=rows.filter(function(x){return x.c1==="제조불량"&&x.ven!=="N/A"});st.push(["제조불량",mf.length,"건","귀책 N/A 제외 · 수량 "+mf.reduce(function(a,x){return a+x.qty},0)+"개",""])}
+  if(SRC==="qc"){var mf=rows.filter(function(x){return x.c1==="제조불량"});st.push(["제조불량",mf.length,"건","대분류 제조불량 전체 · 수량 "+mf.reduce(function(a,x){return a+x.qty},0)+"개",""])}
   else{var cs=rows.reduce(function(a,x){return a+x.cost},0);st.push(["손실비용",cs.toLocaleString(),"만원","발생 "+rows.filter(function(x){return x.cost}).length+"건",""])}
   var un=rows.filter(function(x){return x.site==="미분류"}).length;st.push(["성남 / 동탄",sn+" / "+(rows.length-sn-un),"",un?"사업장 미기재 "+un+"건 별도":"사업장별 건수",""]);
   st.push(["귀책 1위",tv||"-","",tv?vc[tv]+"건":"",""]);
@@ -1978,7 +1987,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261113-1612",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261113-1622",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
