@@ -647,7 +647,7 @@ aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 240px)
 .at th{text-align:left;font-weight:600;font-size:12px;color:var(--fg4);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:rgba(255,255,255,.02)}
 .at td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:13px;color:var(--fg2);white-space:nowrap}
 .at th.r,.at td.r{text-align:right}
-.at td b{color:var(--fg);font-weight:600}.at td.b{font-weight:600;color:var(--fg)}
+.at td b{color:var(--fg);font-weight:600}.at td.bb{font-weight:600;color:var(--fg)}
 .at .mut,.mut{color:var(--fg4);font-size:12px}
 .at tr.red td{color:#ff7a7a;font-weight:600}
 .at tr.goal td:first-child{color:var(--fg);font-weight:600}
@@ -757,6 +757,8 @@ html.boot body{background:var(--bg)}
 }
 
 .an-warn{margin:0 0 14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(232,163,60,.45);background:rgba(232,163,60,.09);color:var(--fg2);font-size:13px;line-height:1.6}.an-warn b{color:#f0b95a;font-weight:600;margin-right:6px}
+
+.ver{padding:0 16px 14px;font-size:11px;color:var(--fg4);letter-spacing:0;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -876,6 +878,7 @@ html.boot body{background:var(--bg)}
     </nav>
     <nav class="nav v" id="nav3"><h4>귀책 업체</h4></nav>
     <div class="side-foot"><span class="live"></span>2026-11-13 09:50 기준<br>예시 데이터 · 시안</div>
+    <div class="ver" id="verTxt"></div>
   </aside>
 
   <main>
@@ -1465,21 +1468,21 @@ function drawAnalysis(){
   /* 1. 20% 감소 목표 */
   if(!A.haseq)h+='<div class="an-warn"><b>장비 데이터가 아직 연결되지 않았어요.</b> 지금 보이는 월별 검수장비는 임시로 넣어둔 고정값이고, 인원별 장비는 불량이 기록된 프로젝트 수(품질 부적합 기준)예요. backlog_raw 연동이 끝나면 자동으로 실제 장비 수로 바뀌어요.</div>';
   h+='<div class="ac"><div class="ah"><h3>'+GOAL.pct+'% 감소 목표</h3><span class="am">기준 '+f2(A.base)+'건/대 → 목표 '+f2(GOAL.target)+'건/대 · 성남+동탄 전체 · 올해</span><button class="fbtn" id="anXls">엑셀 내려받기</button></div><div class="tw"><table class="at"><thead>'+th(["구분","누적"].concat(ms))+'</thead><tbody>';
-  var mr=function(lab,key,cls){return '<tr class="'+(cls||"")+'"><td>'+lab+'</td><td class="r b">'+I(A.cum[key])+'</td>'+A.mo.map(function(o,k){return '<td class="r">'+(k<=CM&&(o.eq||key!=="eq")?I(o[key]):"-")+'</td>'}).join("")+'</tr>'};
+  var mr=function(lab,key,cls){return '<tr class="'+(cls||"")+'"><td>'+lab+'</td><td class="r bb">'+I(A.cum[key])+'</td>'+A.mo.map(function(o,k){return '<td class="r">'+(k<=CM&&(o.eq||key!=="eq")?I(o[key]):"-")+'</td>'}).join("")+'</tr>'};
   h+=mr("검수장비(대)","eq")+mr("불량수량(FT)","ft")+mr("출하/부적합","ship")+mr("최종합계","tot","red");
   var rc=function(r){return r==null?"":(r<=GOAL.target+1e-9?"ok":"bad")};
-  h+='<tr class="goal"><td>대당 불량(건/대)</td><td class="r b '+rc(A.cum.r)+'">'+f2(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r '+rc(o.r)+'">'+f2(o.r)+'</td>'}).join("")+'</tr>';
-  h+='<tr><td>달성 감소율</td><td class="r b">'+A.tierOf(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r">'+A.tierOf(o.r)+'</td>'}).join("")+'</tr>';
+  h+='<tr class="goal"><td>대당 불량(건/대)</td><td class="r bb '+rc(A.cum.r)+'">'+f2(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r '+rc(o.r)+'">'+f2(o.r)+'</td>'}).join("")+'</tr>';
+  h+='<tr><td>달성 감소율</td><td class="r bb">'+A.tierOf(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r">'+A.tierOf(o.r)+'</td>'}).join("")+'</tr>';
   h+='</tbody></table></div><div class="an-note">대당 불량 = 최종합계 ÷ 검수장비. 목표('+f2(GOAL.target)+') 이하면 초록, 초과면 빨강. 불량수량(FT)은 시트 데이터(제조불량 수량)로 자동 집계되고, 검수장비는 backlog_raw의 QC 완료 장비 수, 출하/부적합은 수입/공정 탭에서 구분=출하·대분류=제조불량인 불량수량으로 자동 집계돼요.</div></div>';
   /* 1-b. 감소율별 */
   h+='<div class="ac"><div class="ah"><h3>감소율별 목표표</h3><span class="am">'+(A.cum.eq?'올해 누적 검수장비 '+A.cum.eq+'대 · 현재 최종합계 '+A.cum.tot+'건 · 대당 '+f2(A.cum.r):'')+'</span></div><div class="tw"><table class="at"><thead>'+th(["감소율","대당 목표","누적 허용 불량수","현재 불량수","여유(+) / 초과(−)","월별 달성","상태"])+'</thead><tbody>';
   A.tiers.forEach(function(t){var al=Math.round(t.v*A.cum.eq),gap=al-A.cum.tot,okm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null&&o.r<=t.v+1e-9}).length,tm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null}).length;
-    h+='<tr class="'+(t.p===GOAL.pct?"goal":"")+'"><td>'+(t.p?t.p+"% 감소":"기준(0%)")+(t.p===GOAL.pct?' <em class="tg">공식 목표</em>':'')+'</td><td class="r b">'+f2(t.v)+'</td><td class="r">'+al+'</td><td class="r">'+A.cum.tot+'</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>0?"+":"")+gap+'</td><td class="r">'+okm+' / '+tm+'개월</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>=0?"달성":"미달")+'</td></tr>'});
+    h+='<tr class="'+(t.p===GOAL.pct?"goal":"")+'"><td>'+(t.p?t.p+"% 감소":"기준(0%)")+(t.p===GOAL.pct?' <em class="tg">공식 목표</em>':'')+'</td><td class="r bb">'+f2(t.v)+'</td><td class="r">'+al+'</td><td class="r">'+A.cum.tot+'</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>0?"+":"")+gap+'</td><td class="r">'+okm+' / '+tm+'개월</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>=0?"달성":"미달")+'</td></tr>'});
   h+='</tbody></table></div></div>';
   /* 2. 인원별 */
   var mxq=Math.max.apply(null,A.P.map(function(q){return q.qty}).concat([1]));
   h+='<div class="ac"><div class="ah"><h3>인원별 현황</h3><span class="am">제조 담당자 기준 · 올해 · 불량수량은 제조불량</span></div><div class="tw"><table class="at"><thead>'+th(["#","이름","장비대수","불량수량","평균(불량/장비)",""]).replace('<th class="r">이름','<th>이름')+'</thead><tbody>';
-  A.P.forEach(function(q,k){h+='<tr><td class="r mut">'+(k+1)+'</td><td><b>'+esc(q.n)+'</b>'+(q.ok?'':' <em class="tg g">표본 적음</em>')+'</td><td class="r">'+q.eq+'</td><td class="r b">'+q.qty+'</td><td class="r">'+f2(q.avg)+'</td><td class="bc"><i style="width:'+Math.round(q.qty/mxq*100)+'%"></i></td></tr>'});
+  A.P.forEach(function(q,k){h+='<tr><td class="r mut">'+(k+1)+'</td><td><b>'+esc(q.n)+'</b>'+(q.ok?'':' <em class="tg g">표본 적음</em>')+'</td><td class="r">'+q.eq+'</td><td class="r bb">'+q.qty+'</td><td class="r">'+f2(q.avg)+'</td><td class="bc"><i style="width:'+Math.round(q.qty/mxq*100)+'%"></i></td></tr>'});
   h+='</tbody></table></div><div class="an-note">'+(A.haseq?'장비대수는 backlog_raw에서 QC 날짜가 찍힌 장비를 제조1팀 담당자별로 센 값이에요.':'장비대수는 불량이 기록된 장비(출하 프로젝트) 기준이에요. backlog 연동 전 임시값이에요.')+'</div></div>';
   /* 3. TOP3 / BEST3 */
   var card=function(q,k,hi){return '<div class="ar"><span class="rk">'+(k+1)+'</span><b>'+esc(q.n)+'</b><span class="x"><em>불량</em>'+q.qty+'</span><span class="x"><em>장비</em>'+q.eq+'대</span><span class="x"><em>평균</em>'+f2(q.avg)+'</span></div>'};
@@ -1493,8 +1496,8 @@ function drawAnalysis(){
   /* 5. 휴먼에러 */
   var hx=Math.max.apply(null,A.he.map(function(r){return Math.max.apply(null,r.m)}).concat([1]));
   h+='<div class="ac"><div class="ah"><h3>휴먼에러 발생 현황</h3><span class="am">제조불량의 불량(소분류) · 올해 '+A.heTot+'건</span></div><div class="tw"><table class="at"><thead>'+th(["분류","합계"].concat(ms.slice(0,CM+1))).replace('<th class="r">분류','<th>분류')+'</thead><tbody>';
-  A.he.forEach(function(r){h+='<tr><td>'+esc(r.n)+'</td><td class="r b">'+r.t+'</td>'+r.m.slice(0,CM+1).map(function(v){return '<td class="r hm" style="'+(v?'background:rgba(61,123,255,'+(.1+.5*v/hx).toFixed(2)+')':'')+'">'+(v||"")+'</td>'}).join("")+'</tr>'});
-  h+='<tr class="sumr"><td>합계</td><td class="r b">'+A.heTot+'</td>'+A.heM.slice(0,CM+1).map(function(v){return '<td class="r b">'+v+'</td>'}).join("")+'</tr></tbody></table></div></div>';
+  A.he.forEach(function(r){h+='<tr><td>'+esc(r.n)+'</td><td class="r bb">'+r.t+'</td>'+r.m.slice(0,CM+1).map(function(v){return '<td class="r hm" style="'+(v?'background:rgba(61,123,255,'+(.1+.5*v/hx).toFixed(2)+')':'')+'">'+(v||"")+'</td>'}).join("")+'</tr>'});
+  h+='<tr class="sumr"><td>합계</td><td class="r bb">'+A.heTot+'</td>'+A.heM.slice(0,CM+1).map(function(v){return '<td class="r bb">'+v+'</td>'}).join("")+'</tr></tbody></table></div></div>';
   $("an").innerHTML=h;
   $("anXls").onclick=function(){$("lgXls").click()}}
 
@@ -1975,10 +1978,17 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var VER=null,VERNEW=false;
-  function verSig(){var u=location.href.split("#")[0].split("?")[0];return fetch(u+"?_="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return t.length+":"+(h>>>0)})}
-  function verCheck(){if(VERNEW||document.hidden&&VER!==null)return;verSig().then(function(g){if(!g)return;if(VER===null){VER=g;return}
-    if(g!==VER){VERNEW=true;$("syncMsg").textContent="최신 버전으로 업데이트되었어요";$("syncGo").dataset.ver="1";bar.classList.add("on")}}).catch(function(){})}
+  var BUILD="20261113-1550",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
+  function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
+  function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
+    fetch(location.href.split("#")[0].split("?")[0]+"?_="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.text()}).then(function(t){
+      var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}h=t.length+":"+(h>>>0);
+      var m=BRE.exec(t),nb=m?m[1]:"";
+      var newer=(nb&&nb!==BUILD)||(VH!==null&&h!==VH);if(VH===null)VH=h;
+      vtxt("버전 "+BUILD+" · 확인 "+hh());
+      if(newer){VERNEW=true;$("syncMsg").textContent="최신 버전으로 업데이트되었어요";$("syncGo").dataset.ver="1";bar.classList.add("on")}
+    }).catch(function(e){vtxt("버전 "+BUILD+" · 확인 실패("+(e&&e.message||"네트워크")+")")})}
   verCheck();setInterval(verCheck,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)verCheck()});
   function poll(){
     if(!LIVE||!TK||polling||document.body.classList.contains("locked")||document.hidden)return;
