@@ -1069,52 +1069,53 @@ body.islive #headline{display:none}
 @media (prefers-reduced-motion:reduce){.lwho,.lwho .dot{animation:none}}
 .lwho[hidden],#lnameW[hidden]{display:none!important}
 
-/* ===== 로그인 후 로딩 화면 (웨이퍼가 채워지며 부적합 → 조치 → 정상) ===== */
-.splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;
-  background:radial-gradient(760px 520px at 50% 40%,var(--glow) 0%,transparent 72%),linear-gradient(var(--line) 1px,transparent 1px) 0 0/64px 64px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/64px 64px,var(--bg);
-  transition:opacity .55s ease,filter .55s ease}
+/* ===== 로그인 후 로딩 화면: 빛나는 구체 + 데이터 입자가 모여드는 연출 ===== */
+.splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;background:var(--bg);transition:opacity .6s ease,filter .6s ease}
+.splash::before{content:"";position:absolute;inset:-20%;background:radial-gradient(40% 36% at 50% 44%,rgba(61,123,255,.22),transparent 70%),radial-gradient(30% 28% at 62% 58%,rgba(139,92,246,.16),transparent 70%),radial-gradient(28% 26% at 38% 60%,rgba(34,211,238,.12),transparent 70%);filter:blur(10px)}
 .splash[hidden]{display:none!important}
-.splash.out{opacity:0;filter:blur(8px);pointer-events:none}
-.splash.out .sp-wafer{transform:scale(2.6);opacity:0}
-.splash.out .sp-in>*:not(.sp-wafer){opacity:0;transform:translateY(10px)}
-.sp-in{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;width:min(360px,100%)}
-.sp-in>*{transition:opacity .35s ease,transform .7s cubic-bezier(.3,0,.2,1)}
-.sp-logo{height:24px;width:auto;opacity:.92}
-.sp-wafer{position:relative;width:264px;height:264px;margin:4px 0 2px}
-.sp-wafer canvas{position:absolute;inset:14px;width:calc(100% - 28px);height:calc(100% - 28px)}
-.sp-wafer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.sp-wafer circle{fill:none}
-.sp-wafer .t{stroke:var(--line2);stroke-width:1}
-.sp-wafer .f{stroke:var(--accent2);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 6px var(--accent));transition:stroke .5s}
-.sp-core{position:absolute;left:50%;top:50%;width:104px;height:104px;margin:-52px 0 0 -52px;border-radius:50%;display:flex;align-items:baseline;justify-content:center;padding-top:33px;
-  background:radial-gradient(circle,var(--bg) 58%,transparent 72%);font-variant-numeric:tabular-nums}
-.sp-core b{font-size:38px;font-weight:600;letter-spacing:-.04em;line-height:1}.sp-core i{font-style:normal;font-size:13px;color:var(--fg3);margin-left:2px}
-.sp-who{font-size:21px;letter-spacing:-.02em}.sp-who b{font-weight:600}.sp-who span{color:var(--fg2);transition:color .4s}
-.sp-list{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:4px 16px;text-align:left}
-.sp-row{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:12px;height:40px;border-top:1px solid var(--line);color:var(--fg4);font-size:13.5px;transition:color .35s}
-.sp-row:first-child{border-top:0}
-.sp-row .d{width:8px;height:8px;border-radius:50%;background:var(--track);transition:background .35s,box-shadow .35s}
-.sp-row .v{font-variant-numeric:tabular-nums;font-size:13px;color:var(--fg4);min-width:64px;text-align:right}
-.sp-row.on{color:var(--fg)}.sp-row.on .d{background:var(--accent2);box-shadow:0 0 0 4px var(--accent-soft)}
-.sp-row.on .v::after{content:"불러오는 중";color:var(--fg3)}
-.sp-row.ok{color:var(--fg)}.sp-row.ok .d{background:var(--done);box-shadow:none}
-.sp-row.ok .v{color:var(--fg);font-weight:600}.sp-row.ok .v::after{content:none}
-.sp-step{min-height:20px;color:var(--fg3);font-size:12.5px;margin-top:-6px}
-.splash.ok .sp-wafer .f{stroke:var(--done);filter:drop-shadow(0 0 8px var(--done))}
+.splash.out{opacity:0;filter:blur(12px);pointer-events:none}
+.splash.out .sp-orb{transform:scale(3.2);opacity:0}
+.splash.out .sp-in>*:not(.sp-orb){opacity:0;transform:translateY(12px)}
+.sp-fx{position:absolute;inset:0;width:100%;height:100%}
+.sp-in{position:relative;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;width:min(380px,100%)}
+.sp-in>*{transition:opacity .35s ease,transform .8s cubic-bezier(.3,0,.2,1)}
+.sp-logo{height:22px;width:auto;opacity:.9}
+.sp-orb{position:relative;width:208px;height:208px;margin:6px 0}
+.sp-orb>i{position:absolute;inset:0;border-radius:50%}
+.sp-orb .o1{background:conic-gradient(from 0deg,#3d7bff,#22d3ee,#8b5cf6,#3d7bff);filter:blur(22px);opacity:.75}
+.sp-orb .o2{inset:6px;background:conic-gradient(from 180deg,#7aa8ff,#22d3ee 30%,#8b5cf6 60%,#7aa8ff);-webkit-mask:radial-gradient(circle,transparent 62%,#000 63.5%,#000 66%,transparent 67.5%);mask:radial-gradient(circle,transparent 62%,#000 63.5%,#000 66%,transparent 67.5%)}
+.sp-orb .o3{inset:24px;background:radial-gradient(circle at 35% 30%,rgba(122,168,255,.35),transparent 55%),radial-gradient(circle at 70% 75%,rgba(139,92,246,.28),transparent 55%),var(--bg);box-shadow:inset 0 0 40px rgba(61,123,255,.25)}
+.sp-core{position:absolute;inset:0;display:flex;align-items:baseline;justify-content:center;padding-top:76px;font-variant-numeric:tabular-nums}
+.sp-core b{font-size:46px;font-weight:600;letter-spacing:-.045em;line-height:1}.sp-core i{font-style:normal;font-size:15px;color:var(--fg3);margin-left:3px}
+.sp-who{font-size:22px;letter-spacing:-.02em}.sp-who b{font-weight:600}.sp-who span{color:var(--fg2);transition:color .4s}
+.sp-msg{height:22px;overflow:hidden;margin-top:-8px}
+.sp-msg span{display:block;font-size:14px;font-weight:500;background:linear-gradient(90deg,var(--fg3) 0%,var(--fg) 45%,var(--fg3) 90%) 0 0/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.sp-msg span.sw{animation:spSw .45s cubic-bezier(.2,.7,.2,1),spSh 2.2s linear infinite}
+.sp-bar{width:240px;height:3px;border-radius:2px;background:var(--track);position:relative}
+.sp-bar i{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:2px;background:linear-gradient(90deg,#3d7bff,#22d3ee,#8b5cf6)}
+.sp-bar i::after{content:"";position:absolute;right:-4px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:#fff;box-shadow:0 0 12px 3px rgba(122,168,255,.8)}
 .splash.ok .sp-who span{color:var(--done)}
+.splash.ok .sp-orb .o1{background:conic-gradient(from 0deg,#22c55e,#22d3ee,#3cd296,#22c55e)}
+.splash.ok .sp-bar i{background:linear-gradient(90deg,#22c55e,#3cd296)}
 @media (prefers-reduced-motion:no-preference){
- .splash:not(.out) .sp-in>*{animation:bdUp .6s cubic-bezier(.2,.7,.2,1) both}
- .splash:not(.out) .sp-in>*:nth-child(2){animation:spIn .8s cubic-bezier(.2,.7,.2,1) .05s both}
- .splash:not(.out) .sp-in>*:nth-child(3){animation-delay:.16s}.splash:not(.out) .sp-in>*:nth-child(4){animation-delay:.24s}.splash:not(.out) .sp-in>*:nth-child(5){animation-delay:.3s}
- .sp-row.on .d{animation:spDot 1s ease-in-out infinite}
- .sp-row.ok .v{animation:bdUp .35s cubic-bezier(.2,.7,.2,1) both}
- .splash.ok:not(.out) .sp-wafer{animation:spPulse .7s cubic-bezier(.3,1.4,.5,1)}
+ .splash:not(.out) .sp-in>*{animation:bdUp .7s cubic-bezier(.2,.7,.2,1) both}
+ .splash:not(.out) .sp-in>.sp-orb{animation:spIn .9s cubic-bezier(.2,.7,.2,1) .05s both}
+ .splash:not(.out) .sp-in>*:nth-child(3){animation-delay:.18s}.splash:not(.out) .sp-in>*:nth-child(4){animation-delay:.26s}.splash:not(.out) .sp-in>*:nth-child(5){animation-delay:.32s}
+ .sp-orb .o1{animation:spRot 6s linear infinite}
+ .sp-orb .o2{animation:spRot 3.2s linear infinite reverse}
+ .sp-orb .o3{animation:spBr 2.6s ease-in-out infinite}
+ .splash.ok:not(.out) .sp-orb{animation:spPulse .7s cubic-bezier(.3,1.4,.5,1)}
+ .splash::before{animation:spDrift 9s ease-in-out infinite alternate}
 }
-@media (prefers-reduced-motion:reduce){.splash,.sp-in>*{transition:opacity .2s}.splash.out .sp-wafer{transform:none}}
-@keyframes spIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
-@keyframes spDot{50%{box-shadow:0 0 0 7px transparent}}
-@keyframes spPulse{0%{transform:scale(1)}45%{transform:scale(1.05)}100%{transform:scale(1)}}
-@media (max-width:760px){.sp-wafer{width:220px;height:220px}.sp-core{width:92px;height:92px;margin:-46px 0 0 -46px;padding-top:29px}.sp-core b{font-size:33px}.sp-who{font-size:19px}}
+@media (prefers-reduced-motion:reduce){.splash,.sp-in>*{transition:opacity .2s}.splash.out .sp-orb{transform:none}}
+@keyframes spRot{to{transform:rotate(360deg)}}
+@keyframes spBr{50%{box-shadow:inset 0 0 60px rgba(61,123,255,.4)}}
+@keyframes spSh{to{background-position:-200% 0}}
+@keyframes spSw{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes spIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
+@keyframes spPulse{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+@keyframes spDrift{to{transform:translate(2%,-2%) scale(1.06)}}
+@media (max-width:760px){.sp-orb{width:176px;height:176px}.sp-core{padding-top:62px}.sp-core b{font-size:40px}.sp-who{font-size:19px}.sp-bar{width:200px}}
 
 .lbtn.okd,.lbtn.okd:disabled{background:var(--done)!important;color:#fff!important;opacity:1!important;box-shadow:0 8px 22px -10px var(--done)!important}
 </style>
@@ -1122,20 +1123,13 @@ body.islive #headline{display:none}
 <body>
 <script>try{var __c=JSON.parse(sessionStorage.getItem('nc_sess')||localStorage.getItem('nc_sess')||'null');if(__c&&__c.n&&Date.now()-__c.t<12*3600e3){document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},8000)}}catch(e){}</script>
 <div class="splash" id="splash" hidden aria-live="polite">
+  <canvas class="sp-fx" id="spCv" aria-hidden="true"></canvas>
   <div class="sp-in">
     <img class="sp-logo" id="spLogo" alt="NineBell">
-    <div class="sp-wafer">
-      <canvas id="spCv" aria-hidden="true"></canvas>
-      <svg viewBox="0 0 200 200" aria-hidden="true"><circle class="t" cx="100" cy="100" r="97"/><circle class="f" id="spF" cx="100" cy="100" r="97" pathLength="1" transform="rotate(-90 100 100)"/></svg>
-      <div class="sp-core"><b id="spN">0</b><i>%</i></div>
-    </div>
-    <div class="sp-who"><b id="spName"></b><span id="spSub">님 로그인 중</span></div>
-    <div class="sp-list" id="spList">
-      <div class="sp-row" data-k="qc"><span class="d"></span><span class="l">품질검수 기록</span><span class="v"></span></div>
-      <div class="sp-row" data-k="in"><span class="d"></span><span class="l">수입/공정 기록</span><span class="v"></span></div>
-      <div class="sp-row" data-k="eq"><span class="d"></span><span class="l">검수 장비</span><span class="v"></span></div>
-    </div>
-    <div class="sp-step" id="spStep"></div>
+    <div class="sp-orb" aria-hidden="true"><i class="o1"></i><i class="o2"></i><i class="o3"></i><div class="sp-core"><b id="spN">0</b><i>%</i></div></div>
+    <div class="sp-who"><b id="spName"></b><span id="spSub">님, 환영해요</span></div>
+    <div class="sp-msg"><span id="spStep"></span></div>
+    <div class="sp-bar"><i id="spBar"></i></div>
   </div>
 </div>
 <div class="login" id="login" role="dialog" aria-modal="true" aria-labelledby="lgT">
@@ -1841,14 +1835,14 @@ function anCompute(){
   for(i=0;i<12;i++){var e=haseq?eqm[i]:GOAL.eq[i],sh=(i<CM||!hasin)?GOAL.ship[i]:shm[i],t=ft[i]+sh;mo.push({m:i,eq:e,ft:ft[i],ship:sh,tot:t,r:i<=CM&&e?t/e:null});if(i<=CM){cum.eq+=e;cum.ft+=ft[i];cum.ship+=sh;cum.tot+=t}}
   cum.r=cum.eq?cum.tot/cum.eq:null;
   var tiers=[0].concat(GOAL.steps).map(function(p){return{p:p,v:base*(1-p/100)}});
-  var tierOf=function(r){if(r==null)return"-";var b=null;tiers.forEach(function(t){if(t.p>0&&r<=t.v+1e-9)b=t.p});return b?b+"%":"미달"};
+  var tierOf=function(r){if(r==null)return"-";var b=null;tiers.forEach(function(t){if(t.p>0&&r<=t.v+0.005)b=t.p});return b?b+"%":"미달"};
   /* 인원 */
   var pm={},newP=function(n){var q={n:n,qty:0,cnt:0,pr:{},mq:[],mp:[],eqm:[],eqt:0};for(var k=0;k<12;k++){q.mq.push(0);q.mp.push({});q.eqm.push(0)}return q};
   EQD.forEach(function(x){var n=x.owner;if(!n)return;var q=pm[n]||(pm[n]=newP(n));q.eqm[x.m]++;q.eqt++});
   Q.forEach(function(x){var n=x.finder;if(!n||n==="-")return;var q=pm[n]||(pm[n]=newP(n));
     q.pr[x.proj]=1;q.mp[x.m][x.proj]=1;if(x.c1==="제조불량"){q.qty+=x.qty;q.cnt++;q.mq[x.m]+=x.qty}});
   var P=Object.keys(pm).map(function(k){var q=pm[k];q.eq=haseq?q.eqt:Object.keys(q.pr).length;q.avg=q.eq?q.qty/q.eq:0;return q});
-  var eqs=P.map(function(q){return q.eq}).sort(function(a,b){return a-b}),med=eqs.length?eqs[Math.floor(eqs.length/2)]:0,minEq=Math.max(3,Math.ceil(med*.5));
+  var eqs=P.map(function(q){return q.eq}).sort(function(a,b){return a-b}),med=eqs.length?eqs[Math.floor(eqs.length/2)]:0,minEq=20;
   P.forEach(function(q){q.ok=q.eq>=minEq});
   var byQty=P.slice().sort(function(a,b){return b.qty-a.qty||b.eq-a.eq||(a.n<b.n?-1:1)}),
       top3=byQty.filter(function(q){return q.qty>0}).slice(0,3),
@@ -1870,25 +1864,25 @@ function drawAnalysis(){
   h+='<div class="ac"><div class="ah"><h3>'+GOAL.pct+'% 감소 목표</h3><span class="am">기준 '+f2(A.base)+'건/대 → 목표 '+f2(GOAL.target)+'건/대 · 성남+동탄 전체 · 올해</span><button class="fbtn" id="anXls">엑셀 내려받기</button></div><div class="tw"><table class="at"><thead>'+th(["구분","누적"].concat(ms))+'</thead><tbody>';
   var mr=function(lab,key,cls){return '<tr class="'+(cls||"")+'"><td>'+lab+'</td><td class="r bb">'+I(A.cum[key])+'</td>'+A.mo.map(function(o,k){return '<td class="r">'+(k<=CM&&(o.eq||key!=="eq")?I(o[key]):"-")+'</td>'}).join("")+'</tr>'};
   h+=mr("검수장비(대)","eq")+mr("불량수량(FT)","ft")+mr("출하/부적합","ship")+mr("최종합계","tot","red");
-  var rc=function(r){return r==null?"":(r<=GOAL.target+1e-9?"ok":"bad")};
+  var rc=function(r){return r==null?"":(r<=GOAL.target+0.005?"ok":"bad")};
   h+='<tr class="goal"><td>대당 불량(건/대)</td><td class="r bb '+rc(A.cum.r)+'">'+f2(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r '+rc(o.r)+'">'+f2(o.r)+'</td>'}).join("")+'</tr>';
   h+='<tr><td>달성 감소율</td><td class="r bb">'+A.tierOf(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r">'+A.tierOf(o.r)+'</td>'}).join("")+'</tr>';
-  h+='</tbody></table></div><div class="an-note">대당 불량 = 최종합계 ÷ 검수장비. 목표('+f2(GOAL.target)+') 이하면 초록, 초과면 빨강. 불량수량(FT)은 시트 데이터(제조불량 수량)로 자동 집계되고, 검수장비는 backlog_raw의 QC 완료 장비 수, 출하/부적합은 지난달까지는 품질팀 확정 값(합계 100건)이고, 이번 달부터는 수입/공정 탭의 구분=출하·대분류=제조불량 불량수량으로 집계돼요.</div></div>';
+  h+='</tbody></table></div></div>';
   /* 1-b. 감소율별 */
   h+='<div class="ac"><div class="ah"><h3>감소율별 목표표</h3><span class="am">'+(A.cum.eq?'올해 누적 검수장비 '+A.cum.eq+'대 · 현재 최종합계 '+A.cum.tot+'건 · 대당 '+f2(A.cum.r):'')+'</span></div><div class="tw"><table class="at"><thead>'+th(["감소율","대당 목표","누적 허용 불량수","현재 불량수","여유(+) / 초과(−)","월별 달성","상태"])+'</thead><tbody>';
-  A.tiers.forEach(function(t){var al=Math.round(t.v*A.cum.eq),gap=al-A.cum.tot,okm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null&&o.r<=t.v+1e-9}).length,tm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null}).length;
+  A.tiers.forEach(function(t){var al=Math.round(t.v*A.cum.eq),gap=al-A.cum.tot,okm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null&&o.r<=t.v+0.005}).length,tm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null}).length;
     h+='<tr class="'+(t.p===GOAL.pct?"goal":"")+'"><td>'+(t.p?t.p+"% 감소":"기준(0%)")+(t.p===GOAL.pct?' <em class="tg">공식 목표</em>':'')+'</td><td class="r bb">'+f2(t.v)+'</td><td class="r">'+al+'</td><td class="r">'+A.cum.tot+'</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>0?"+":"")+gap+'</td><td class="r">'+okm+' / '+tm+'개월</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>=0?"달성":"미달")+'</td></tr>'});
   h+='</tbody></table></div></div>';
   /* 2. 인원별 */
   var mxq=Math.max.apply(null,A.P.map(function(q){return q.qty}).concat([1]));
-  h+='<div class="ac"><div class="ah"><h3>인원별 현황</h3><span class="am">제조 담당자 기준 · 올해 · 불량수량은 제조불량</span></div><div class="tw"><table class="at"><thead>'+th(["#","이름","장비대수","불량수량","평균(불량/장비)",""]).replace('<th class="r">이름','<th>이름')+'</thead><tbody>';
+  h+='<div class="ac"><div class="ah"><h3>인원별 현황</h3><span class="am">제조 담당자 기준 · 올해 · 불량수량은 제조불량</span></div><div class="tw"><table class="at"><thead>'+th(["순위","이름","장비대수","불량수량","평균(불량/장비)",""]).replace('<th class="r">이름','<th>이름')+'</thead><tbody>';
   A.P.forEach(function(q,k){h+='<tr><td class="r mut">'+(k+1)+'</td><td><b>'+esc(q.n)+'</b>'+(q.ok?'':' <em class="tg g">표본 적음</em>')+'</td><td class="r">'+q.eq+'</td><td class="r bb">'+q.qty+'</td><td class="r">'+f2(q.avg)+'</td><td class="bc"><i style="width:'+Math.round(q.qty/mxq*100)+'%"></i></td></tr>'});
   h+='</tbody></table></div></div>';
   /* 3. TOP3 / BEST3 */
   var card=function(q,k,hi){return '<div class="ar"><span class="rk">'+(k+1)+'</span><b>'+esc(q.n)+'</b><span class="x"><em>불량</em>'+q.qty+'</span><span class="x"><em>장비</em>'+q.eq+'대</span><span class="x"><em>평균</em>'+f2(q.avg)+'</span></div>'};
   h+='<div class="ag"><div class="ac"><div class="ah"><h3>올해 불량 많은 TOP3</h3></div>'+(A.top3.map(card).join("")||'<div class="empty">데이터가 없어요.</div>')+'</div>'
     +'<div class="ac"><div class="ah"><h3>불량 적은 TOP3</h3></div>'+(A.best.map(card).join("")||'<div class="empty">조건에 맞는 인원이 없어요.</div>')
-    +'<div class="an-note">장비 '+A.minEq+'대 미만은 순위에서 뺐어요(장비가 적으면 불량이 없어도 비교가 애매해서).'+(A.small.length?' 표본 적음: '+A.small.map(function(q){return esc(q.n)+' '+q.eq+'대/불량 '+q.qty}).join(", "):'')+'</div></div></div>';
+    +'<div class="an-note">장비 '+A.minEq+'대 이상인 사람만 순위에 넣었어요.'+(A.small.length?' 표본 적음: '+A.small.map(function(q){return esc(q.n)+' '+q.eq+'대/불량 '+q.qty}).join(", "):'')+'</div></div></div>';
   /* 4. 월별 TOP3 */
   h+='<div class="ac"><div class="ah"><h3>월별 인원 TOP3</h3><span class="am">불량수량이 많은 순</span></div><div class="tw"><table class="at"><thead><tr><th>월</th><th>1위</th><th>2위</th><th>3위</th></tr></thead><tbody>';
   A.mtop.forEach(function(a,k){h+='<tr><td><b>'+(k+1)+'월</b></td>'+[0,1,2].map(function(j){var q=a[j];return '<td>'+(q?esc(q.n)+' <span class="mut">불량 '+q.v+' · 장비 '+q.eq+'대</span>':'<span class="mut">-</span>')+'</td>'}).join("")+'</tr>'});
@@ -2115,7 +2109,7 @@ function xlsxOut(){
       rowsDef.forEach(function(d){var c=[cell(d[0],1,d[1],tL),cell(d[0],2,A.cum[d[2]],tB,"SUM(D"+d[0]+":O"+d[0]+")")];
         A.mo.forEach(function(o,k){c.push(k<=CM?cell(d[0],3+k,o[d[2]],tN):cell(d[0],3+k,null,tE))});put(d[0],c,22)});
       var c10=[cell(10,1,"최종합계",tRedL),cell(10,2,A.cum.tot,tRed,"SUM(D10:O10)")];A.mo.forEach(function(o,k){c10.push(k<=CM?cell(10,3+k,o.tot,tRed,cl(3+k)+"8+"+cl(3+k)+"9"):cell(10,3+k,null,tE))});put(10,c10,24);
-      var rs=function(v){return v==null?tE:(v<=GOAL.target+1e-9?okS:badS)};
+      var rs=function(v){return v==null?tE:(v<=GOAL.target+0.005?okS:badS)};
       var c11=[cell(11,1,"대당 불량(건/대)",tLb),cell(11,2,A.cum.r,rs(A.cum.r),'IFERROR(C10/C7,"")')];A.mo.forEach(function(o,k){c11.push(o.r==null?cell(11,3+k,null,tE):cell(11,3+k,o.r,rs(o.r),'IFERROR('+cl(3+k)+'10/'+cl(3+k)+'7,"")'))});put(11,c11,24);
       var tc=function(v){return v==="미달"?badC:(v==="-"?tC:okC)};
       var c12=[cell(12,1,"달성 감소율",tL),cell(12,2,A.tierOf(A.cum.r),tc(A.tierOf(A.cum.r)))];A.mo.forEach(function(o,k){var t=A.tierOf(o.r);c12.push(o.r==null?cell(12,3+k,null,tE):cell(12,3+k,t,tc(t)))});put(12,c12,22);
@@ -2123,7 +2117,7 @@ function xlsxOut(){
       /* 2 */
       secRow(15,"감소율별 목표표");
       put(16,[cell(16,1,"감소율",hdL),cell(16,2,"대당 목표",hd),cell(16,3,"누적 허용 불량수",hd),cell(16,4,"현재 불량수",hd),cell(16,5,"여유(+) / 초과(-)",hd),cell(16,6,"월별 달성",hd),cell(16,7,"상태",hd)],34);
-      A.tiers.forEach(function(t,k){var rr=17+k,al=Math.round(t.v*A.cum.eq),gap=al-A.cum.tot,okm=A.mo.filter(function(o,q){return q<=CM&&o.r!=null&&o.r<=t.v+1e-9}).length,tm=A.mo.filter(function(o,q){return q<=CM&&o.r!=null}).length,goal=t.p===GOAL.pct;
+      A.tiers.forEach(function(t,k){var rr=17+k,al=Math.round(t.v*A.cum.eq),gap=al-A.cum.tot,okm=A.mo.filter(function(o,q){return q<=CM&&o.r!=null&&o.r<=t.v+0.005}).length,tm=A.mo.filter(function(o,q){return q<=CM&&o.r!=null}).length,goal=t.p===GOAL.pct;
         var ls=goal?tLb:tL;put(rr,[cell(rr,1,(t.p?t.p+"% 감소":"기준 (0%)")+(goal?"  ★ 공식 목표":""),ls),cell(rr,2,t.v,goal?X({f:{b:1,c:NAVY},bg:"EAF0FF",h:"right",n:"0.00",b:bd}):tD),cell(rr,3,al,tN,"ROUND(C"+rr+"*$C$7,0)"),cell(rr,4,A.cum.tot,tN,"$C$10"),cell(rr,5,gap,gap>=0?X({f:{b:1,c:"14864F"},bg:"E3F6EA",h:"right",n:"+#,##0;-#,##0;0",b:bd}):X({f:{b:1,c:"C0392B"},bg:"FDE8E8",h:"right",n:"+#,##0;-#,##0;0",b:bd}),"D"+rr+"-E"+rr),cell(rr,6,okm+" / "+tm+"개월",tC),cell(rr,7,gap>=0?"달성":"미달",gap>=0?okC:badC)],24)});
       /* 3 */
       r=17+A.tiers.length+1;secRow(r,"인원별 현황 (올해 · 제조 담당자)");
@@ -2292,12 +2286,12 @@ function bdChart2(D){
   var pts=[];rs.forEach(function(v,i){if(v!=null)pts.push([x(i),yy(v),v,i])});
   if(pts.length>1){var d="M"+pts.map(function(p){return p[0].toFixed(1)+" "+p[1].toFixed(1)}).join(" L"),ar=d+" L"+pts[pts.length-1][0].toFixed(1)+" "+(H-B)+" L"+pts[0][0].toFixed(1)+" "+(H-B)+" Z";
     s+='<path d="'+ar+'" class="bd-ar"/><path class="bd-ln" pathLength="1" d="'+d+'"/>'}
-  pts.forEach(function(p){var ok=p[2]<=tg+1e-9,cur=p[3]===D.hi;
+  pts.forEach(function(p){var ok=p[2]<=tg+0.005,cur=p[3]===D.hi;
     s+='<g data-tip="'+(p[3]+1)+'월<br><b>대당 불량 '+f2(p[2])+'건</b><span>'+(ok?"목표 달성":"목표 초과")+'</span>"><circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(cur?5.5:4)+'" class="bd-pt '+(ok?"ok":"bad")+'" style="--i:'+p[3]+'"/><circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="14" fill="transparent"/></g>';
     if(cur||p[2]===Math.max.apply(null,vals))s+='<text x="'+p[0].toFixed(1)+'" y="'+(p[1]-11).toFixed(1)+'" class="bd-vl cur" text-anchor="middle">'+f2(p[2])+'</text>'});
   return '<svg viewBox="0 0 '+W+' '+H+'" class="bd-svg" role="img" aria-label="월별 대당 불량">'+s+'</svg>'}
 function bdGauge(D,Y){
-  var A=D.A,r=Y?A.cum.r:A.mo[D.sm].r,base=A.base,red=r==null?null:(base-r)/base*100,goal=GOAL.pct,prog=red==null?0:Math.max(0,Math.min(1,red/goal)),R=46,C=2*Math.PI*R,ok=r!=null&&r<=GOAL.target+1e-9;
+  var A=D.A,r=Y?A.cum.r:A.mo[D.sm].r,base=A.base,red=r==null?null:(base-r)/base*100,goal=GOAL.pct,prog=red==null?0:Math.max(0,Math.min(1,red/goal)),R=46,C=2*Math.PI*R,ok=r!=null&&r<=GOAL.target+0.005;
   return '<div class="bd-gauge"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="'+R+'" class="gb"/><circle cx="60" cy="60" r="'+R+'" class="gf '+(ok?"ok":"bad")+'" pathLength="1" stroke-dasharray="1" style="--p:'+(1-prog).toFixed(3)+'" transform="rotate(-90 60 60)"/></svg><div class="gt"><b>'+(red==null?"-":bdNum(Math.max(0,Math.round(red))))+(red==null?"":'<i>%</i>')+'</b><span>감소율</span></div></div>'}
 
 function bdRoom(D,Y){
@@ -2331,7 +2325,7 @@ function drawBoard(){
   if(!(LED.qc||[]).length&&!(LED.in||[]).length){host.innerHTML='<div class="bd-sk"><i></i><i></i><i></i><i></i><i></i><i class="w"></i></div>';return}
   var D=bdCompute(),A=D.A,cm=D.cm,sm=D.sm,Y=BD.per==="y",cur=sm===cm,mon=(sm+1)+"월",pmn=D.pm>=0?(D.pm+1)+"월":"",gp=cur?" 같은 기간":"";
   var qN=Y?D.qy:D.qc,iN=Y?D.iy:D.ic,mfN=Y?D.mfy:D.mfc,tot=qN.length+iN.length,totp=D.qp.length+D.ip.length,cost=Y?D.costY:D.costC;
-  var rC=Y?A.cum.r:A.mo[sm].r,rP=sm>0?A.mo[sm-1].r:null,okR=rC!=null&&rC<=GOAL.target+1e-9,mine=D.unchk.filter(function(x){return x.finder===ME.name}).length;
+  var rC=Y?A.cum.r:A.mo[sm].r,rP=sm>0?A.mo[sm-1].r:null,okR=rC!=null&&rC<=GOAL.target+0.005,mine=D.unchk.filter(function(x){return x.finder===ME.name}).length;
   var done=cm>0?D.tt.slice(0,cm):[],avg=done.length?Math.round(done.reduce(function(s,v){return s+v},0)/done.length):0,lastM=cm>0?D.tt[cm-1]:0;
   var pc=bdPct(tot,totp),sum;
   if(Y)sum='<b>올해 부적합 '+tot+'건</b>'+(avg?' (완료된 달 월평균 '+avg+'건)':'')+', 대당 불량 누적 '+(rC==null?"집계 전":'<b class="'+(okR?"ok":"bad")+'">'+f2(rC)+'건</b>으로 목표('+f2(GOAL.target)+')'+(okR?" 안이에요":"를 넘었어요"))+'.';
@@ -2421,7 +2415,7 @@ function bdXlsx(){
     var cmpV=Y?Math.round(avg):totp;
     var K=[["부적합 합계(건)",tot,tN,cmpV,tN,Y?(avg?pct(D.tt[cm-1]||0,avg):null):pct(tot,totp),"품질검수 "+qN.length+" · 수입/공정 "+iN.length],
       ["제조불량(건)",mfN.length,tN,Y?null:D.mfp.length,tN,Y?null:pct(mfN.length,D.mfp.length),"수량 "+mfN.reduce(function(a,x){return a+(+x.qty||0)},0)+"개"],
-      ["대당 불량(건/대)",rC,tD,Y?A.base:rP,tD,Y?(rC!=null?pct(rC,A.base):null):(rP!=null&&rC!=null?pct(rC,rP):null),"목표 "+f2(GOAL.target)+(rC!=null?(rC<=GOAL.target+1e-9?" · 달성":" · 초과"):"")],
+      ["대당 불량(건/대)",rC,tD,Y?A.base:rP,tD,Y?(rC!=null?pct(rC,A.base):null):(rP!=null&&rC!=null?pct(rC,rP):null),"목표 "+f2(GOAL.target)+(rC!=null?(rC<=GOAL.target+0.005?" · 달성":" · 초과"):"")],
       ["수입/공정 손실비용(만원)",cost,tN,Y?null:D.costP,tN,Y?null:pct(D.costC,D.costP),"수입/공정 "+iN.length+"건"],
       ["불량 확인 대기(건)",D.unchk.length,tN,null,tN,null,(CHK_FROM.getMonth()+1)+"/"+CHK_FROM.getDate()+" 이후 발생분"]];
     K.forEach(function(k,i){var r=7+i;put(r,[cell(r,1,k[0],tL),cell(r,2,k[1],k[2]),cell(r,3,k[3]==null?"":k[3],k[3]==null?tM:k[4]),cell(r,4,k[5]==null?"":k[5],k[5]==null?tM:tP),cell(r,5,k[6],X({f:{c:MUT,sz:9},h:"left",ind:1,b:bo}))],22)});
@@ -2488,7 +2482,7 @@ function bdSide(D){
 function bdMe(D,mine){
   var A=D.A,me=null,rk=0;A.P.forEach(function(q,i){if(q.n===ME.name){me=q;rk=i+1}});if(!me)return"";
   var oks=A.P.filter(function(q){return q.ok}),tav=oks.length?oks.reduce(function(a,q){return a+q.avg},0)/oks.length:0,cmN=D.mfc.filter(function(x){return x.finder===ME.name}).length,pmN=D.mfp.filter(function(x){return x.finder===ME.name}).length,low=me.avg<=tav;
-  return '<div class="bd-me"><div class="who"><b>'+esc(ME.name)+'</b><span>님의 현황</span></div>'
+  return '<div class="bd-me"><div class="who"><b>'+esc(ME.name+(ME.role==="팀장"||ME.role==="총괄팀장"?" "+ME.role:""))+'</b><span>님의 현황</span></div>'
    +'<div class="it"><span>'+(D.sm+1)+'월 제조불량</span><b>'+bdNum(cmN)+'<small>건</small></b>'+(D.pm>=0?bdChip(cmN,pmN):'')+'</div>'
    +'<div class="it"><span>올해 불량수량</span><b>'+bdNum(me.qty)+'<small>개</small></b><em>팀 '+A.P.length+'명 중 '+rk+'번째로 많음</em></div>'
    +'<div class="it"><span>장비당 평균 · 장비 '+me.eq+'대</span><b>'+bdNum(me.avg,2)+'</b><em class="'+(low?"ok":"bad")+'">팀 평균 '+f2(tav)+'보다 '+(low?"낮아요":"높아요")+'</em></div>'
@@ -2497,11 +2491,11 @@ function bdMe(D,mine){
 /* 분석 탭 맨 위 요약 */
 function anHero(A){
   var tg=GOAL.target,ms=[],i;for(i=0;i<=CM;i++)if(A.mo[i].r!=null)ms.push(A.mo[i]);if(!ms.length)return"";
-  var okN=ms.filter(function(o){return o.r<=tg+1e-9}).length,best=ms.slice().sort(function(a,b){return a.r-b.r})[0],worst=ms.slice().sort(function(a,b){return b.r-a.r})[0],need=A.cum.tot-Math.floor(tg*A.cum.eq),okC=A.cum.r!=null&&A.cum.r<=tg+1e-9;
+  var okN=ms.filter(function(o){return o.r<=tg+0.005}).length,best=ms.slice().sort(function(a,b){return a.r-b.r})[0],worst=ms.slice().sort(function(a,b){return b.r-a.r})[0],need=A.cum.tot-Math.floor(tg*A.cum.eq),okC=A.cum.r!=null&&A.cum.r<=tg+0.005;
   var W=720,H=230,L=34,R=10,T=26,B=28,mx=bdNice(Math.max(worst.r,tg*1.3)*1.05),gw=(W-L-R)/12,bw=Math.min(30,gw*.52),yy=function(v){return T+(H-T-B)*(1-v/mx)},s="";
   for(i=0;i<=4;i++){var v=mx*i/4,y=yy(v);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="bd-g"/><text x="'+(L-7)+'" y="'+(y+4)+'" class="bd-ax" text-anchor="end">'+(mx<=10?v.toFixed(1):Math.round(v))+'</text>'}
   for(i=0;i<12;i++){var cx=L+gw*i+gw/2,o=A.mo[i];s+='<text x="'+cx+'" y="'+(H-9)+'" class="bd-ax'+(i===CM?" cur":"")+'" text-anchor="middle">'+(i+1)+'월</text>';
-    if(i>CM||o.r==null)continue;var h=Math.max(2,(H-T-B)*o.r/mx),ok=o.r<=tg+1e-9;
+    if(i>CM||o.r==null)continue;var h=Math.max(2,(H-T-B)*o.r/mx),ok=o.r<=tg+0.005;
     s+='<g data-tip="'+(i+1)+'월<br><b>대당 '+f2(o.r)+'건</b><span>불량 '+o.tot+' ÷ 장비 '+o.eq+'대 · '+(ok?"달성":"초과")+'</span>"><rect class="grow anb '+(ok?"ok":"bad")+'" style="--i:'+i+'" x="'+(cx-bw/2).toFixed(1)+'" y="'+(H-B-h).toFixed(1)+'" width="'+bw+'" height="'+h.toFixed(1)+'" rx="5"/><text x="'+cx+'" y="'+(H-B-h-7).toFixed(1)+'" class="bd-vl'+(i===CM?" cur":"")+'" text-anchor="middle">'+f2(o.r)+'</text></g>'}
   s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy(tg)+'" y2="'+yy(tg)+'" class="bd-tg"/><text x="'+(W-R)+'" y="'+(yy(tg)-6)+'" class="bd-tl" text-anchor="end">목표 '+f2(tg)+'</text>';
   var tile=function(l,v,u,sub,c){return '<div class="aht"><span>'+l+'</span><b class="'+(c||"")+'">'+v+(u?'<small>'+u+'</small>':'')+'</b><em>'+sub+'</em></div>'};
@@ -2543,7 +2537,7 @@ document.querySelector(".gnav").addEventListener("click",function(e){var b=e.tar
 $("gHome").addEventListener("click",function(e){e.preventDefault();if(LIVE)setSrc("bd");else{setSrc("nc");setView("overview")}});
 
 /* 시안 모드(DB 미연결)용 가짜 서버 — 이 기기 안에서만 저장 */
-var ROSTER={"손성민":"프로","고현우":"팀장","나영훈":"프로","박제민":"프로","김규태":"프로","최재혁":"프로"};
+var ROSTER={"손성민":"프로","고현우":"팀장","김재환":"총괄팀장","나영훈":"프로","박제민":"프로","김규태":"프로","최재혁":"프로"};
 function demoCall(fn,a){
   var db={};try{db=JSON.parse(localStorage.getItem("nc_demo_db")||"{}")}catch(e){}
   function save(){try{localStorage.setItem("nc_demo_db",JSON.stringify(db))}catch(e){}}
@@ -2574,7 +2568,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   function ld(k){try{return sessionStorage.getItem(k)||localStorage.getItem(k)}catch(e){return null}}
   function msg(t,ok){err.textContent=t||"";err.className="lerr"+(ok?" ok":"")}
   function nm(v){return String(v||"").replace(/\s/g,"")}
-  function dn(u){return u[0]+(u[1]==="팀장"?" 팀장":"")}
+  function dn(u){return u[0]+(u[1]==="팀장"||u[1]==="총괄팀장"?" "+u[1]:"")}
   $("llogo").src=document.querySelector(".gnav .logo").src;
   $("mq").innerHTML=QS.map(function(q){return '<option>'+q+'</option>'}).join("");
   $("lfoot").innerHTML=LIVE?"5번 틀리면 10분간 잠겨요.":"3번 틀리면 10분간 잠겨요.<br>시안 모드예요. 이 기기 안에서만 저장돼요.";
@@ -2609,42 +2603,32 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("toReset").onclick=function(){$("rname").value=nm($("lname").value)||ld(LAST)||"";show("vReset1");$("rs1").disabled=!nm($("rname").value)};
 
 
-  /* ---- 로그인 후 로딩 화면: 웨이퍼가 한 바퀴 돌며 채워지고, 부적합(빨강) → 조치(초록) → 정상(파랑)으로 바뀜 ---- */
+  /* ---- 로그인 후 로딩 화면: 화면 곳곳의 데이터 입자가 가운데 구체로 빨려 들어가며 분석되는 연출 ---- */
   var SP=(function(){
-    var el=$("splash"),cv=$("spCv"),ctx=cv.getContext&&cv.getContext("2d"),run=false,p=0,tgt=0,t0=0,fin=false,raf=0,dies=[],N=19,W=0,C={};
+    var el=$("splash"),cv=$("spCv"),ctx=cv.getContext&&cv.getContext("2d"),run=false,p=0,tgt=0,t0=0,fin=false,raf=0,pts=[],W=0,H=0,mi=-1,
+        MS=["데이터를 불러오고 있어요","AI가 부적합 기록을 분석하고 있어요","AI가 불량 추세를 계산하고 있어요","현황판을 준비하고 있어요"],
+        COL=["#7aa8ff","#22d3ee","#a78bfa","#3d7bff"];
     $("spLogo").src=document.querySelector(".gnav .logo").src;
-    function build(){var c=(N-1)/2,sd=20261113,rnd=function(){sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};dies=[];
-      for(var y=0;y<N;y++)for(var x=0;x<N;x++){var dx=x-c,dy=y-c,r=Math.sqrt(dx*dx+dy*dy);if(r>c+.25||r<2.6)continue;
-        var a=Math.atan2(dx,-dy);if(a<0)a+=Math.PI*2;dies.push({x:x,y:y,a:a/(Math.PI*2),r:r/c,bad:rnd()<.09,j:rnd()})}}
-    function size(){var d=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth||236;W=w;cv.width=cv.height=Math.round(w*d);ctx.setTransform(d,0,0,d,0,0);
-      var cs=getComputedStyle(document.documentElement),g=function(k,f){return(cs.getPropertyValue(k)||"").trim()||f};
-      C={acc:g("--accent","#3d7bff"),acc2:g("--accent2","#7aa8ff"),bad:g("--bad","#f26a6a"),ok:g("--done","#4cb782"),ln:g("--line2","rgba(255,255,255,.12)")}}
-    function paint(){if(!ctx)return;var s=W/N,g=Math.max(1.2,s*.14),q=p/100,i,d;ctx.clearRect(0,0,W,W);
-      for(i=0;i<dies.length;i++){d=dies[i];var x=d.x*s+g/2,y=d.y*s+g/2,w=s-g,lit=q-d.a;   /* lit>0 이면 스윕이 지나간 칸 */
-        if(lit<=0&&!fin){ctx.globalAlpha=1;ctx.strokeStyle=C.ln;ctx.lineWidth=1;rr(x+.5,y+.5,w-1,w-1,2.2);ctx.stroke();continue}
-        var col=C.acc,al=.26+.5*d.j;
-        if(d.bad&&!fin){if(lit<.1){col=C.bad;al=.95}else if(lit<.22){col=C.ok;al=.9}else{col=C.acc2;al=.85}}
-        else if(d.bad){col=C.acc2;al=.85}
-        if(lit<.03&&!fin){al=1;col=d.bad?C.bad:C.acc2}                                   /* 방금 켜진 칸은 밝게 */
-        ctx.globalAlpha=al;ctx.fillStyle=col;rr(x,y,w,w,2.2);ctx.fill()}
-      if(!fin&&q>0&&q<1){var cx=W/2,ang=q*Math.PI*2-Math.PI/2,R=W/2;ctx.globalAlpha=1;
-        var gr=ctx.createLinearGradient(cx,cx,cx+Math.cos(ang)*R,cx+Math.sin(ang)*R);gr.addColorStop(0,"transparent");gr.addColorStop(.3,C.acc2);gr.addColorStop(1,C.acc2);
-        ctx.strokeStyle=gr;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx,cx);ctx.lineTo(cx+Math.cos(ang)*R,cx+Math.sin(ang)*R);ctx.stroke();
-        ctx.globalAlpha=.1;ctx.fillStyle=C.acc2;ctx.beginPath();ctx.moveTo(cx,cx);ctx.arc(cx,cx,R,ang-.5,ang);ctx.closePath();ctx.fill()}
+    function size(){var d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0)}
+    function spawn(){var a=Math.random()*Math.PI*2,r=Math.max(W,H)*(.45+Math.random()*.35);return{a:a,r:r,v:.004+Math.random()*.006,s:.8+Math.random()*1.8,c:COL[(Math.random()*4)|0]}}
+    function fx(){if(!ctx||reduce)return;var ob=el.querySelector(".sp-orb").getBoundingClientRect(),cx=ob.left+ob.width/2,cy=ob.top+ob.height/2,R0=ob.width*.36,i,q;var tw=el.querySelector(".sp-who").getBoundingClientRect(),tb=$("spBar").parentNode.getBoundingClientRect(),zy0=tw.top-14,zy1=tb.bottom+14,zx=Math.max(tw.width,tb.width)/2+40;
+      ctx.clearRect(0,0,W,H);
+      for(i=0;i<pts.length;i++){q=pts[i];q.r-=q.r*q.v*(fin?3.2:1)+.25;q.a+=.0035;
+        if(q.r<R0){pts[i]=spawn();continue}
+        var x=cx+Math.cos(q.a)*q.r,y=cy+Math.sin(q.a)*q.r,al=Math.min(1,(q.r-R0)/120)*Math.min(1,(Math.max(W,H)*.8-q.r)/200);if(al<=0)continue;if(y>zy0&&y<zy1&&Math.abs(x-cx)<zx)continue;
+        ctx.globalAlpha=al*.85;ctx.fillStyle=q.c;ctx.beginPath();ctx.arc(x,y,q.s,0,6.283);ctx.fill();
+        if(q.r<R0+170){ctx.globalAlpha=al*.2;ctx.strokeStyle=q.c;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(cx+Math.cos(q.a)*(q.r+26),cy+Math.sin(q.a)*(q.r+26));ctx.stroke()}}
       ctx.globalAlpha=1}
-    function rr(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h)}
-    function rows(){var a=el.querySelectorAll(".sp-row"),k=p<30?0:p<60?1:2;[].forEach.call(a,function(r,i){if(!r.classList.contains("ok"))r.classList.toggle("on",i<=k)})}
-    function draw(){$("spF").style.strokeDashoffset=(1-p/100).toFixed(4);$("spN").textContent=Math.round(p);if(!fin)rows();paint()}
-    function tick(){if(!run)return;if(!fin&&tgt<94)tgt+=.012;p+=(tgt-p)*(tgt>=100?.2:.024);if(Math.abs(tgt-p)<.12)p=tgt;draw();raf=requestAnimationFrame(tick)}
-    function cnt(k){var n=k==="qc"?(LED.qc||[]).length:k==="in"?(LED.in||[]).length:(EQD||[]).length;return n.toLocaleString()+(k==="eq"?"대":"건")}
+    function say(t){var e=$("spStep");e.textContent=t;e.classList.remove("sw");void e.offsetWidth;e.classList.add("sw")}
+    function draw(){$("spN").textContent=Math.round(p);$("spBar").style.width=p.toFixed(2)+"%";if(!fin){var k=p<22?0:p<48?1:p<72?2:3;if(k!==mi){mi=k;say(MS[k])}}fx()}
+    function tick(){if(!run)return;if(!fin&&tgt<94)tgt+=.012;p+=(tgt-p)*(tgt>=100?.18:.024);if(Math.abs(tgt-p)<.12)p=tgt;draw();raf=requestAnimationFrame(tick)}
+    addEventListener("resize",function(){if(run)size()});
     return{
-      start:function(name){cancelAnimationFrame(raf);el.className="splash";el.hidden=false;if(!dies.length)build();size();
-        [].forEach.call(el.querySelectorAll(".sp-row"),function(r){r.className="sp-row";r.querySelector(".v").textContent=""});
-        $("spName").textContent=name||"";$("spSub").textContent="님, 환영해요";$("spStep").textContent="기록을 안전하게 불러오고 있어요";p=0;tgt=84;fin=false;run=true;t0=Date.now();draw();tick()},
+      start:function(name){cancelAnimationFrame(raf);el.className="splash";el.hidden=false;size();pts=[];for(var i=0;i<(W<700?70:140);i++){var q=spawn();q.r*=.35+Math.random()*.65;pts.push(q)}
+        $("spName").textContent=name||"";$("spSub").textContent="님, 환영해요";mi=-1;p=0;tgt=84;fin=false;run=true;t0=Date.now();draw();tick()},
       finish:function(min){return new Promise(function(res){setTimeout(function(){tgt=100;
-        [].forEach.call(el.querySelectorAll(".sp-row"),function(r,i){setTimeout(function(){r.classList.remove("on");r.classList.add("ok");r.querySelector(".v").textContent=cnt(r.dataset.k)},140+i*190)});
-        setTimeout(function(){fin=true;$("spSub").textContent="님, 준비 완료";$("spStep").textContent="현황판으로 이동해요";el.classList.add("ok")},760);
-        setTimeout(res,1500)},Math.max(0,(min||0)-(Date.now()-t0)))})},
+        setTimeout(function(){fin=true;$("spSub").textContent="님, 분석이 끝났어요";say("현황판으로 이동해요");el.classList.add("ok")},520);
+        setTimeout(res,1350)},Math.max(0,(min||0)-(Date.now()-t0)))})},
       hide:function(){el.classList.add("out");setTimeout(function(){el.hidden=true;run=false;cancelAnimationFrame(raf)},760)},
       fail:function(){el.hidden=true;run=false;cancelAnimationFrame(raf)}}})();
 
@@ -2652,8 +2636,8 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   function call(fn,args){return API(fn,args).catch(function(){return{ok:false,msg:"서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요."}})}
   function enterWith(r,keep){TK=r.token||"";
     /* PIN 확인 → 카드에 "OOO님 로그인 완료" 1.8초 → 로딩 화면(데이터 받기) → 현황판 */
-    $("lwhoN").textContent=r.name;$("lwhoT").textContent="님 로그인 완료";$("lwho").className="lwho done";$("lwho").hidden=false;msg("");$("lgo").disabled=true;$("lgo").textContent="로그인 완료";$("lgo").classList.add("okd");
-    return new Promise(function(ok){setTimeout(ok,1800)}).then(function(){SP.start(r.name);return LIVE?loadLive(TK):null}).then(function(){return SP.finish(1900)})
+    $("lwhoN").textContent=dn([r.name,r.role]);$("lwhoT").textContent="님 로그인 완료";$("lwho").className="lwho done";$("lwho").hidden=false;msg("");$("lgo").disabled=true;$("lgo").textContent="로그인 완료";$("lgo").classList.add("okd");
+    return new Promise(function(ok){setTimeout(ok,1800)}).then(function(){SP.start(dn([r.name,r.role]));return LIVE?loadLive(TK):null}).then(function(){return SP.finish(2600)})
      .then(function(){$("lgo").textContent="로그인";$("lgo").classList.remove("okd");enter([r.name,r.role],keep);SP.hide()})
      .catch(function(){SP.fail();$("lwho").hidden=true;$("lgo").textContent="로그인";$("lgo").classList.remove("okd");P1.clear();chkLogin();msg("데이터를 불러오지 못했어요. 다시 시도해 주세요.")})}
 
@@ -2741,7 +2725,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-0210",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-0920",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
@@ -2781,7 +2765,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   if(cur&&cur.n&&Date.now()-cur.t<12*3600e3){
     if(LIVE){if(cur.k){TK=cur.k;var keepS=!!localStorage.getItem(SK),tries=0,unboot=function(){document.documentElement.classList.remove("boot")};
       /* 새로고침 때: 서버가 '만료'라고 답한 경우에만 로그아웃. 통신이 잠깐 끊긴 건 다시 시도하고 로그인은 유지 */
-      SP.start(cur.n);
+      SP.start(dn([cur.n,cur.r]));
       (function go(){loadLive(TK).then(function(){SP.finish(500).then(function(){enter([cur.n,cur.r],keepS);SP.hide()})},function(e){if(String(e&&e.message)==="expired"||tries>=2)SP.fail();
         if(String(e&&e.message)==="expired"){TK="";st(SK,null);unboot();msg("로그인 시간이 지나 다시 로그인해 주세요.")}
         else if(++tries<3)setTimeout(go,900*tries);
