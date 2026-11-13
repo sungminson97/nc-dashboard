@@ -737,9 +737,13 @@ body.locked #toTop{display:none}
 @media(min-width:761px){#lgTbl .tbl td[data-k="pn"]{white-space:nowrap;overflow-wrap:normal;font-size:12px;min-width:0}#lgTbl .tbl td[data-k="gubun"],#lgTbl .tbl td[data-k="cost"],#lgTbl .tbl td[data-k="ship"]{white-space:nowrap;overflow-wrap:normal}#lgTbl .tbl td[data-k="desc"]{min-width:200px}}
 @media(min-width:761px) and (max-width:1520px){#lgTbl .tbl th[data-k="ship"],#lgTbl .tbl td[data-k="ship"]{display:none}}
 @media(min-width:761px) and (max-width:1380px){#lgTbl .tbl td[data-k="pn"]{font-size:11.5px}#lgTbl .tbl th[data-k="cost"],#lgTbl .tbl td[data-k="cost"]{display:none}}
+
+html.boot .login{opacity:0!important;visibility:hidden!important;transition:none!important}
+html.boot body{background:var(--bg)}
 </style>
 </head>
 <body>
+<script>try{var __c=JSON.parse(sessionStorage.getItem('nc_sess')||localStorage.getItem('nc_sess')||'null');if(__c&&__c.n&&Date.now()-__c.t<12*3600e3){document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},8000)}}catch(e){}</script>
 <div class="login" id="login" role="dialog" aria-modal="true" aria-labelledby="lgT">
   <div class="lstage">
     <canvas id="wafer" aria-hidden="true"></canvas>
@@ -1925,6 +1929,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   /* ---- 입장 / 로그아웃 ---- */
   var last=Date.now();
   function enter(u,keep){
+    document.documentElement.classList.remove("boot");
     ME={name:u[0],role:u[1]};st(SK,JSON.stringify({n:u[0],r:u[1],t:Date.now(),k:TK}),keep);
     $("meN").textContent=dn(u);$("meR").style.display="none";
     document.body.classList.remove("locked");$("login").classList.add("off");$("login").setAttribute("aria-hidden","true");
@@ -1982,7 +1987,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("lname").value=ld(LAST)||"";chkLogin();show("vLogin");
   var cur=null;try{cur=JSON.parse(ld(SK)||"null")}catch(e){}
   if(cur&&cur.n&&Date.now()-cur.t<12*3600e3){
-    if(LIVE){if(cur.k){TK=cur.k;loadLive(TK).then(function(){enter([cur.n,cur.r],!!localStorage.getItem(SK))}).catch(function(){TK="";st(SK,null)})}}
+    if(LIVE){if(cur.k){TK=cur.k;loadLive(TK).then(function(){enter([cur.n,cur.r],!!localStorage.getItem(SK))}).catch(function(){TK="";st(SK,null);document.documentElement.classList.remove("boot")})}else document.documentElement.classList.remove("boot")}
     else enter([cur.n,cur.r],!!localStorage.getItem(SK))}
 })();
 /* ===== 로그인 웨이퍼 맵: 검출(빨강) → 조치(초록) → 정상(파랑) 을 반복해서 보여줌 ===== */
