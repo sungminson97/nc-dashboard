@@ -707,6 +707,32 @@ button:active:not(:disabled){opacity:.82}
 .tbl td.m{letter-spacing:-.01em}
 .stat .s,.big .dl{line-height:1.45}
 .props dd .ck{vertical-align:middle}
+
+/* ---------- v14: 표 폭 · 확인 완료 · 맨 위로 · 드롭다운 ---------- */
+select{color-scheme:dark}
+:root[data-theme="light"] select{color-scheme:light}
+select option{background:#15171a;color:#e8eaed}
+:root[data-theme="light"] select option{background:#fff;color:#14161a}
+button.ck.lock{opacity:.5;cursor:default}
+button.ck.on.lock{opacity:.85}
+@media(min-width:761px){
+  #lgTbl .tbl{min-width:0;width:100%}
+  #lgTbl .tbl th,#lgTbl .tbl td{padding-left:10px;padding-right:10px}
+  #lgTbl .tbl th[data-k="c1"],#lgTbl .tbl td[data-k="c1"],#lgTbl .tbl th[data-k="ptype"],#lgTbl .tbl td[data-k="ptype"]{display:none}
+  #lgTbl .tbl td{white-space:normal;overflow:visible;text-overflow:clip;max-width:none;overflow-wrap:anywhere;line-height:1.45}
+  #lgTbl .tbl td[data-k="id"],#lgTbl .tbl td[data-k="chk"],#lgTbl .tbl td[data-k="d"],#lgTbl .tbl td[data-k="site"],#lgTbl .tbl td[data-k="finder"],#lgTbl .tbl td[data-k="ven"],#lgTbl .tbl td[data-k="qty"]{white-space:nowrap;overflow-wrap:normal}
+  #lgTbl .tbl td[data-k="desc"]{min-width:220px}
+  #lgTbl .tbl td[data-k="part"]{min-width:90px}
+  #lgTbl .tbl td[data-k="proj"]{min-width:90px}
+}
+#toTop{position:fixed;right:max(22px,env(safe-area-inset-right,0px));bottom:max(26px,env(safe-area-inset-bottom,0px));z-index:14;height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--line2);background:var(--panel);color:var(--fg);font-size:13px;font-weight:500;box-shadow:0 10px 28px rgba(0,0,0,.38);opacity:0;transform:translateY(10px);pointer-events:none;transition:opacity .16s,transform .16s,border-color .12s;cursor:pointer}
+#toTop.on{opacity:1;transform:none;pointer-events:auto}
+#toTop:hover{border-color:var(--accent)}
+body.locked #toTop{display:none}
+@media(max-width:760px){#toTop{bottom:calc(78px + env(safe-area-inset-bottom,0px));right:16px;height:38px}}
+
+@media(min-width:761px) and (max-width:1520px){#lgTbl .tbl th[data-k="id"],#lgTbl .tbl td[data-k="id"]{display:none}#lgTbl .tbl th,#lgTbl .tbl td{padding-left:8px;padding-right:8px}}
+@media(min-width:761px) and (max-width:1380px){#lgTbl .tbl th[data-k="part"],#lgTbl .tbl td[data-k="part"]{display:none}}
 </style>
 </head>
 <body>
@@ -955,6 +981,7 @@ button:active:not(:disabled){opacity:.82}
 <div class="drawer" id="drawer" role="dialog" aria-hidden="true" aria-label="부적합 상세"></div>
 <div class="tip" id="tip"></div>
 
+<button id="toTop" type="button">맨 위로</button>
 <div id="syncBar" role="status" aria-live="polite"><span class="dot"></span><span id="syncMsg">새 기록이 반영되었어요</span><button class="go" id="syncGo" type="button">새로고침</button><button class="x" id="syncX" type="button" aria-label="닫기">×</button></div>
 <script>
 /* ================= 예시 데이터 (실제 값 아님) ================= */
@@ -1221,7 +1248,7 @@ var LCFG={
   qc:{name:"품질검수(제조) 부적합",
     flt:[["chk","확인 여부"],["c1","대분류"],["ven","귀책"],["c3","소분류"],["ship","출하월"],["finder","제조 담당자"]],
     dims:[["ven","귀책"],["c1","대분류"],["c3","소분류"],["finder","제조 담당자"]],
-    cols:[["id","번호","mono p2"],["chk","확인",""],["d","발생일",""],["site","사업장",""],["proj","출하 프로젝트","m"],["part","위치 · 품명","p2"],["desc","불량내용",""],["ven","귀책",""],["c1","대분류","p2"],["c3","소분류","p2"],["finder","제조 담당자","p2"],["qty","수량","r"],["ptype","TYPE","p2"]]},
+    cols:[["id","번호","mono p2"],["chk","확인",""],["d","발생일",""],["site","사업장",""],["finder","제조 담당자",""],["proj","출하 프로젝트","m"],["part","위치 · 품명","p2"],["desc","불량내용",""],["ven","귀책",""],["c1","대분류","p2"],["c3","소분류","p2"],["qty","수량","r"],["ptype","TYPE","p2"]]},
   in:{name:"수입/공정 부적합",
     flt:[["c1","대분류"],["ven","귀책업체"],["gubun","구분"],["cls","분류"],["ship","출하월"],["finder","발견자"]],
     dims:[["ven","귀책업체"],["c1","대분류"],["gubun","구분"],["cls","분류"]],
@@ -1231,14 +1258,14 @@ var LS={qc:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},in:{f:{},dim:"ven",sort:{
 var SC={"성남":"var(--st1)","동탄":"var(--st2)","미분류":"var(--st3)"};
 function ledAll(){return LED[SRC].filter(sOK)}
 function inRg(x){return range==="m"?x.m===CM:range==="q"?x.m>=CM-2:true}
-function ledF(rows){var S=LS[SRC];return rows.filter(function(x){for(var k in S.f){if(S.f[k]&&String(x[k])!==S.f[k])return false}
+function ledF(rows){var S=LS[SRC];return rows.filter(function(x){for(var k in S.f){if(k==="chk"&&KEEP[x.id])continue;if(S.f[k]&&String(x[k])!==S.f[k])return false}
   if(qs){var t=(x.id+" "+x.proj+" "+x.part+" "+x.pn+" "+x.ven+" "+x.c1+" "+x.c3+" "+x.finder+" "+x.desc).toLowerCase();if(!qs.toLowerCase().split(/\s+/).every(function(w){return t.indexOf(w)>=0}))return false}return true})}
 function fmtCost(v){return v?v.toLocaleString()+"만":"-"}
 function cell(k,x){
   if(k==="d")return fd(x.d);
   if(k==="site")return '<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>';
   if(k==="cost")return fmtCost(x.cost);
-  if(k==="chk"){var on=x.chk==="확인";return '<button class="ck'+(on?' on':'')+'" data-ck="'+esc(x.id)+'" aria-pressed="'+on+'" title="'+(on?esc(x.chkBy)+' 님이 확인':'아직 확인 안 됨 · 눌러서 확인')+'">'+(on?"확인":"미확인")+'</button>'}
+  if(k==="chk"){var on=x.chk==="확인",me=canChk(x);return '<button class="ck'+(on?' on':'')+(me?'':' lock')+'" data-ck="'+esc(x.id)+'" aria-pressed="'+on+'"'+(me?'':' disabled')+' title="'+(on?esc(x.chkBy)+' 님이 확인했어요':(me?'눌러서 확인 완료로 바꿔요':'담당자 본인만 확인할 수 있어요'))+'">'+(on?"확인 완료":"미확인")+'</button>'}
   if(k==="ven"&&SRC==="qc"&&(x.ven==="기구"||x.ven==="전장"))return '<span class="tag '+(x.ven==="기구"?"t1":"t2")+'">'+x.ven+'</span>';
   return esc(x[k]==null?"":x[k])}
 function syncSel(){var S=LS[SRC];[].forEach.call($("fbar").querySelectorAll("select"),function(el){el.value=S.f[el.dataset.k]||"";el.classList.toggle("on",!!el.value)})}
@@ -1272,7 +1299,7 @@ function renderLedger(){
   $("nav3").innerHTML='<h4>귀책 상위</h4>'+vs.map(function(v){return '<button data-v="'+esc(v)+'" style="--p:'+Math.round(vc[v]/vc[vs[0]]*100)+'%" '+(S.f.ven===v?'aria-current="true"':'')+'><span class="l">'+esc(v)+'</span><span class="n">'+vc[v]+'</span></button>'}).join("");
   syncSel();
   drawLedTrend(ledF(all));drawLedBars(rows);drawLedTable(rows);drawChkBar();
-  var un=SRC==="qc"?rows.filter(function(x){return x.chk!=="확인"}).length:0,cb=$("lgChkAll");if(cb){cb.style.display=un?"":"none";if(cb.dataset.ask!=="1")cb.textContent="화면의 미확인 "+un+"건 모두 확인"}}
+  var un=SRC==="qc"?rows.filter(function(x){return x.chk!=="확인"&&canChk(x)}).length:0,cb=$("lgChkAll");if(cb){cb.style.display=un?"":"none";if(cb.dataset.ask!=="1")cb.textContent="내 미확인 "+un+"건 모두 확인"}}
 
 var TS={};
 function drawLedTrend(rows){
@@ -1338,18 +1365,19 @@ function drawLedTable(rows){
 /* ================= 불량 확인 체크 ================= */
 function chkSave(keys,val,rev){
   chkBusy++;
-  rpc("nc_check_set",{p_token:GTK,p_keys:keys,p_val:val}).then(function(r){if(r===-1||r===null)throw new Error("x")})
-    .catch(function(){rev();applyChk();render()}).then(function(){chkBusy--})}
+  rpc("nc_check_set",{p_token:GTK,p_keys:keys,p_val:val}).then(function(r){if(r===-1||r===null||r<keys.length)throw new Error("x")})
+    .catch(function(){rev();applyChk();render()}).then(function(){chkBusy--;refreshChecks()})}
 function toggleChk(id){
   var x=(LED.qc||[]).filter(function(y){return y.id===id})[0];if(!x)return;
-  var val=x.chk!=="확인",old=CHK[x.ck];
+  if(!canChk(x))return;
+  var val=x.chk!=="확인",old=CHK[x.ck];KEEP[x.id]=1;
   if(val)CHK[x.ck]={by:ME.name||"-",at:new Date().toISOString()};else delete CHK[x.ck];
   applyChk();render();
   chkSave([x.ck],val,function(){if(old)CHK[x.ck]=old;else delete CHK[x.ck]})}
 var chkAskT;
 function chkAll(){
-  var b=$("lgChkAll"),rows=(window.__ledRows||[]).filter(function(x){return x.chk!=="확인"}),keys=[],seen={};
-  rows.forEach(function(x){if(!seen[x.ck]){seen[x.ck]=1;keys.push(x.ck)}});keys=keys.slice(0,500);
+  var b=$("lgChkAll"),rows=(window.__ledRows||[]).filter(function(x){return x.chk!=="확인"&&canChk(x)}),keys=[],seen={};
+  rows.forEach(function(x){KEEP[x.id]=1;if(!seen[x.ck]){seen[x.ck]=1;keys.push(x.ck)}});keys=keys.slice(0,500);
   if(!keys.length)return;
   if(b.dataset.ask!=="1"){b.dataset.ask="1";b.textContent="한 번 더 누르면 "+keys.length+"건이 확인 처리돼요";clearTimeout(chkAskT);chkAskT=setTimeout(function(){b.dataset.ask="";render()},4000);return}
   b.dataset.ask="";var prev={};keys.forEach(function(k){prev[k]=CHK[k];CHK[k]={by:ME.name||"-",at:new Date().toISOString()}});
@@ -1367,10 +1395,12 @@ function drawChkBar(){
   if(ME.name&&by[ME.name])nm=[ME.name].concat(nm.filter(function(n){return n!==ME.name}));
   el.style.display="flex";el.classList.toggle("ok",!nm.length&&!un);
   el.innerHTML=(nm.length||un)?'<span class="cl">미확인 불량</span>'+nm.map(function(n){return '<button class="cc'+(n===ME.name?" me":"")+'" data-n="'+esc(n)+'">'+esc(n)+'<b>'+by[n]+'건</b></button>'}).join("")+(un?'<span class="mut">담당자 미기재 '+un+'건</span>':'')+'<span class="cs">'+(CHK_FROM.getMonth()+1)+'/'+CHK_FROM.getDate()+' 이후 발생 기준 · 이름을 누르면 그 사람 목록만 봐요</span>':'<span class="cok">'+(CHK_FROM.getMonth()+1)+'월 이후 불량을 모두 확인했어요</span>'}
-$("chkBar").addEventListener("click",function(e){var b=e.target.closest("button.cc");if(!b)return;var S=LS.qc;S.f.finder=b.dataset.n;S.f.chk="미확인";S.lim=50;render();var l=$("lgList");if(l&&l.scrollIntoView)l.scrollIntoView({behavior:"smooth",block:"start"})});
+$("chkBar").addEventListener("click",function(e){var b=e.target.closest("button.cc");if(!b)return;var S=LS.qc;S.f.finder=b.dataset.n;S.f.chk="미확인";S.lim=50;KEEP={};render();var l=$("lgList");if(l&&l.scrollIntoView)l.scrollIntoView({behavior:"smooth",block:"start"})});
 
 /* ================= 분석 (품질검수) ================= */
 /* 20% 감소 목표 — 검수장비 수 / 출하·부적합 건수는 시트 backlog_raw 연결 전까지 아래 값을 직접 입력 (1월~12월) */
+var KEEP={};
+function canChk(x){return !!ME.name&&String(x.finder||"").trim()===String(ME.name).trim()}
 var EQD=[],CHK={},ME={name:"",role:""},CHK_FROM=new Date(2026,10,1),chkBusy=0;
 function applyChk(){(LED.qc||[]).forEach(function(x){var c=CHK[x.ck];x.chk=c?"확인":"미확인";x.chkBy=c?c.by:""})}
 var GOAL={pct:20,target:2.68,steps:[5,10,15,20,25,30],eq:[27,19,30,35,34,31,45,52,40,45,13,0],ship:[14,8,16,4,15,7,7,16,6,7,0,0]};
@@ -1446,7 +1476,7 @@ function openLed(id){
   var x=LED[SRC].filter(function(y){return y.id===id})[0];if(!x)return;curId=id;var ix=curList.indexOf(id),cfg=LCFG[SRC];
   var P=[["번호",x.n],["사업장",'<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>'],["발생일",fd(x.d)],["출하월",x.ship],[SRC==="qc"?"출하 프로젝트":"발주 프로젝트",'<span class="chip">'+esc(x.proj)+'</span>'],["품명 · 위치",esc(x.part)],["TYPE",esc(x.ptype||"-")],["품번",'<span style="font-family:var(--mono);font-size:12px">'+esc(x.pn)+'</span>'],["불량 수량",x.qty+"개"],["귀책"+(SRC==="in"?"업체":""),'<span class="chip">'+esc(x.ven)+'</span>'],["대분류",esc(x.c1)],["중분류",esc(x.c2)],["소분류",esc(x.c3)],["발견자",esc(x.finder)]];
   if(x.note)P.push(["비고",esc(x.note)]);
-  if(SRC==="qc"){var ok=x.chk==="확인";P.push(["확인",'<button class="ck'+(ok?' on':'')+'" data-ck="'+esc(x.id)+'" data-dr="1">'+(ok?"확인":"미확인")+'</button>'+(ok?' <span class="mut">'+esc(x.chkBy)+'</span>':'')])}
+  if(SRC==="qc"){var ok=x.chk==="확인";var mm=canChk(x);P.push(["확인",'<button class="ck'+(ok?' on':'')+(mm?'':' lock')+'" data-ck="'+esc(x.id)+'" data-dr="1"'+(mm?'':' disabled')+'>'+(ok?"확인 완료":"미확인")+'</button>'+(ok?' <span class="mut">'+esc(x.chkBy)+'</span>':(mm?'':' <span class="mut">담당자 본인만 확인할 수 있어요</span>'))])}
   if(SRC==="in")P.push(["구분",esc(x.gubun)],["분류",esc(x.cls)],["담당자",esc(x.owner)],["조치사항",esc(x.act)],["손실비용",fmtCost(x.cost)]);
   $("drawer").innerHTML='<div class="dh"><span class="id">'+x.id+'</span><div class="nv"><button id="dp" aria-label="이전">↑</button><span class="cnt">'+(ix+1)+' / '+curList.length+'</span><button id="dn" aria-label="다음">↓</button><button id="dx">닫기</button></div></div>'
    +'<div class="dbody"><h2>'+esc(x.proj)+' · '+esc(x.part)+'</h2><p class="desc">'+esc(x.desc)+'.</p><dl class="props">'+P.map(function(r){return '<dt>'+r[0]+'</dt><dd class="tn">'+r[1]+'</dd>'}).join("")+'</dl><p class="note">'+cfg.name+(LIVE?"":" · 예시 데이터")+'</p></div>';
@@ -1719,16 +1749,17 @@ function xlsxOut(){
     var b=$("lgXls");b.disabled=false;b.textContent="엑셀 내려받기"}
 }
 
-$("fbar").addEventListener("change",function(e){var el=e.target.closest("select");if(!el)return;var S=LS[SRC];S.f[el.dataset.k]=el.value;S.lim=50;render()});
-$("fbar").addEventListener("click",function(e){if(e.target.id==="fReset"){LS[SRC].f={};qs="";$("q").value="";LS[SRC].lim=50;render()}});
+$("fbar").addEventListener("change",function(e){var el=e.target.closest("select");if(!el)return;var S=LS[SRC];S.f[el.dataset.k]=el.value;S.lim=50;KEEP={};render()});
+$("fbar").addEventListener("click",function(e){if(e.target.id==="fReset"){KEEP={};LS[SRC].f={};qs="";$("q").value="";LS[SRC].lim=50;render()}});
 $("lgDim").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;LS[SRC].dim=b.dataset.d;[].forEach.call(this.querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x===b)});renderLedger()});
-$("lgBars").addEventListener("click",function(e){var b=e.target.closest("button.b");if(!b)return;var S=LS[SRC],k=S.dim,v=b.dataset.val;S.f[k]=S.f[k]===v?"":v;S.lim=50;render()});
-$("lgChips").addEventListener("click",function(e){var b=e.target.closest("button[data-fk]");if(!b)return;if(b.dataset.fk==="__q"){qs="";$("q").value=""}else LS[SRC].f[b.dataset.fk]="";render()});
+$("lgBars").addEventListener("click",function(e){var b=e.target.closest("button.b");if(!b)return;var S=LS[SRC],k=S.dim,v=b.dataset.val;S.f[k]=S.f[k]===v?"":v;S.lim=50;KEEP={};render()});
+$("lgChips").addEventListener("click",function(e){var b=e.target.closest("button[data-fk]");if(!b)return;if(b.dataset.fk==="__q"){qs="";$("q").value=""}else LS[SRC].f[b.dataset.fk]="";KEEP={};render()});
 $("drawer").addEventListener("click",function(e){var kb=e.target.closest("button.ck[data-dr]");if(!kb)return;var id=kb.dataset.ck;toggleChk(id);openLed(id)});
 $("lgTbl").addEventListener("click",function(e){var kb=e.target.closest("button.ck");if(kb){e.stopPropagation();toggleChk(kb.dataset.ck);return}var th=e.target.closest("th");if(th){var S=LS[SRC],k=th.dataset.k;S.sort=S.sort.k===k?{k:k,dir:-S.sort.dir}:{k:k,dir:(k==="d"||k==="qty"||k==="cost")?-1:1};renderLedger();return}
   var tr=e.target.closest("tr.lr");if(tr)openDrawer(tr.dataset.id)});
 $("lgMoreW").addEventListener("click",function(e){if(e.target.id==="lgMore"){LS[SRC].lim+=100;renderLedger()}});
 $("lgXls").onclick=xlsxOut;$("lgChkAll").onclick=chkAll;
+(function(){var b=$("toTop"),t=0;function up(){t=0;b.classList.toggle("on",scrollY>700)}addEventListener("scroll",function(){if(!t)t=requestAnimationFrame(up)},{passive:true});b.onclick=function(){scrollTo({top:0,behavior:"smooth"})}})();
 $("lgLeg").addEventListener("click",function(e){var b=e.target.closest("button[data-s]");if(!b)return;TS[b.dataset.s]=!TS[b.dataset.s];drawLedTrend(ledF(ledAll()))});
 $("lgView").addEventListener("click",function(e){var b=e.target.closest("button[data-v]");if(!b)return;LV=b.dataset.v;applyLV();if(LV==="an")drawAnalysis();scrollTo({top:0,behavior:"auto"})});
 var rzL;addEventListener("resize",function(){clearTimeout(rzL);rzL=setTimeout(function(){if(SRC!=="nc")drawLedTrend(ledF(ledAll()))},120)});
