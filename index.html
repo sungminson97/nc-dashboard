@@ -2493,7 +2493,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     ME={name:u[0],role:u[1]};st(SK,JSON.stringify({n:u[0],r:u[1],t:Date.now(),k:TK}),keep);
     $("meN").textContent=dn(u);$("meR").style.display="none";
     document.body.classList.remove("locked");document.body.classList.add("entered");$("login").classList.add("off");$("login").setAttribute("aria-hidden","true");
-    last=Date.now();if(LIVE){setSrc("bd");setTimeout(poll,2500)}else drawTrend();
+    last=Date.now();if(LIVE){try{setSrc("bd")}catch(e){console.error("화면 그리기 오류",e)}setTimeout(poll,2500)}else drawTrend();
   }
   function logout(m){
     if(LIVE&&TK){rpc("nc_logout",{p_token:TK}).catch(function(){});LED={qc:[],in:[]}}TK="";BASE=null;PEND=null;hideBar();
@@ -2517,7 +2517,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261113-2224",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261113-2240",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
@@ -2536,6 +2536,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
       polling=false;
       if(!r){logout("로그인 시간이 지나 다시 로그인해 주세요.");return}
       refreshChecks();
+      try{var ss=[localStorage,sessionStorage];ss.forEach(function(a){var v=a.getItem(SK);if(v){var o=JSON.parse(v);if(o.k===TK){o.t=Date.now();a.setItem(SK,JSON.stringify(o))}}})}catch(e){}
       if(BASE===null){BASE=r.v;return}
       if(r.v!==BASE&&r.v!==PEND)showBar(r)
     }).catch(function(){polling=false})}
@@ -2554,7 +2555,12 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("lname").value=ld(LAST)||"";chkLogin();show("vLogin");
   var cur=null;try{cur=JSON.parse(ld(SK)||"null")}catch(e){}
   if(cur&&cur.n&&Date.now()-cur.t<12*3600e3){
-    if(LIVE){if(cur.k){TK=cur.k;loadLive(TK).then(function(){enter([cur.n,cur.r],!!localStorage.getItem(SK))}).catch(function(){TK="";st(SK,null);document.documentElement.classList.remove("boot")})}else document.documentElement.classList.remove("boot")}
+    if(LIVE){if(cur.k){TK=cur.k;var keepS=!!localStorage.getItem(SK),tries=0,unboot=function(){document.documentElement.classList.remove("boot")};
+      /* 새로고침 때: 서버가 '만료'라고 답한 경우에만 로그아웃. 통신이 잠깐 끊긴 건 다시 시도하고 로그인은 유지 */
+      (function go(){loadLive(TK).then(function(){enter([cur.n,cur.r],keepS)},function(e){
+        if(String(e&&e.message)==="expired"){TK="";st(SK,null);unboot();msg("로그인 시간이 지나 다시 로그인해 주세요.")}
+        else if(++tries<3)setTimeout(go,900*tries);
+        else{TK="";unboot();msg("서버에 연결하지 못했어요. 잠시 뒤 새로고침하면 로그인이 그대로 이어져요.")}})})()}else document.documentElement.classList.remove("boot")}
     else enter([cur.n,cur.r],!!localStorage.getItem(SK))}
 })();
 /* ===== 로그인 웨이퍼 맵: 검출(빨강) → 조치(초록) → 정상(파랑) 을 반복해서 보여줌 ===== */
