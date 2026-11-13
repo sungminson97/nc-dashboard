@@ -1063,10 +1063,75 @@ body.islive #headline{display:none}
 @keyframes lspin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.lwho,.lwho .dot{animation:none}}
 .lwho[hidden],#lnameW[hidden]{display:none!important}
+
+/* ===== 로그인 후 로딩 화면 (웨이퍼가 채워지며 부적합 → 조치 → 정상) ===== */
+.splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;
+  background:radial-gradient(760px 520px at 50% 40%,var(--glow) 0%,transparent 72%),linear-gradient(var(--line) 1px,transparent 1px) 0 0/64px 64px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/64px 64px,var(--bg);
+  transition:opacity .55s ease,filter .55s ease}
+.splash[hidden]{display:none!important}
+.splash.out{opacity:0;filter:blur(8px);pointer-events:none}
+.splash.out .sp-wafer{transform:scale(2.6);opacity:0}
+.splash.out .sp-in>*:not(.sp-wafer){opacity:0;transform:translateY(10px)}
+.sp-in{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center;width:min(360px,100%)}
+.sp-in>*{transition:opacity .35s ease,transform .7s cubic-bezier(.3,0,.2,1)}
+.sp-logo{height:24px;width:auto;opacity:.92}
+.sp-wafer{position:relative;width:264px;height:264px;margin:4px 0 2px}
+.sp-wafer canvas{position:absolute;inset:14px;width:calc(100% - 28px);height:calc(100% - 28px)}
+.sp-wafer svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sp-wafer circle{fill:none}
+.sp-wafer .t{stroke:var(--line2);stroke-width:1}
+.sp-wafer .f{stroke:var(--accent2);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;filter:drop-shadow(0 0 6px var(--accent));transition:stroke .5s}
+.sp-core{position:absolute;left:50%;top:50%;width:104px;height:104px;margin:-52px 0 0 -52px;border-radius:50%;display:flex;align-items:baseline;justify-content:center;padding-top:33px;
+  background:radial-gradient(circle,var(--bg) 58%,transparent 72%);font-variant-numeric:tabular-nums}
+.sp-core b{font-size:38px;font-weight:600;letter-spacing:-.04em;line-height:1}.sp-core i{font-style:normal;font-size:13px;color:var(--fg3);margin-left:2px}
+.sp-who{font-size:21px;letter-spacing:-.02em}.sp-who b{font-weight:600}.sp-who span{color:var(--fg2);transition:color .4s}
+.sp-list{width:100%;border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:4px 16px;text-align:left}
+.sp-row{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:12px;height:40px;border-top:1px solid var(--line);color:var(--fg4);font-size:13.5px;transition:color .35s}
+.sp-row:first-child{border-top:0}
+.sp-row .d{width:8px;height:8px;border-radius:50%;background:var(--track);transition:background .35s,box-shadow .35s}
+.sp-row .v{font-variant-numeric:tabular-nums;font-size:13px;color:var(--fg4);min-width:64px;text-align:right}
+.sp-row.on{color:var(--fg)}.sp-row.on .d{background:var(--accent2);box-shadow:0 0 0 4px var(--accent-soft)}
+.sp-row.on .v::after{content:"불러오는 중";color:var(--fg3)}
+.sp-row.ok{color:var(--fg)}.sp-row.ok .d{background:var(--done);box-shadow:none}
+.sp-row.ok .v{color:var(--fg);font-weight:600}.sp-row.ok .v::after{content:none}
+.sp-step{min-height:20px;color:var(--fg3);font-size:12.5px;margin-top:-6px}
+.splash.ok .sp-wafer .f{stroke:var(--done);filter:drop-shadow(0 0 8px var(--done))}
+.splash.ok .sp-who span{color:var(--done)}
+@media (prefers-reduced-motion:no-preference){
+ .splash:not(.out) .sp-in>*{animation:bdUp .6s cubic-bezier(.2,.7,.2,1) both}
+ .splash:not(.out) .sp-in>*:nth-child(2){animation:spIn .8s cubic-bezier(.2,.7,.2,1) .05s both}
+ .splash:not(.out) .sp-in>*:nth-child(3){animation-delay:.16s}.splash:not(.out) .sp-in>*:nth-child(4){animation-delay:.24s}.splash:not(.out) .sp-in>*:nth-child(5){animation-delay:.3s}
+ .sp-row.on .d{animation:spDot 1s ease-in-out infinite}
+ .sp-row.ok .v{animation:bdUp .35s cubic-bezier(.2,.7,.2,1) both}
+ .splash.ok:not(.out) .sp-wafer{animation:spPulse .7s cubic-bezier(.3,1.4,.5,1)}
+}
+@media (prefers-reduced-motion:reduce){.splash,.sp-in>*{transition:opacity .2s}.splash.out .sp-wafer{transform:none}}
+@keyframes spIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+@keyframes spDot{50%{box-shadow:0 0 0 7px transparent}}
+@keyframes spPulse{0%{transform:scale(1)}45%{transform:scale(1.05)}100%{transform:scale(1)}}
+@media (max-width:760px){.sp-wafer{width:220px;height:220px}.sp-core{width:92px;height:92px;margin:-46px 0 0 -46px;padding-top:29px}.sp-core b{font-size:33px}.sp-who{font-size:19px}}
+
 </style>
 </head>
 <body>
 <script>try{var __c=JSON.parse(sessionStorage.getItem('nc_sess')||localStorage.getItem('nc_sess')||'null');if(__c&&__c.n&&Date.now()-__c.t<12*3600e3){document.documentElement.classList.add('boot');setTimeout(function(){document.documentElement.classList.remove('boot')},8000)}}catch(e){}</script>
+<div class="splash" id="splash" hidden aria-live="polite">
+  <div class="sp-in">
+    <img class="sp-logo" id="spLogo" alt="NineBell">
+    <div class="sp-wafer">
+      <canvas id="spCv" aria-hidden="true"></canvas>
+      <svg viewBox="0 0 200 200" aria-hidden="true"><circle class="t" cx="100" cy="100" r="97"/><circle class="f" id="spF" cx="100" cy="100" r="97" pathLength="1" transform="rotate(-90 100 100)"/></svg>
+      <div class="sp-core"><b id="spN">0</b><i>%</i></div>
+    </div>
+    <div class="sp-who"><b id="spName"></b><span id="spSub">님 로그인 중</span></div>
+    <div class="sp-list" id="spList">
+      <div class="sp-row" data-k="qc"><span class="d"></span><span class="l">품질검수 기록</span><span class="v"></span></div>
+      <div class="sp-row" data-k="in"><span class="d"></span><span class="l">수입/공정 기록</span><span class="v"></span></div>
+      <div class="sp-row" data-k="eq"><span class="d"></span><span class="l">검수 장비</span><span class="v"></span></div>
+    </div>
+    <div class="sp-step" id="spStep"></div>
+  </div>
+</div>
 <div class="login" id="login" role="dialog" aria-modal="true" aria-labelledby="lgT">
   <div class="lstage">
     <canvas id="wafer" aria-hidden="true"></canvas>
@@ -1092,11 +1157,11 @@ body.islive #headline{display:none}
       <div class="lwho" id="lwho" hidden><span class="dot"></span><b id="lwhoN"></b><span id="lwhoT">님 로그인 중</span></div>
       <label class="keep"><input type="checkbox" id="keep">이 기기에서 로그인 유지</label>
       <button class="lbtn" id="lgo" disabled>로그인</button>
-      <div class="llinks"><span class="lhint">처음이면 팀에서 받은 PIN을 입력해 주세요</span><button class="llink" id="toReset">PIN을 잊으셨나요?</button></div>
+      <div class="llinks"><span class="lhint">처음이면 제조1팀 PIN을 입력해 주세요</span><button class="llink" id="toReset">PIN을 잊으셨나요?</button></div>
     </div>
 
     <div class="lv" id="vJoin" hidden>
-      <p class="lask">팀 PIN이 확인됐어요.</p>
+      <p class="lask">제조1팀 PIN이 확인됐어요.</p>
       <p class="lnote">처음이라 가입이 필요해요. 본인만 아는 PIN 4자리를 정하고 이름을 입력하면 끝나요. 다음부터는 그 PIN만 넣으면 바로 들어와요.</p>
       <button class="lbtn" id="jgo">가입하기</button>
       <div class="llinks"><button class="llink" data-back="vLogin">로그인으로 돌아가기</button></div>
@@ -2497,7 +2562,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   var MAXF=3,IDLE=30*60e3,SK="nc_sess",LAST="nc_last";
   var QS=["제일 사랑하는 사람은?","가장 맛있게 먹은 음식은?","어릴 때 별명은?","가장 기억에 남는 여행지는?","제일 좋아하는 영화는?","처음 다닌 초등학교 이름은?"];
   var JOINC="";
-  var T={vLogin:["로그인","본인 PIN 4자리를 입력해 주세요."],vJoin:["가입이 필요해요",""],vMake1:["내 PIN 정하기","팀 PIN 말고, 본인만 아는 숫자 4자리를 정해 주세요."],vMake2:["이름 입력","본인 이름을 입력해 주세요."],vMake3:["본인 확인",""],vMake4:["질문 선택","PIN을 잊었을 때 본인 확인에 써요."],vReset1:["PIN 다시 만들기","이름을 입력해 주세요."],vReset2:["본인 확인",""]};
+  var T={vLogin:["로그인","본인 PIN 4자리를 입력해 주세요."],vJoin:["가입이 필요해요",""],vMake1:["내 PIN 정하기","제조1팀 PIN 말고, 본인만 아는 숫자 4자리를 정해 주세요."],vMake2:["이름 입력","본인 이름을 입력해 주세요."],vMake3:["본인 확인",""],vMake4:["질문 선택","PIN을 잊었을 때 본인 확인에 써요."],vReset1:["PIN 다시 만들기","이름을 입력해 주세요."],vReset2:["본인 확인",""]};
   var err=$("lerr"),TK="",busy=false;
   function st(k,v,keep){try{var a=keep?localStorage:sessionStorage;if(v===null){localStorage.removeItem(k);sessionStorage.removeItem(k)}else a.setItem(k,v)}catch(e){}}
   function ld(k){try{return sessionStorage.getItem(k)||localStorage.getItem(k)}catch(e){return null}}
@@ -2536,15 +2601,54 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("jgo").onclick=function(){M1.clear();M2.clear();show("vMake1");M1.focus()};
   $("toReset").onclick=function(){$("rname").value=nm($("lname").value)||ld(LAST)||"";show("vReset1");$("rs1").disabled=!nm($("rname").value)};
 
+
+  /* ---- 로그인 후 로딩 화면: 웨이퍼가 한 바퀴 돌며 채워지고, 부적합(빨강) → 조치(초록) → 정상(파랑)으로 바뀜 ---- */
+  var SP=(function(){
+    var el=$("splash"),cv=$("spCv"),ctx=cv.getContext&&cv.getContext("2d"),run=false,p=0,tgt=0,t0=0,fin=false,raf=0,dies=[],N=19,W=0,C={};
+    $("spLogo").src=document.querySelector(".gnav .logo").src;
+    function build(){var c=(N-1)/2,sd=20261113,rnd=function(){sd=(sd*1664525+1013904223)>>>0;return sd/4294967296};dies=[];
+      for(var y=0;y<N;y++)for(var x=0;x<N;x++){var dx=x-c,dy=y-c,r=Math.sqrt(dx*dx+dy*dy);if(r>c+.25||r<2.6)continue;
+        var a=Math.atan2(dx,-dy);if(a<0)a+=Math.PI*2;dies.push({x:x,y:y,a:a/(Math.PI*2),r:r/c,bad:rnd()<.09,j:rnd()})}}
+    function size(){var d=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth||236;W=w;cv.width=cv.height=Math.round(w*d);ctx.setTransform(d,0,0,d,0,0);
+      var cs=getComputedStyle(document.documentElement),g=function(k,f){return(cs.getPropertyValue(k)||"").trim()||f};
+      C={acc:g("--accent","#3d7bff"),acc2:g("--accent2","#7aa8ff"),bad:g("--bad","#f26a6a"),ok:g("--done","#4cb782"),ln:g("--line2","rgba(255,255,255,.12)")}}
+    function paint(){if(!ctx)return;var s=W/N,g=Math.max(1.2,s*.14),q=p/100,i,d;ctx.clearRect(0,0,W,W);
+      for(i=0;i<dies.length;i++){d=dies[i];var x=d.x*s+g/2,y=d.y*s+g/2,w=s-g,lit=q-d.a;   /* lit>0 이면 스윕이 지나간 칸 */
+        if(lit<=0&&!fin){ctx.globalAlpha=1;ctx.strokeStyle=C.ln;ctx.lineWidth=1;rr(x+.5,y+.5,w-1,w-1,2.2);ctx.stroke();continue}
+        var col=C.acc,al=.26+.5*d.j;
+        if(d.bad&&!fin){if(lit<.1){col=C.bad;al=.95}else if(lit<.22){col=C.ok;al=.9}else{col=C.acc2;al=.85}}
+        else if(d.bad){col=C.acc2;al=.85}
+        if(lit<.03&&!fin){al=1;col=d.bad?C.bad:C.acc2}                                   /* 방금 켜진 칸은 밝게 */
+        ctx.globalAlpha=al;ctx.fillStyle=col;rr(x,y,w,w,2.2);ctx.fill()}
+      if(!fin&&q>0&&q<1){var cx=W/2,ang=q*Math.PI*2-Math.PI/2,R=W/2;ctx.globalAlpha=1;
+        var gr=ctx.createLinearGradient(cx,cx,cx+Math.cos(ang)*R,cx+Math.sin(ang)*R);gr.addColorStop(0,"transparent");gr.addColorStop(.3,C.acc2);gr.addColorStop(1,C.acc2);
+        ctx.strokeStyle=gr;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(cx,cx);ctx.lineTo(cx+Math.cos(ang)*R,cx+Math.sin(ang)*R);ctx.stroke();
+        ctx.globalAlpha=.1;ctx.fillStyle=C.acc2;ctx.beginPath();ctx.moveTo(cx,cx);ctx.arc(cx,cx,R,ang-.5,ang);ctx.closePath();ctx.fill()}
+      ctx.globalAlpha=1}
+    function rr(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h)}
+    function rows(){var a=el.querySelectorAll(".sp-row"),k=p<30?0:p<60?1:2;[].forEach.call(a,function(r,i){if(!r.classList.contains("ok"))r.classList.toggle("on",i<=k)})}
+    function draw(){$("spF").style.strokeDashoffset=(1-p/100).toFixed(4);$("spN").textContent=Math.round(p);if(!fin)rows();paint()}
+    function tick(){if(!run)return;if(!fin&&tgt<94)tgt+=.012;p+=(tgt-p)*(tgt>=100?.2:.024);if(Math.abs(tgt-p)<.12)p=tgt;draw();raf=requestAnimationFrame(tick)}
+    function cnt(k){var n=k==="qc"?(LED.qc||[]).length:k==="in"?(LED.in||[]).length:(EQD||[]).length;return n.toLocaleString()+(k==="eq"?"대":"건")}
+    return{
+      start:function(name){cancelAnimationFrame(raf);el.className="splash";el.hidden=false;if(!dies.length)build();size();
+        [].forEach.call(el.querySelectorAll(".sp-row"),function(r){r.className="sp-row";r.querySelector(".v").textContent=""});
+        $("spName").textContent=name||"";$("spSub").textContent="님 로그인 중";$("spStep").textContent="기록을 안전하게 불러오고 있어요";p=0;tgt=84;fin=false;run=true;t0=Date.now();draw();tick()},
+      finish:function(min){return new Promise(function(res){setTimeout(function(){tgt=100;
+        [].forEach.call(el.querySelectorAll(".sp-row"),function(r,i){setTimeout(function(){r.classList.remove("on");r.classList.add("ok");r.querySelector(".v").textContent=cnt(r.dataset.k)},140+i*190)});
+        setTimeout(function(){fin=true;$("spSub").textContent="님 로그인 완료";$("spStep").textContent="현황판으로 이동해요";el.classList.add("ok")},760);
+        setTimeout(res,1500)},Math.max(0,(min||0)-(Date.now()-t0)))})},
+      hide:function(){el.classList.add("out");setTimeout(function(){el.hidden=true;run=false;cancelAnimationFrame(raf)},760)},
+      fail:function(){el.hidden=true;run=false;cancelAnimationFrame(raf)}}})();
+
   /* ---- 서버 호출 ---- */
   function call(fn,args){return API(fn,args).catch(function(){return{ok:false,msg:"서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요."}})}
-  function enterWith(r,keep){TK=r.token||"";var t0=Date.now(),go=LIVE?loadLive(TK):Promise.resolve();
-    /* "OOO님 로그인 중" → 데이터를 다 받으면 "로그인 완료" → 메인 화면 */
+  function enterWith(r,keep){TK=r.token||"";var go=LIVE?loadLive(TK):Promise.resolve();
+    /* PIN 확인 → 카드에 "OOO님 로그인 중" → 로딩 화면 → "로그인 완료" → 현황판 */
     $("lwhoN").textContent=r.name;$("lwhoT").textContent="님 로그인 중";$("lwho").className="lwho";$("lwho").hidden=false;msg("");$("lgo").disabled=true;$("lgo").textContent="로그인 중";
-    return go.then(function(){return new Promise(function(ok){setTimeout(ok,Math.max(0,700-(Date.now()-t0)))})}).then(function(){
-      $("lwhoT").textContent="님 로그인 완료";$("lwho").className="lwho done";
-      return new Promise(function(ok){setTimeout(ok,650)})}).then(function(){$("lgo").textContent="로그인";enter([r.name,r.role],keep)})
-     .catch(function(){$("lwho").hidden=true;$("lgo").textContent="로그인";P1.clear();chkLogin();msg("데이터를 불러오지 못했어요. 다시 시도해 주세요.")})}
+    return new Promise(function(ok){setTimeout(ok,420)}).then(function(){SP.start(r.name);return go}).then(function(){return SP.finish(1900)})
+     .then(function(){$("lgo").textContent="로그인";enter([r.name,r.role],keep);SP.hide()})
+     .catch(function(){SP.fail();$("lwho").hidden=true;$("lgo").textContent="로그인";P1.clear();chkLogin();msg("데이터를 불러오지 못했어요. 다시 시도해 주세요.")})}
 
   /* ---- 로그인 ---- */
   function doLogin(){
@@ -2629,7 +2733,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-0025",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-0120",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
@@ -2669,7 +2773,8 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   if(cur&&cur.n&&Date.now()-cur.t<12*3600e3){
     if(LIVE){if(cur.k){TK=cur.k;var keepS=!!localStorage.getItem(SK),tries=0,unboot=function(){document.documentElement.classList.remove("boot")};
       /* 새로고침 때: 서버가 '만료'라고 답한 경우에만 로그아웃. 통신이 잠깐 끊긴 건 다시 시도하고 로그인은 유지 */
-      (function go(){loadLive(TK).then(function(){enter([cur.n,cur.r],keepS)},function(e){
+      SP.start(cur.n);
+      (function go(){loadLive(TK).then(function(){SP.finish(500).then(function(){enter([cur.n,cur.r],keepS);SP.hide()})},function(e){if(String(e&&e.message)==="expired"||tries>=2)SP.fail();
         if(String(e&&e.message)==="expired"){TK="";st(SK,null);unboot();msg("로그인 시간이 지나 다시 로그인해 주세요.")}
         else if(++tries<3)setTimeout(go,900*tries);
         else{TK="";unboot();msg("서버에 연결하지 못했어요. 잠시 뒤 새로고침하면 로그인이 그대로 이어져요.")}})})()}else document.documentElement.classList.remove("boot")}
