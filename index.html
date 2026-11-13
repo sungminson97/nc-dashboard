@@ -1270,14 +1270,14 @@ function rpc(fn,args){
 function loadLive(token,keep){
   return rpc("nc_list",{p_token:token}).then(function(rows){
     if(!rows)throw new Error("expired");
-    var L={qc:[],in:[]};
+    var L={qc:[],in:[]},SEEN={};
     rows.forEach(function(r){
       var p=String(r.occurred).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);if(d.getFullYear()!==2026)return;
-      var q=r.src==="qc",o={id:(q?"Q-":"I-")+r.id,n:0,site:r.site,d:d,m:d.getMonth(),ship:r.ship_month||"-",proj:r.project||"-",part:r.part||"-",pn:r.pn||"-",ptype:r.ptype||"-",note:r.note||"",qty:+r.qty||0,
+      var q=r.src==="qc",bk=(q?"Q-":"I-")+(r.sheet_no||r.id),uk=bk;if(SEEN[bk])uk=bk+"-"+(++SEEN[bk]);else SEEN[bk]=1;var o={id:uk,n:+r.sheet_no||0,site:r.site,d:d,m:d.getMonth(),ship:r.ship_month||"-",proj:r.project||"-",part:r.part||"-",pn:r.pn||"-",ptype:r.ptype||"-",note:r.note||"",qty:+r.qty||0,
         finder:r.finder||"-",desc:r.content||"-",ven:r.vendor||(q?"N/A":"미지정"),c1:r.c1||"-",c2:r.c2||"-",c3:r.c3||"-",cost:+r.cost||0,
         gubun:r.gubun||"-",cls:r.cls||"-",owner:r.owner||"-",act:r.action||"-"};
       L[r.src].push(o)});
-    ["qc","in"].forEach(function(k){L[k].sort(function(a,b){return a.d-b.d}).forEach(function(o,i){o.n=i+1});LED[k]=L[k]});
+    ["qc","in"].forEach(function(k){L[k].sort(function(a,b){return a.d-b.d}).forEach(function(o,i){if(!o.n)o.n=i+1});LED[k]=L[k]});
     if(!keep){LS.qc.f={};LS.in.f={}}
     var t=new Date(),z=function(n){return n<10?"0"+n:n};
     document.querySelector(".side-foot").innerHTML='<span class="live"></span>'+t.getFullYear()+"-"+z(t.getMonth()+1)+"-"+z(t.getDate())+" "+z(t.getHours())+":"+z(t.getMinutes())+" 기준<br>DB 연동"})}
