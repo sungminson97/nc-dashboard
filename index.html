@@ -1052,6 +1052,7 @@ body.islive #headline{display:none}
 .aht em{font-style:normal;color:var(--fg3);font-size:11.5px;text-wrap:balance}
 .anb.ok{fill:var(--done)}.anb.bad{fill:var(--bad);fill-opacity:.8}.anb{transition:filter .15s}.an-hero g:hover .anb{filter:brightness(1.2)}
 @media (max-width:1000px){.anh{grid-template-columns:minmax(0,1fr)}}
+.ckna{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;font-size:12px;color:var(--fg4);border:1px dashed var(--line2);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -1588,7 +1589,7 @@ function cell(k,x){
   if(k==="d")return fd(x.d);
   if(k==="site")return '<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>';
   if(k==="cost")return fmtCost(x.cost);
-  if(k==="chk"){var on=x.chk==="확인",me=canChk(x);return '<button class="ck'+(on?' on':'')+(me?'':' lock')+'" data-ck="'+esc(x.id)+'" aria-pressed="'+on+'"'+(me?'':' disabled')+' title="'+(on?esc(x.chkBy)+' 님이 확인했어요':(me?'눌러서 확인 완료로 바꿔요':'담당자 본인만 확인할 수 있어요'))+'">'+(on?"확인 완료":"미확인")+'</button>'}
+  if(k==="chk"){if(x.chk==="대상 아님")return '<span class="ckna" title="'+(CHK_FROM.getMonth()+1)+'/'+CHK_FROM.getDate()+' 이전 발생분은 확인 대상이 아니에요">대상 아님</span>';var on=x.chk==="확인",me=canChk(x);return '<button class="ck'+(on?' on':'')+(me?'':' lock')+'" data-ck="'+esc(x.id)+'" aria-pressed="'+on+'"'+(me?'':' disabled')+' title="'+(on?esc(x.chkBy)+' 님이 확인했어요':(me?'눌러서 확인 완료로 바꿔요':'담당자 본인만 확인할 수 있어요'))+'">'+(on?"확인 완료":"미확인")+'</button>'}
   if(k==="ven"&&SRC==="qc"&&(x.ven==="기구"||x.ven==="전장"))return '<span class="tag '+(x.ven==="기구"?"t1":"t2")+'">'+x.ven+'</span>';
   return esc(x[k]==null?"":x[k])}
 function syncSel(){var S=LS[SRC];[].forEach.call($("fbar").querySelectorAll("input[data-k]"),function(el){if(document.activeElement!==el)el.value=S.f[el.dataset.k]||"";el.classList.toggle("on",!!S.f[el.dataset.k])});[].forEach.call($("fbar").querySelectorAll("select"),function(el){el.value=S.f[el.dataset.k]||"";el.classList.toggle("on",!!el.value)})}
@@ -1627,7 +1628,7 @@ function renderLedger(){
   $("nav3").innerHTML='<h4>귀책 상위</h4>'+mfBtn+vs.map(function(v){return '<button data-v="'+esc(v)+'" style="--p:'+Math.round(vc[v]/vc[vs[0]]*100)+'%" '+(S.f.ven===v?'aria-current="true"':'')+'><span class="l">'+esc(v)+'</span><span class="n">'+vc[v]+'</span></button>'}).join("");
   syncSel();
   drawLedTrend(ledF(all),all);drawLedBars(rows);drawLedTable(rows);drawChkBar();
-  var un=SRC==="qc"?rows.filter(function(x){return x.chk!=="확인"&&canChk(x)}).length:0,cb=$("lgChkAll");if(cb){cb.style.display=un?"":"none";if(cb.dataset.ask!=="1")cb.textContent=(ME.role==="개발자"?"미확인 ":"내 미확인 ")+un+"건 모두 확인"}}
+  var un=SRC==="qc"?rows.filter(function(x){return x.chk==="미확인"&&canChk(x)}).length:0,cb=$("lgChkAll");if(cb){cb.style.display=un?"":"none";if(cb.dataset.ask!=="1")cb.textContent=(ME.role==="개발자"?"미확인 ":"내 미확인 ")+un+"건 모두 확인"}}
 
 var TS={};
 function drawLedTrend(rows,baseRows){
@@ -1712,7 +1713,7 @@ function toggleChk(id){
   chkSave([x.ck],val,function(){if(old)CHK[x.ck]=old;else delete CHK[x.ck]})}
 var chkAskT;
 function chkAll(){
-  var b=$("lgChkAll"),rows=(window.__ledRows||[]).filter(function(x){return x.chk!=="확인"&&canChk(x)}),keys=[],seen={};
+  var b=$("lgChkAll"),rows=(window.__ledRows||[]).filter(function(x){return x.chk==="미확인"&&canChk(x)}),keys=[],seen={};
   rows.forEach(function(x){KEEP[x.id]=1;if(!seen[x.ck]){seen[x.ck]=1;keys.push(x.ck)}});keys=keys.slice(0,500);
   if(!keys.length)return;
   if(b.dataset.ask!=="1"){b.dataset.ask="1";b.textContent="한 번 더 누르면 "+keys.length+"건이 확인 처리돼요";clearTimeout(chkAskT);chkAskT=setTimeout(function(){b.dataset.ask="";render()},4000);return}
@@ -1736,9 +1737,9 @@ $("chkBar").addEventListener("click",function(e){var b=e.target.closest("button.
 /* ================= 분석 (품질검수) ================= */
 /* 20% 감소 목표 — 검수장비 수 / 출하·부적합 건수는 시트 backlog_raw 연결 전까지 아래 값을 직접 입력 (1월~12월) */
 var KEEP={};
-function canChk(x){if(ME.role==="개발자")return true;return !!ME.name&&String(x.finder||"").trim()===String(ME.name).trim()}
+function canChk(x){if(x.chk==="대상 아님")return false;if(ME.role==="개발자")return true;return !!ME.name&&String(x.finder||"").trim()===String(ME.name).trim()}
 var EQS="",EQD=[],CHK={},ME={name:"",role:""},CHK_FROM=new Date(2026,10,1),chkBusy=0;
-function applyChk(){(LED.qc||[]).forEach(function(x){var c=CHK[x.ck];x.chk=c?"확인":"미확인";x.chkBy=c?c.by:""})}
+function applyChk(){(LED.qc||[]).forEach(function(x){var c=CHK[x.ck];x.chk=c?"확인":(x.d<CHK_FROM?"대상 아님":"미확인");x.chkBy=c?c.by:""})}
 var GOAL={pct:20,target:2.68,steps:[5,10,15,20,25,30],eq:[27,19,30,35,34,31,45,52,40,45,13,0],ship:[14,8,16,4,15,7,7,16,6,7,0,0]};
 function f2(v){return v==null||isNaN(v)?"-":v.toFixed(2)}
 function anCompute(){
@@ -1813,7 +1814,7 @@ function openLed(id){
   var x=LED[SRC].filter(function(y){return y.id===id})[0];if(!x)return;curId=id;var ix=curList.indexOf(id),cfg=LCFG[SRC];
   var P=[["번호",x.n],["사업장",'<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>'],["발생일",fd(x.d)],["출하월",x.ship],[SRC==="qc"?"출하 프로젝트":"발주 프로젝트",'<span class="chip">'+esc(x.proj)+'</span>'],["품명 · 위치",esc(x.part)],["TYPE",esc(x.ptype||"-")],["품번",'<span style="font-family:var(--mono);font-size:12px">'+esc(x.pn)+'</span>'],["불량 수량",x.qty+"개"],["귀책"+(SRC==="in"?"업체":""),'<span class="chip">'+esc(x.ven)+'</span>'],["대분류",esc(x.c1)],["중분류",esc(x.c2)],["소분류",esc(x.c3)],["발견자",esc(x.finder)]];
   if(x.note)P.push(["비고",esc(x.note)]);
-  if(SRC==="qc"){var ok=x.chk==="확인";var mm=canChk(x);P.push(["확인",'<button class="ck'+(ok?' on':'')+(mm?'':' lock')+'" data-ck="'+esc(x.id)+'" data-dr="1"'+(mm?'':' disabled')+'>'+(ok?"확인 완료":"미확인")+'</button>'+(ok?' <span class="mut">'+esc(x.chkBy)+'</span>':(mm?'':' <span class="mut">담당자 본인만 확인할 수 있어요</span>'))])}
+  if(SRC==="qc"&&x.chk==="대상 아님"){P.push(["확인",'<span class="ckna">대상 아님</span> <span class="mut">'+(CHK_FROM.getMonth()+1)+'/'+CHK_FROM.getDate()+' 이전 발생분이에요</span>'])}else if(SRC==="qc"){var ok=x.chk==="확인";var mm=canChk(x);P.push(["확인",'<button class="ck'+(ok?' on':'')+(mm?'':' lock')+'" data-ck="'+esc(x.id)+'" data-dr="1"'+(mm?'':' disabled')+'>'+(ok?"확인 완료":"미확인")+'</button>'+(ok?' <span class="mut">'+esc(x.chkBy)+'</span>':(mm?'':' <span class="mut">담당자 본인만 확인할 수 있어요</span>'))])}
   if(SRC==="in")P.push(["구분",esc(x.gubun)],["분류",esc(x.cls)],["담당자",esc(x.owner)],["조치사항",esc(x.act)],["손실비용",fmtCost(x.cost)]);
   $("drawer").innerHTML='<div class="dh"><span class="id">'+x.id+'</span><div class="nv"><button id="dp" aria-label="이전">↑</button><span class="cnt">'+(ix+1)+' / '+curList.length+'</span><button id="dn" aria-label="다음">↓</button><button id="dx">닫기</button></div></div>'
    +'<div class="dbody"><h2>'+esc(x.proj)+' · '+esc(x.part)+'</h2><p class="desc">'+esc(x.desc)+'.</p><dl class="props">'+P.map(function(r){return '<dt>'+r[0]+'</dt><dd class="tn">'+r[1]+'</dd>'}).join("")+'</dl><p class="note">'+cfg.name+(LIVE?"":" · 예시 데이터")+'</p></div>';
@@ -2590,7 +2591,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261113-2310",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261113-2330",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
