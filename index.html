@@ -1429,7 +1429,7 @@ $("chkBar").addEventListener("click",function(e){var b=e.target.closest("button.
 /* 20% 감소 목표 — 검수장비 수 / 출하·부적합 건수는 시트 backlog_raw 연결 전까지 아래 값을 직접 입력 (1월~12월) */
 var KEEP={};
 function canChk(x){if(ME.role==="개발자")return true;return !!ME.name&&String(x.finder||"").trim()===String(ME.name).trim()}
-var EQD=[],CHK={},ME={name:"",role:""},CHK_FROM=new Date(2026,10,1),chkBusy=0;
+var EQS="",EQD=[],CHK={},ME={name:"",role:""},CHK_FROM=new Date(2026,10,1),chkBusy=0;
 function applyChk(){(LED.qc||[]).forEach(function(x){var c=CHK[x.ck];x.chk=c?"확인":"미확인";x.chkBy=c?c.by:""})}
 var GOAL={pct:20,target:2.68,steps:[5,10,15,20,25,30],eq:[27,19,30,35,34,31,45,52,40,45,13,0],ship:[14,8,16,4,15,7,7,16,6,7,0,0]};
 function f2(v){return v==null||isNaN(v)?"-":v.toFixed(2)}
@@ -1466,7 +1466,7 @@ function drawAnalysis(){
   var th=function(a){return '<tr>'+a.map(function(t,k){return '<th'+(k?' class="r"':'')+'>'+t+'</th>'}).join("")+'</tr>'};
   var I=function(v){return v==null?"-":String(v)};
   /* 1. 20% 감소 목표 */
-  if(!A.haseq)h+='<div class="an-warn"><b>장비 데이터가 아직 연결되지 않았어요.</b> 지금 보이는 월별 검수장비는 임시로 넣어둔 고정값이고, 인원별 장비는 불량이 기록된 프로젝트 수(품질 부적합 기준)예요. backlog_raw 연동이 끝나면 자동으로 실제 장비 수로 바뀌어요.</div>';
+  if(!A.haseq)h+='<div class="an-warn"><b>장비 데이터가 아직 연결되지 않았어요.</b> 지금 보이는 월별 검수장비는 임시로 넣어둔 고정값이고, 인원별 장비는 불량이 기록된 프로젝트 수(품질 부적합 기준)예요. backlog_raw 연동이 끝나면 자동으로 실제 장비 수로 바뀌어요.<br><span class="mut">진단: '+esc(EQS||"확인 중")+'</span></div>';
   h+='<div class="ac"><div class="ah"><h3>'+GOAL.pct+'% 감소 목표</h3><span class="am">기준 '+f2(A.base)+'건/대 → 목표 '+f2(GOAL.target)+'건/대 · 성남+동탄 전체 · 올해</span><button class="fbtn" id="anXls">엑셀 내려받기</button></div><div class="tw"><table class="at"><thead>'+th(["구분","누적"].concat(ms))+'</thead><tbody>';
   var mr=function(lab,key,cls){return '<tr class="'+(cls||"")+'"><td>'+lab+'</td><td class="r bb">'+I(A.cum[key])+'</td>'+A.mo.map(function(o,k){return '<td class="r">'+(k<=CM&&(o.eq||key!=="eq")?I(o[key]):"-")+'</td>'}).join("")+'</tr>'};
   h+=mr("검수장비(대)","eq")+mr("불량수량(FT)","ft")+mr("출하/부적합","ship")+mr("최종합계","tot","red");
@@ -1805,6 +1805,7 @@ function loadLive(token,keep){GTK=token;
     var rows=res[0],eqr=res[1];CHK={};(res[2]||[]).forEach(function(c){CHK[c.k]={by:c.by,at:c.at}});
     if(!rows)throw new Error("expired");
     var eod=new Date();eod.setHours(23,59,59,999);
+    EQS=eqr===null?"받기 실패: 서버에 장비 목록 함수가 없거나 오류예요(supabase_장비연동.sql 실행 여부 확인)":(eqr.length===0?"서버 장비 표가 비어 있어요: Apps Script 동기화가 아직 값을 보내지 못한 상태예요(Apps Script 실행 기록 확인)":"서버에서 "+eqr.length+"건을 받았어요");
     EQD=(eqr||[]).map(function(r){var p=String(r.qc_date).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);return{d:d,m:d.getMonth(),owner:r.owner||"",proj:r.project||"",type:r.etype||"",site:r.site||""}}).filter(function(x){return x.d.getFullYear()===2026&&x.d<=eod});
     var L={qc:[],in:[]},SEEN={};
     rows.forEach(function(r){
@@ -1978,7 +1979,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261113-1550",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261113-1558",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
