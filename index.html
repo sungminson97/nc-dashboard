@@ -670,7 +670,7 @@ aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 240px)
 /* ---------- v14: 불량 확인 ---------- */
 .chkb{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:13px 16px;border:1px solid rgba(255,170,60,.38);background:rgba(255,170,60,.08);border-radius:12px;margin:0 0 14px}
 .chkb .cl{font-weight:600;color:#ffb454;font-size:13.5px}
-.chkb button.cc{height:30px;padding:0 13px;border-radius:999px;border:1px solid var(--line2);color:var(--fg);background:var(--panel);font-size:13px;cursor:pointer}
+.chkb button.cc{display:inline-flex;align-items:center;white-space:nowrap;height:30px;padding:0 13px;border-radius:999px;border:1px solid var(--line2);color:var(--fg);background:var(--panel);font-size:13px;cursor:pointer}
 .chkb button.cc b{color:#ffb454;margin-left:6px;font-weight:600}
 .chkb button.cc.me{border-color:#ffb454}
 .chkb button.cc:hover{border-color:var(--fg4)}
@@ -686,6 +686,27 @@ button.ck.on{border-color:rgba(62,207,142,.4);color:#3ecf8e;background:rgba(62,2
   #lgTbl tr.lr td[data-k="chk"]{display:block;grid-column:4;grid-row:4;justify-self:end;overflow:visible}
   .chkb .cs{margin-left:0;flex-basis:100%}
 }
+
+/* ---------- v14: 스크롤 성능 · 마감 ---------- */
+html{background:var(--bg)}
+body,:root[data-theme="light"] body{background:none!important;background-attachment:scroll!important}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;contain:strict;
+  background:radial-gradient(1200px 520px at 50% -180px,var(--glow) 0%,transparent 72%),linear-gradient(var(--line) 1px,transparent 1px) 0 0/64px 64px,linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/64px 64px,var(--bg)}
+:root[data-theme="light"] body::before{background:radial-gradient(1200px 520px at 50% -180px,var(--glow) 0%,transparent 72%),var(--bg)}
+.gnav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:rgba(8,9,10,.95)!important}
+:root[data-theme="light"] .gnav{background:rgba(236,238,242,.96)!important}
+.ac,.cols{content-visibility:auto;contain-intrinsic-size:auto 420px}
+.tbl tr.lr{contain:layout style}
+#syncBar:not(.on) .dot{animation:none}
+::selection{background:rgba(61,123,255,.35)}
+*{scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+button{transition:background-color .12s,border-color .12s,color .12s,opacity .12s}
+button:active:not(:disabled){opacity:.82}
+.fbar select{cursor:pointer}
+.tbl td.m{letter-spacing:-.01em}
+.stat .s,.big .dl{line-height:1.45}
+.props dd .ck{vertical-align:middle}
 </style>
 </head>
 <body>
@@ -1243,9 +1264,9 @@ function renderLedger(){
   var st=[["불량 수량",qty,"개","필터 반영 합계",""]];
   if(SRC==="qc"){var mf=rows.filter(function(x){return x.c1==="제조불량"&&x.ven!=="N/A"});st.push(["제조불량",mf.length,"건","귀책 N/A 제외 · 수량 "+mf.reduce(function(a,x){return a+x.qty},0)+"개",""])}
   else{var cs=rows.reduce(function(a,x){return a+x.cost},0);st.push(["손실비용",cs.toLocaleString(),"만원","발생 "+rows.filter(function(x){return x.cost}).length+"건",""])}
-  var un=rows.filter(function(x){return x.site==="미분류"}).length;st.push(["성남 / 동탄",sn+" / "+(rows.length-sn-un),"건",un?"사업장 미기재 "+un+"건 별도":"사업장별 건수",""]);
+  var un=rows.filter(function(x){return x.site==="미분류"}).length;st.push(["성남 / 동탄",sn+" / "+(rows.length-sn-un),"",un?"사업장 미기재 "+un+"건 별도":"사업장별 건수",""]);
   st.push(["귀책 1위",tv||"-","",tv?vc[tv]+"건":"",""]);
-  $("lgStats").innerHTML=st.map(function(a){return '<div class="stat"><div class="l">'+a[0]+'</div><div class="v'+(a[0]==="귀책 1위"||String(a[1]).length>6?" lg":"")+'">'+a[1]+'<small>'+a[2]+'</small></div><div class="s">'+a[3]+'</div></div>'}).join("");
+  $("lgStats").innerHTML=st.map(function(a){return '<div class="stat"><div class="l">'+a[0]+'</div><div class="v'+(a[0]==="귀책 1위"||String(a[1]).length>4?" lg":"")+'">'+a[1]+'<small>'+a[2]+'</small></div><div class="s">'+a[3]+'</div></div>'}).join("");
   $("hlB").textContent=lab+" "+rows.length+"건";
   var vs=Object.keys(vc).sort(function(a,b){return vc[b]-vc[a]}).slice(0,6);
   $("nav3").innerHTML='<h4>귀책 상위</h4>'+vs.map(function(v){return '<button data-v="'+esc(v)+'" style="--p:'+Math.round(vc[v]/vc[vs[0]]*100)+'%" '+(S.f.ven===v?'aria-current="true"':'')+'><span class="l">'+esc(v)+'</span><span class="n">'+vc[v]+'</span></button>'}).join("");
@@ -1424,6 +1445,7 @@ function openLed(id){
   var x=LED[SRC].filter(function(y){return y.id===id})[0];if(!x)return;curId=id;var ix=curList.indexOf(id),cfg=LCFG[SRC];
   var P=[["번호",x.n],["사업장",'<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>'],["발생일",fd(x.d)],["출하월",x.ship],[SRC==="qc"?"출하 프로젝트":"발주 프로젝트",'<span class="chip">'+esc(x.proj)+'</span>'],["품명 · 위치",esc(x.part)],["TYPE",esc(x.ptype||"-")],["품번",'<span style="font-family:var(--mono);font-size:12px">'+esc(x.pn)+'</span>'],["불량 수량",x.qty+"개"],["귀책"+(SRC==="in"?"업체":""),'<span class="chip">'+esc(x.ven)+'</span>'],["대분류",esc(x.c1)],["중분류",esc(x.c2)],["소분류",esc(x.c3)],["발견자",esc(x.finder)]];
   if(x.note)P.push(["비고",esc(x.note)]);
+  if(SRC==="qc"){var ok=x.chk==="확인";P.push(["확인",'<button class="ck'+(ok?' on':'')+'" data-ck="'+esc(x.id)+'" data-dr="1">'+(ok?"확인":"미확인")+'</button>'+(ok?' <span class="mut">'+esc(x.chkBy)+'</span>':'')])}
   if(SRC==="in")P.push(["구분",esc(x.gubun)],["분류",esc(x.cls)],["담당자",esc(x.owner)],["조치사항",esc(x.act)],["손실비용",fmtCost(x.cost)]);
   $("drawer").innerHTML='<div class="dh"><span class="id">'+x.id+'</span><div class="nv"><button id="dp" aria-label="이전">↑</button><span class="cnt">'+(ix+1)+' / '+curList.length+'</span><button id="dn" aria-label="다음">↓</button><button id="dx">닫기</button></div></div>'
    +'<div class="dbody"><h2>'+esc(x.proj)+' · '+esc(x.part)+'</h2><p class="desc">'+esc(x.desc)+'.</p><dl class="props">'+P.map(function(r){return '<dt>'+r[0]+'</dt><dd class="tn">'+r[1]+'</dd>'}).join("")+'</dl><p class="note">'+cfg.name+(LIVE?"":" · 예시 데이터")+'</p></div>';
@@ -1701,6 +1723,7 @@ $("fbar").addEventListener("click",function(e){if(e.target.id==="fReset"){LS[SRC
 $("lgDim").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;LS[SRC].dim=b.dataset.d;[].forEach.call(this.querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x===b)});renderLedger()});
 $("lgBars").addEventListener("click",function(e){var b=e.target.closest("button.b");if(!b)return;var S=LS[SRC],k=S.dim,v=b.dataset.val;S.f[k]=S.f[k]===v?"":v;S.lim=50;render()});
 $("lgChips").addEventListener("click",function(e){var b=e.target.closest("button[data-fk]");if(!b)return;if(b.dataset.fk==="__q"){qs="";$("q").value=""}else LS[SRC].f[b.dataset.fk]="";render()});
+$("drawer").addEventListener("click",function(e){var kb=e.target.closest("button.ck[data-dr]");if(!kb)return;var id=kb.dataset.ck;toggleChk(id);openLed(id)});
 $("lgTbl").addEventListener("click",function(e){var kb=e.target.closest("button.ck");if(kb){e.stopPropagation();toggleChk(kb.dataset.ck);return}var th=e.target.closest("th");if(th){var S=LS[SRC],k=th.dataset.k;S.sort=S.sort.k===k?{k:k,dir:-S.sort.dir}:{k:k,dir:(k==="d"||k==="qty"||k==="cost")?-1:1};renderLedger();return}
   var tr=e.target.closest("tr.lr");if(tr)openDrawer(tr.dataset.id)});
 $("lgMoreW").addEventListener("click",function(e){if(e.target.id==="lgMore"){LS[SRC].lim+=100;renderLedger()}});
