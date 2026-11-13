@@ -740,6 +740,21 @@ body.locked #toTop{display:none}
 
 html.boot .login{opacity:0!important;visibility:hidden!important;transition:none!important}
 html.boot body{background:var(--bg)}
+/* 목록 열 확장: 화면이 넓을수록 열이 더 보여요. 제조불량 줄은 은은한 초록 포인트 */
+@media(min-width:761px){
+  #lgTbl .tbl th[data-k="ship"],#lgTbl .tbl td[data-k="ship"],#lgTbl .tbl th[data-k="ptype"],#lgTbl .tbl td[data-k="ptype"],#lgTbl .tbl th[data-k="c1"],#lgTbl .tbl td[data-k="c1"],#lgTbl .tbl th[data-k="c2"],#lgTbl .tbl td[data-k="c2"],#lgTbl .tbl th[data-k="owner"],#lgTbl .tbl td[data-k="owner"]{display:none}
+  #lgTbl .tbl tr.mf td:first-child{box-shadow:inset 3px 0 0 rgba(52,168,100,.75)}
+  #lgTbl .tbl tr.mf td{background:rgba(52,168,100,.045)}
+  #lgTbl .tbl tr.lr.mf:hover td{background:rgba(52,168,100,.1)}
+  #lgTbl .tbl tr.lr.mf.on td{background:rgba(61,123,255,.12)}
+  #lgTbl .tbl td[data-k="c2"],#lgTbl .tbl td[data-k="c3"],#lgTbl .tbl td[data-k="owner"],#lgTbl .tbl td[data-k="ptype"],#lgTbl .tbl td[data-k="c1"],#lgTbl .tbl td[data-k="part"]{white-space:nowrap;overflow-wrap:normal}
+}
+@media(min-width:1600px){
+  #lgTbl .tbl th[data-k="owner"],#lgTbl .tbl td[data-k="owner"]{display:table-cell}
+}
+@media(min-width:1800px){
+  #lgTbl .tbl th[data-k="c2"],#lgTbl .tbl td[data-k="c2"]{display:table-cell}
+}
 </style>
 </head>
 <body>
@@ -1256,7 +1271,7 @@ var LCFG={
   qc:{name:"품질검수(제조) 부적합",
     flt:[["chk","확인 여부"],["c1","대분류"],["ven","귀책"],["c3","소분류"],["ship","출하월"],["finder","제조 담당자"]],
     dims:[["ven","귀책"],["c1","대분류"],["c3","소분류"],["finder","제조 담당자"]],
-    cols:[["id","번호","mono p2"],["chk","확인",""],["d","발생일",""],["site","사업장",""],["finder","제조 담당자",""],["proj","출하 프로젝트","m"],["part","위치 · 품명","p2"],["desc","불량내용",""],["ven","귀책",""],["c1","대분류","p2"],["c3","소분류","p2"],["qty","수량","r"],["ptype","TYPE","p2"]]},
+    cols:[["id","NO.","mono p2"],["chk","확인",""],["site","공장",""],["ship","출하월","p2"],["d","발생일",""],["proj","출하 프로젝트","m"],["ptype","TYPE","p2"],["part","위치","p2"],["qty","수량","r"],["c1","대분류","p2"],["c2","중분류","p2"],["c3","소분류","p2"],["ven","귀책",""],["finder","제조 담당자",""],["owner","품질 담당자","p2"],["desc","불량내용",""]]},
   in:{name:"수입/공정 부적합",
     flt:[["c1","대분류"],["ven","귀책업체"],["gubun","구분"],["cls","분류"],["ship","출하월"],["finder","발견자"]],
     dims:[["ven","귀책업체"],["c1","대분류"],["gubun","구분"],["cls","분류"]],
@@ -1357,7 +1372,7 @@ function drawLedTable(rows){
   curList=arr.map(function(x){return x.id});
   var h='<table class="tbl"><thead><tr>'+cfg.cols.map(function(c){var cl=c[2].split(" ");return '<th class="'+(cl.indexOf("r")>=0?"r ":"")+(k===c[0]?"s ":"")+(cl.indexOf("p2")>=0?"p2":"")+'" data-k="'+c[0]+'">'+c[1]+(k===c[0]?(dir>0?" ↑":" ↓"):"")+'</th>'}).join("")+'</tr></thead><tbody>';
   arr.slice(0,S.lim).forEach(function(x){
-    h+='<tr class="lr'+(x.id===curId?" on":"")+'" data-id="'+x.id+'">'+cfg.cols.map(function(c){var cl=c[2].split(" "),cls=[];
+    h+='<tr class="lr'+(x.id===curId?" on":"")+(SRC==="qc"&&x.c1==="제조불량"?" mf":"")+'" data-id="'+x.id+'">'+cfg.cols.map(function(c){var cl=c[2].split(" "),cls=[];
       if(cl.indexOf("r")>=0)cls.push("r");if(cl.indexOf("m")>=0)cls.push("m");if(cl.indexOf("mono")>=0)cls.push("mono");if(cl.indexOf("p2")>=0)cls.push("p2");if(c[0]==="ven"&&x.ven==="N/A")cls.push("na");
       return '<td class="'+cls.join(" ")+'" data-k="'+c[0]+'">'+cell(c[0],x)+'</td>'}).join("")+'</tr>'});
   h+='</tbody></table>';
@@ -1596,30 +1611,35 @@ function xlsxOut(){
     var S2=LS[SRC],fl=[];Object.keys(S2.f).forEach(function(k){if(S2.f[k]){var n=(cfg.flt.filter(function(a){return a[0]===k})[0]||[k,k])[1];fl.push(n+" "+S2.f[k])}});if(qs)fl.push('검색 "'+qs+'"');
     var lab={m:"이번 달",q:"최근 3개월",y:"올해"}[range],siteL=SITE==="all"?"성남+동탄":SITE;
     var sub=lab+" · "+siteL+(fl.length?" · "+fl.join(", "):"")+" · 총 "+rows.length.toLocaleString()+"건 · 출력 "+stamp;
-    /* ---------- 시트 1: 부적합 목록 (품질팀 관리대장 모양) ---------- */
-    var C=[["id","NO.",7,"c"],["site","제조\n공장",8,"c"],["ship","출하월",8,"c"],["d","발생일\n(검수일)",11,"d"],["proj",isQ?"출하 프로젝트 명":"발주 프로젝트 명",26,"c"]];
-    if(!isQ)C.push(["pn","품번",22,"c"]);
-    C.push(["ptype","TYPE",17,"c"],["part",isQ?"위치":"품명 · 위치",isQ?13:22,"c"],["qty","불량\n수량",7,"n"],["c1","불량\n(대분류)",11,"c"],["c2","불량\n(중분류)",15,"c"],["c3","불량\n(소분류)",12,"c"],["gubun",isQ?"검사\n구분":"구분",8,"c","y"]);
+    /* ---------- 시트 1: 부적합 목록 ---------- */
+    var C=[["id","번호",10,"c"],["d","발생일",12,"d"],["site","사업장",9,"site"],["ship","출하월",8,"c"],["proj",isQ?"출하 프로젝트":"발주 프로젝트",24,"l"],["part",isQ?"위치 · 품명":"품명 · 위치",24,"l"],["ptype","TYPE",16,"l"]];
+    if(!isQ)C.push(["pn","품번",20,"l"]);
+    C.push(["qty","불량 수량",9,"n"],["ven",isQ?"귀책":"귀책업체",13,"tag"],["c1","대분류",11,"c"],["c2","중분류",11,"c"],["c3","소분류",11,"c"],["gubun",isQ?"검사 구분":"구분",10,"c"]);
     if(!isQ)C.push(["cls","분류",9,"c"]);
-    C.push(["ven",isQ?"귀책":"귀책업체",11,"c"],["finder",isQ?"제조\n담당자":"발견자",10,"c"],["owner",isQ?"품질\n담당자":"담당자",10,"c"],["desc","불량내용",62,"w"]);
-    if(isQ)C.push(["chk","확인\n여부",9,"c"],["chkBy","확인자",9,"c"]);
-    C.push(["act","조치사항",18,"w"],["note","세부 조치내용",30,"w"]);
-    if(!isQ)C.push(["cost","손실비용\n(만원)",11,"n"]);
-    var nc=C.length,HR=1,r0=2,out=[],merges=[];
-    var K="000000",GREEN="A9D18E",YEL="FFFF00",tb={l:["thin",K],r:["thin",K],t:["thin",K],b:["thin",K]};
-    var hs=X({f:{b:1,sz:10,c:K},bg:"FFFFFF",h:"center",v:"center",w:1,b:tb}),hy=X({f:{b:1,sz:10,c:K},bg:YEL,h:"center",v:"center",w:1,b:tb});
-    out.push(row(HR,C.map(function(c,i){return cell(HR,i,c[1],c[4]?hy:hs)}),32));
-    rows.forEach(function(x,i){var r=r0+i,cells=[],mfg=x.c1==="제조불량";
-      C.forEach(function(c,j){var t=c[3],v=x[c[0]];
-        var st=function(o){o.f=o.f||{sz:10,c:K};if(mfg)o.bg=GREEN;o.v="center";o.b=tb;return o};
-        if(c[0]==="d"){cells.push(cell(r,j,XL.ser(x.d),X(st({f:{sz:10,c:K},n:"mm/dd",h:"center"}))));return}
-        if(c[0]==="id"){cells.push(cell(r,j,i+1,X(st({f:{sz:10,c:K},h:"center"}))));return}
-        if(t==="n"){var nv=+v||0;cells.push(cell(r,j,nv===0&&c[0]==="cost"?null:nv,X(st({f:{sz:10,c:K},n:"#,##0",h:"center"}))));return}
-        if(t==="w"){cells.push(cell(r,j,v&&v!=="-"?v:"",X(st({f:{sz:10,c:K},w:1,h:"left"}))));return}
-        var sv=v==null?"":String(v);cells.push(cell(r,j,sv,X(st({f:{sz:10,c:K},h:"center"}))))});
+    C.push(["finder",isQ?"제조 담당자":"발견자",11,"c"],["owner","담당자",11,"c"]);if(isQ)C.push(["chk","확인 여부",10,"chk"],["chkBy","확인자",10,"c"]);C.push(["desc","불량내용",46,"w"],["act","조치사항",34,"w"],["note",isQ?"세부 조치내용":"비고 / 세부 조치내용",30,"w"]);
+    if(!isQ)C.push(["cost","손실비용(만원)",13,"n"]);
+    var nc=C.length,HR=4,r0=HR+1,out=[],merges=[];
+    var band=X({bg:NAVY});
+    out.push(row(1,[cell(1,0,cfg.name,X({f:{b:1,sz:18,c:"FFFFFF"},bg:NAVY,ind:1}))].concat(C.slice(1).map(function(c,i){return cell(1,i+1,null,band)})),38));
+    out.push(row(2,[cell(2,0,sub,X({f:{sz:10,c:"B9C6E0"},bg:NAVY,ind:1}))].concat(C.slice(1).map(function(c,i){return cell(2,i+1,null,band)})),22));
+    out.push(row(3,[],8));
+    var hs=X({f:{b:1,sz:10,c:"FFFFFF"},bg:NAVY,h:"center",w:1,b:{b:["medium",BL]}});
+    out.push(row(HR,C.map(function(c,i){return cell(HR,i,c[1],hs)}),28));
+    var tintSite={"성남":["E4EDFF","2F5FC8"],"동탄":["FBEBD9","9A5614"],"미분류":["ECEEF2","5B6472"]},tintVen={"기구":["E4EDFF","2F5FC8"],"전장":["FBEBD9","9A5614"]};
+    rows.forEach(function(x,i){var r=r0+i,zb=i%2?ZEB:null,cells=[];
+      C.forEach(function(c,j){var t=c[3],v=x[c[0]],st;
+        var base=function(o){if(!o.bg&&zb)o.bg=zb;o.b={b:["thin",LINE]};return o};
+        if(c[0]==="d"){cells.push(cell(r,j,XL.ser(x.d),X(base({f:{},n:"yyyy-mm-dd",h:"center"}))));return}
+        if(c[0]==="id"){cells.push(cell(r,j,String(v),X(base({f:{c:MUT,sz:9},h:"center"}))));return}
+        if(t==="site"){var ts=tintSite[v]||tintSite["미분류"];cells.push(cell(r,j,v,X(base({f:{b:1,c:ts[1]},bg:ts[0],h:"center"}))));return}
+        if(t==="tag"&&tintVen[v]){var tv=tintVen[v];cells.push(cell(r,j,v,X(base({f:{b:1,c:tv[1]},bg:tv[0],h:"center"}))));return}
+        if(t==="chk"){var ok=v==="확인";cells.push(cell(r,j,v||"",X(base({f:{b:1,c:ok?"14864F":"B8690B"},bg:ok?"E3F6EA":"FDF0DC",h:"center"}))));return}
+                if(t==="n"){var nv=+v||0;cells.push(cell(r,j,nv===0&&c[0]==="cost"?null:nv,X(base({f:{},n:"#,##0",h:"right"}))));return}
+        if(t==="w"){cells.push(cell(r,j,v&&v!=="-"?v:"",X(base({f:{},w:1,v:"top",h:"left"}))));return}
+        var sv=v==null||v==="-"?"":String(v);cells.push(cell(r,j,sv,X(base({f:{b:c[0]==="proj"?1:0,c:c[0]==="proj"?NAVY:INK},h:t==="c"||t==="tag"?"center":"left",w:0}))))});
       var ln=1;C.forEach(function(c){if(c[3]==='w'){var t=x[c[0]];if(t&&t!=='-')ln=Math.max(ln,xlLines(String(t),c[2]))}});
-      out.push(row(r,cells,Math.max(21,ln*13.5+6)))});
-    var s1={name:"부적합 목록",nc:nc,nr:r0+rows.length-1,cols:C.map(function(c){return c[2]}),rows:out,merges:merges,freeze:[1,HR],filter:"A"+HR+":"+cl(nc-1)+(r0+rows.length-1),land:1,tab:BL,foot:cfg.name+" · "+stamp};
+      out.push(row(r,cells,Math.min(150,Math.max(22,ln*13.5+8))))});
+        var s1={name:"부적합 목록",nc:nc,nr:r0+rows.length-1,cols:C.map(function(c){return c[2]}),rows:out,merges:merges,freeze:[2,HR],filter:"A"+HR+":"+cl(nc-1)+(r0+rows.length-1),land:1,tab:BL,foot:cfg.name+" · "+stamp};
     /* ---------- 시트 2: 요약 ---------- */
     var hd=X({f:{b:1,c:"FFFFFF"},bg:NAVY,h:"center"}),hdL=X({f:{b:1,c:"FFFFFF"},bg:NAVY,h:"left",ind:1});
     var tL=X({f:{c:INK},h:"left",ind:1,b:{b:["thin",LINE]}}),tN=X({f:{c:INK},h:"right",n:"#,##0",b:{b:["thin",LINE]}}),tP=X({f:{c:MUT},h:"right",n:"0.0%",b:{b:["thin",LINE]}}),tR=X({f:{c:MUT},h:"center",b:{b:["thin",LINE]}}),tS=X({f:{b:1,c:NAVY},bg:"EAF0FB",h:"right",n:"#,##0",b:{t:["thin","B9C6DD"]}}),tSL=X({f:{b:1,c:NAVY},bg:"EAF0FB",h:"left",ind:1,b:{t:["thin","B9C6DD"]}});
@@ -1953,10 +1973,10 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
   var VER=null,VERNEW=false;
-  function verSig(){return fetch(location.href.split("#")[0].split("?")[0],{method:"HEAD",cache:"no-store"}).then(function(r){if(!r.ok)throw 0;var e=(r.headers.get("etag")||"")+"|"+(r.headers.get("last-modified")||"");return e==="|"?(r.headers.get("content-length")||""):e})}
+  function verSig(){var u=location.href.split("#")[0].split("?")[0];return fetch(u+"?_="+Date.now(),{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){var h=2166136261;for(var i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return t.length+":"+(h>>>0)})}
   function verCheck(){if(VERNEW||document.hidden&&VER!==null)return;verSig().then(function(g){if(!g)return;if(VER===null){VER=g;return}
     if(g!==VER){VERNEW=true;$("syncMsg").textContent="최신 버전으로 업데이트되었어요";$("syncGo").dataset.ver="1";bar.classList.add("on")}}).catch(function(){})}
-  verCheck();setInterval(verCheck,45000);document.addEventListener("visibilitychange",function(){if(!document.hidden)verCheck()});
+  verCheck();setInterval(verCheck,30000);document.addEventListener("visibilitychange",function(){if(!document.hidden)verCheck()});
   function poll(){
     if(!LIVE||!TK||polling||document.body.classList.contains("locked")||document.hidden)return;
     polling=true;
