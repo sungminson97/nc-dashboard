@@ -824,7 +824,7 @@ aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 240px)
         <div class="list" id="lgList">
           <div class="list-h">
             <div class="lt"><h3 id="lgTitle"></h3><span id="lgChips"></span></div>
-            <div class="dropt"><span class="note" id="lgSort"></span><button class="fbtn" id="lgCsv">CSV 내려받기</button></div>
+            <div class="dropt"><span class="note" id="lgSort"></span><button class="fbtn" id="lgXls">엑셀 내려받기</button></div>
           </div>
           <div class="tw" id="lgTbl"></div>
           <div id="lgMoreW"></div>
@@ -1244,11 +1244,211 @@ function openLed(id){
   $("dx").onclick=closeDrawer;$("dp").onclick=function(){step(-1)};$("dn").onclick=function(){step(1)};
   [].forEach.call($("lgTbl").querySelectorAll("tr.lr"),function(r){r.classList.toggle("on",r.dataset.id===id)})}
 
-function csvOut(){
-  var cfg=LCFG[SRC],rows=window.__ledRows||[];
-  var q=function(v){return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'};
-  var lines=[cfg.cols.map(function(c){return q(c[1])}).join(",")].concat(rows.map(function(x){return cfg.cols.map(function(c){return q(c[0]==="d"?x.d.getFullYear()+"-"+(x.d.getMonth()+1)+"-"+x.d.getDate():x[c[0]])}).join(",")}));
-  try{var b=new Blob(["﻿"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=cfg.name.replace(/\//g,"-")+"_"+(SITE==="all"?"전체":SITE)+".csv";document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},500)}catch(e){}}
+/* ===== 엑셀 내려받기 (외부 라이브러리 없이 .xlsx 를 직접 만듭니다 · 보안망 영향 없음) ===== */
+var XL=(function(){
+  var enc=new TextEncoder(),S;
+  function esc(v){return String(v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F￾￿]/g,"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+  function cl(n){var s="";n++;while(n>0){var m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s}
+  function ser(d){return Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/864e5+25569}
+  function idx(a,x){var i=a.indexOf(x);if(i<0){a.push(x);i=a.length-1}return i}
+  function reset(){S={fonts:[],fills:['<fill><patternFill patternType="none"/></fill>','<fill><patternFill patternType="gray125"/></fill>'],borders:[],fmts:{},nf:164,xfs:[],map:{}};xf({})}
+  function font(o){return idx(S.fonts,'<font>'+(o.b?'<b/>':'')+'<sz val="'+(o.sz||10)+'"/><color rgb="FF'+(o.c||"1F2937")+'"/><name val="맑은 고딕"/><family val="2"/><charset val="129"/></font>')}
+  function fill(c){return c?idx(S.fills,'<fill><patternFill patternType="solid"><fgColor rgb="FF'+c+'"/><bgColor indexed="64"/></patternFill></fill>'):0}
+  function bd(o){o=o||{};var e=function(t,k){return o[k]?'<'+t+' style="'+o[k][0]+'"><color rgb="FF'+o[k][1]+'"/></'+t+'>':'<'+t+'/>'};return idx(S.borders,'<border>'+e("left","l")+e("right","r")+e("top","t")+e("bottom","b")+'<diagonal/></border>')}
+  function nf(c){if(!c)return 0;if(c==="#,##0")return 3;if(c==="0%")return 9;if(!S.fmts[c])S.fmts[c]=S.nf++;return S.fmts[c]}
+  /* o: {f:{b,sz,c}, bg, b:{l,r,t,b}, n, h, v, w, ind} */
+  function xf(o){var k=JSON.stringify(o);if(S.map[k]!=null)return S.map[k];
+    S.map[k]=S.xfs.length;
+    var fi=font(o.f||{}),fl=fill(o.bg),bi=bd(o.b),ni=nf(o.n);
+    S.xfs.push('<xf numFmtId="'+ni+'" fontId="'+fi+'" fillId="'+fl+'" borderId="'+bi+'" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyNumberFormat="1" applyAlignment="1"><alignment horizontal="'+(o.h||"general")+'" vertical="'+(o.v||"center")+'"'+(o.w?' wrapText="1"':'')+(o.ind?' indent="'+o.ind+'"':'')+'/></xf>');
+    return S.map[k]}
+  function stylesXml(){
+    var fm=Object.keys(S.fmts).map(function(c){return '<numFmt numFmtId="'+S.fmts[c]+'" formatCode="'+esc(c)+'"/>'}).join("");
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+      +(fm?'<numFmts count="'+Object.keys(S.fmts).length+'">'+fm+'</numFmts>':'')
+      +'<fonts count="'+S.fonts.length+'">'+S.fonts.join("")+'</fonts><fills count="'+S.fills.length+'">'+S.fills.join("")+'</fills><borders count="'+S.borders.length+'">'+S.borders.join("")+'</borders>'
+      +'<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="'+S.xfs.length+'">'+S.xfs.join("")+'</cellXfs>'
+      +'<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'}
+  /* 셀 */
+  function cell(r,c,v,s,f){var a=cl(c)+r,st=s!=null?' s="'+s+'"':'';
+    if(f!=null)return '<c r="'+a+'"'+st+'><f>'+esc(f)+'</f><v>'+v+'</v></c>';
+    if(v===null||v===undefined||v==="")return '<c r="'+a+'"'+st+'/>';
+    if(typeof v==="number")return '<c r="'+a+'"'+st+'><v>'+v+'</v></c>';
+    return '<c r="'+a+'"'+st+' t="inlineStr"><is><t xml:space="preserve">'+esc(v)+'</t></is></c>'}
+  function row(r,cells,ht){return '<row r="'+r+'"'+(ht?' ht="'+ht+'" customHeight="1"':'')+'>'+cells.join("")+'</row>'}
+  /* 시트 XML (요소 순서는 OOXML 규격을 따름) */
+  function sheet(o){
+    var x='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">';
+    x+='<sheetPr>'+(o.tab?'<tabColor rgb="FF'+o.tab+'"/>':'')+'<pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="A1:'+cl(o.nc-1)+o.nr+'"/>';
+    x+='<sheetViews><sheetView workbookViewId="0" showGridLines="0"'+(o.sel?' tabSelected="1"':'')+' zoomScale="100">';
+    if(o.freeze)x+='<pane'+(o.freeze[0]?' xSplit="'+o.freeze[0]+'"':'')+' ySplit="'+o.freeze[1]+'" topLeftCell="'+cl(o.freeze[0])+(o.freeze[1]+1)+'" activePane="'+(o.freeze[0]?"bottomRight":"bottomLeft")+'" state="frozen"/>';
+    x+='</sheetView></sheetViews><sheetFormatPr defaultRowHeight="20"/>';
+    x+='<cols>'+o.cols.map(function(w,i){return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>'}).join("")+'</cols>';
+    x+='<sheetData>'+o.rows.join("")+'</sheetData>';
+    if(o.filter)x+='<autoFilter ref="'+o.filter+'"/>';
+    if(o.merges&&o.merges.length)x+='<mergeCells count="'+o.merges.length+'">'+o.merges.map(function(m){return '<mergeCell ref="'+m+'"/>'}).join("")+'</mergeCells>';
+    (o.cf||[]).forEach(function(c,i){x+='<conditionalFormatting sqref="'+c.ref+'"><cfRule type="dataBar" priority="'+(i+1)+'"><dataBar><cfvo type="num" val="0"/><cfvo type="max"/><color rgb="FF'+c.color+'"/></dataBar></cfRule></conditionalFormatting>'});
+    x+='<pageMargins left="0.4" right="0.4" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="'+(o.land?"landscape":"portrait")+'" fitToWidth="1" fitToHeight="0"/>';
+    x+='<headerFooter><oddFooter>&amp;L'+esc(o.foot||"")+'&amp;R&amp;P / &amp;N</oddFooter></headerFooter>';
+    if(o.drawing)x+='<drawing r:id="rId1"/>';
+    return x+'</worksheet>'}
+  /* 차트 */
+  function chart(o){
+    var C='http://schemas.openxmlformats.org/drawingml/2006/chart',A='http://schemas.openxmlformats.org/drawingml/2006/main',bar=o.dir==="bar";
+    var tx=function(t,sz,b,c){return '<c:tx><c:rich><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="'+sz+'" b="'+(b?1:0)+'"><a:solidFill><a:srgbClr val="'+c+'"/></a:solidFill><a:latin typeface="맑은 고딕"/><a:ea typeface="맑은 고딕"/></a:defRPr></a:pPr><a:r><a:rPr lang="ko-KR" sz="'+sz+'" b="'+(b?1:0)+'"><a:solidFill><a:srgbClr val="'+c+'"/></a:solidFill><a:latin typeface="맑은 고딕"/><a:ea typeface="맑은 고딕"/></a:rPr><a:t>'+esc(t)+'</a:t></a:r></a:p></c:rich></c:tx>'};
+    var txp=function(sz,c){return '<c:txPr><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="'+sz+'"><a:solidFill><a:srgbClr val="'+c+'"/></a:solidFill><a:latin typeface="맑은 고딕"/><a:ea typeface="맑은 고딕"/></a:defRPr></a:pPr><a:endParaRPr lang="ko-KR"/></a:p></c:txPr>'};
+    var ser=o.series.map(function(s,i){
+      var cat='<c:cat><c:strRef><c:f>'+esc(o.cat.ref)+'</c:f><c:strCache><c:ptCount val="'+o.cat.v.length+'"/>'+o.cat.v.map(function(v,j){return '<c:pt idx="'+j+'"><c:v>'+esc(v)+'</c:v></c:pt>'}).join("")+'</c:strCache></c:strRef></c:cat>';
+      var val='<c:val><c:numRef><c:f>'+esc(s.ref)+'</c:f><c:numCache><c:formatCode>General</c:formatCode><c:ptCount val="'+s.v.length+'"/>'+s.v.map(function(v,j){return '<c:pt idx="'+j+'"><c:v>'+v+'</c:v></c:pt>'}).join("")+'</c:numCache></c:numRef></c:val>';
+      return '<c:ser><c:idx val="'+i+'"/><c:order val="'+i+'"/><c:tx><c:strRef><c:f>'+esc(s.nameRef)+'</c:f><c:strCache><c:ptCount val="1"/><c:pt idx="0"><c:v>'+esc(s.name)+'</c:v></c:pt></c:strCache></c:strRef></c:tx>'
+        +'<c:spPr><a:solidFill><a:srgbClr val="'+s.color+'"/></a:solidFill></c:spPr><c:invertIfNegative val="0"/>'
+        +(o.labels?'<c:dLbls><c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>'+txp(900,"4B5563")+'<c:showLegendKey val="0"/><c:showVal val="1"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showBubbleSize val="0"/></c:dLbls>':'')
+        +cat+val+'</c:ser>'}).join("");
+    var ax='<c:catAx><c:axId val="111"/><c:scaling><c:orientation val="'+(bar?"maxMin":"minMax")+'"/></c:scaling><c:delete val="0"/><c:axPos val="'+(bar?"l":"b")+'"/><c:numFmt formatCode="General" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:spPr><a:ln w="9525"><a:solidFill><a:srgbClr val="CBD2DD"/></a:solidFill></a:ln></c:spPr>'+txp(900,"374151")+'<c:crossAx val="222"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/><c:noMultiLvlLbl val="0"/></c:catAx>'
+      +'<c:valAx><c:axId val="222"/><c:scaling><c:orientation val="minMax"/><c:min val="0"/></c:scaling><c:delete val="0"/><c:axPos val="'+(bar?"b":"l")+'"/><c:majorGridlines><c:spPr><a:ln w="6350"><a:solidFill><a:srgbClr val="E5E9F0"/></a:solidFill></a:ln></c:spPr></c:majorGridlines><c:numFmt formatCode="#,##0" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:spPr><a:ln><a:noFill/></a:ln></c:spPr>'+txp(900,"6B7280")+'<c:crossAx val="111"/><c:crosses val="'+(bar?"max":"autoZero")+'"/><c:crossBetween val="between"/></c:valAx>';
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><c:chartSpace xmlns:c="'+C+'" xmlns:a="'+A+'" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><c:roundedCorners val="0"/>'
+      +'<c:chart><c:title>'+tx(o.title,1200,true,"1F2A44")+'<c:overlay val="0"/></c:title><c:autoTitleDeleted val="0"/><c:plotArea><c:layout/>'
+      +'<c:barChart><c:barDir val="'+(bar?"bar":"col")+'"/><c:grouping val="'+(o.stack?"stacked":"clustered")+'"/><c:varyColors val="0"/>'+ser+'<c:gapWidth val="'+(o.gap||60)+'"/>'+(o.stack?'<c:overlap val="100"/>':'')+'<c:axId val="111"/><c:axId val="222"/></c:barChart>'+ax
+      +'<c:spPr><a:noFill/></c:spPr></c:plotArea>'+(o.series.length>1?'<c:legend><c:legendPos val="b"/><c:overlay val="0"/>'+txp(900,"374151")+'</c:legend>':'')+'<c:plotVisOnly val="1"/><c:dispBlanksAs val="gap"/></c:chart>'
+      +'<c:spPr><a:solidFill><a:srgbClr val="FFFFFF"/></a:solidFill><a:ln w="9525"><a:solidFill><a:srgbClr val="D5DBE5"/></a:solidFill></a:ln></c:spPr></c:chartSpace>'}
+  function drawing(list){
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><xdr:wsDr xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+      +list.map(function(g,i){return '<xdr:twoCellAnchor><xdr:from><xdr:col>'+g.c0+'</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>'+g.r0+'</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from><xdr:to><xdr:col>'+g.c1+'</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>'+g.r1+'</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>'
+        +'<xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="'+(i+2)+'" name="차트 '+(i+1)+'"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm><a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/chart"><c:chart xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:id="rId'+(i+1)+'"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor>'}).join("")+'</xdr:wsDr>'}
+  /* ZIP (가능하면 deflate 압축, 안 되면 저장만) */
+  var T=(function(){var t=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+  function crc(b){var c=0xFFFFFFFF;for(var i=0;i<b.length;i++)c=T[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}
+  async function deflate(b){if(typeof CompressionStream==="undefined")return null;try{var cs=new CompressionStream("deflate-raw"),w=cs.writable.getWriter();w.write(b);w.close();return new Uint8Array(await new Response(cs.readable).arrayBuffer())}catch(e){return null}}
+  async function zip(files){
+    var now=new Date(),dt=((now.getFullYear()-1980)<<9|(now.getMonth()+1)<<5|now.getDate())&0xFFFF,tm=(now.getHours()<<11|now.getMinutes()<<5|(now.getSeconds()>>1))&0xFFFF,parts=[],cd=[],off=0;
+    function u16(v){return[v&255,v>>>8&255]}function u32(v){return[v&255,v>>>8&255,v>>>16&255,v>>>24&255]}
+    for(var i=0;i<files.length;i++){
+      var nm=enc.encode(files[i][0]),raw=typeof files[i][1]==="string"?enc.encode(files[i][1]):files[i][1],cr=crc(raw),dz=await deflate(raw),meth=dz&&dz.length<raw.length?8:0,data=meth?dz:raw;
+      var lh=new Uint8Array([0x50,0x4B,3,4].concat(u16(20),u16(0x0800),u16(meth),u16(tm),u16(dt),u32(cr),u32(data.length),u32(raw.length),u16(nm.length),u16(0)));
+      parts.push(lh,nm,data);
+      cd.push(new Uint8Array([0x50,0x4B,1,2].concat(u16(20),u16(20),u16(0x0800),u16(meth),u16(tm),u16(dt),u32(cr),u32(data.length),u32(raw.length),u16(nm.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(off))),nm);
+      off+=lh.length+nm.length+data.length}
+    var cs=0;cd.forEach(function(p){cs+=p.length});
+    var end=new Uint8Array([0x50,0x4B,5,6].concat(u16(0),u16(0),u16(files.length),u16(files.length),u32(cs),u32(off),u16(0)));
+    return new Blob(parts.concat(cd,[end]),{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})}
+  return{reset:reset,xf:xf,cell:cell,row:row,sheet:sheet,chart:chart,drawing:drawing,stylesXml:stylesXml,zip:zip,cl:cl,ser:ser,esc:esc}
+})();
+
+function xlLines(t,w){var n=0;t.split(/\r?\n/).forEach(function(l){var u=0;for(var i=0;i<l.length;i++)u+=l.charCodeAt(i)>0x2E7F?2:1;n+=Math.max(1,Math.ceil(u/Math.max(4,w-1)))});return n}
+
+function xlsxOut(){
+  var btn=$("lgXls"),cfg=LCFG[SRC],rows=(window.__ledRows||[]).slice(),isQ=SRC==="qc";
+  if(!rows.length){btn.textContent="내려받을 데이터가 없어요";setTimeout(function(){btn.textContent="엑셀 내려받기"},1800);return}
+  btn.disabled=true;btn.textContent="엑셀 만드는 중";
+  setTimeout(async function(){try{
+    XL.reset();var X=XL.xf,cell=XL.cell,row=XL.row,cl=XL.cl;
+    var NAVY="1F2A44",INK="1F2937",MUT="6B7280",LINE="E3E7EE",ZEB="F6F8FC",BL="4F8CFF",OR="CC7620",GY="8A93A3";
+    var thin=function(c){return{b:["thin",c||LINE]}};
+    var now=new Date(),z=function(n){return n<10?"0"+n:""+n},stamp=now.getFullYear()+"-"+z(now.getMonth()+1)+"-"+z(now.getDate())+" "+z(now.getHours())+":"+z(now.getMinutes());
+    var S2=LS[SRC],fl=[];Object.keys(S2.f).forEach(function(k){if(S2.f[k]){var n=(cfg.flt.filter(function(a){return a[0]===k})[0]||[k,k])[1];fl.push(n+" "+S2.f[k])}});if(qs)fl.push('검색 "'+qs+'"');
+    var lab={m:"이번 달",q:"최근 3개월",y:"올해"}[range],siteL=SITE==="all"?"성남+동탄":SITE;
+    var sub=lab+" · "+siteL+(fl.length?" · "+fl.join(", "):"")+" · 총 "+rows.length.toLocaleString()+"건 · 출력 "+stamp;
+    /* ---------- 시트 1: 부적합 목록 ---------- */
+    var C=[["id","번호",10,"c"],["d","발생일",12,"d"],["site","사업장",9,"site"],["ship","출하월",8,"c"],["proj",isQ?"출하 프로젝트":"발주 프로젝트",24,"l"],["part",isQ?"위치 · 품명":"품명 · 위치",24,"l"],["ptype","TYPE",16,"l"]];
+    if(!isQ)C.push(["pn","품번",20,"l"]);
+    C.push(["qty","불량 수량",9,"n"],["ven",isQ?"귀책":"귀책업체",13,"tag"],["c1","대분류",11,"c"],["c2","중분류",11,"c"],["c3","소분류",11,"c"],["gubun",isQ?"검사 구분":"구분",10,"c"]);
+    if(!isQ)C.push(["cls","분류",9,"c"]);
+    C.push(["finder",isQ?"제조 담당자":"발견자",11,"c"],["owner","담당자",11,"c"],["desc","불량내용",46,"w"],["act","조치사항",34,"w"],["note",isQ?"세부 조치내용":"비고 / 세부 조치내용",30,"w"]);
+    if(!isQ)C.push(["cost","손실비용(만원)",13,"n"]);
+    var nc=C.length,HR=4,r0=HR+1,out=[],merges=[];
+    out.push(row(1,[cell(1,0,cfg.name,X({f:{b:1,sz:18,c:NAVY}}))].concat(C.slice(1).map(function(c,i){return cell(1,i+1,null,X({}))})),34));
+    out.push(row(2,[cell(2,0,sub,X({f:{sz:10,c:MUT}}))],20));
+    out.push(row(3,[],8));
+    var hs=X({f:{b:1,sz:10,c:"FFFFFF"},bg:NAVY,h:"center",w:1,b:{b:["medium",BL]}});
+    out.push(row(HR,C.map(function(c,i){return cell(HR,i,c[1],hs)}),28));
+    var tintSite={"성남":["E4EDFF","2F5FC8"],"동탄":["FBEBD9","9A5614"],"미분류":["ECEEF2","5B6472"]},tintVen={"기구":["E4EDFF","2F5FC8"],"전장":["FBEBD9","9A5614"]};
+    rows.forEach(function(x,i){var r=r0+i,zb=i%2?ZEB:null,cells=[];
+      C.forEach(function(c,j){var t=c[3],v=x[c[0]],st;
+        var base=function(o){if(!o.bg&&zb)o.bg=zb;o.b={b:["thin",LINE]};return o};
+        if(c[0]==="d"){cells.push(cell(r,j,XL.ser(x.d),X(base({f:{},n:"yyyy-mm-dd",h:"center"}))));return}
+        if(c[0]==="id"){cells.push(cell(r,j,String(v),X(base({f:{c:MUT,sz:9},h:"center"}))));return}
+        if(t==="site"){var ts=tintSite[v]||tintSite["미분류"];cells.push(cell(r,j,v,X(base({f:{b:1,c:ts[1]},bg:ts[0],h:"center"}))));return}
+        if(t==="tag"&&tintVen[v]){var tv=tintVen[v];cells.push(cell(r,j,v,X(base({f:{b:1,c:tv[1]},bg:tv[0],h:"center"}))));return}
+        if(t==="n"){var nv=+v||0;cells.push(cell(r,j,nv===0&&c[0]==="cost"?null:nv,X(base({f:{},n:"#,##0",h:"right"}))));return}
+        if(t==="w"){cells.push(cell(r,j,v&&v!=="-"?v:"",X(base({f:{},w:1,v:"top",h:"left"}))));return}
+        var sv=v==null||v==="-"?"":String(v);cells.push(cell(r,j,sv,X(base({f:{b:c[0]==="proj"?1:0,c:c[0]==="proj"?NAVY:INK},h:t==="c"||t==="tag"?"center":"left",w:0}))))});
+      var ln=1;C.forEach(function(c){if(c[3]==='w'){var t=x[c[0]];if(t&&t!=='-')ln=Math.max(ln,xlLines(String(t),c[2]))}});
+      out.push(row(r,cells,Math.min(150,Math.max(22,ln*13.5+8))))});
+        var s1={name:"부적합 목록",nc:nc,nr:r0+rows.length-1,cols:C.map(function(c){return c[2]}),rows:out,merges:merges,freeze:[2,HR],filter:"A"+HR+":"+cl(nc-1)+(r0+rows.length-1),land:1,sel:1,tab:BL,foot:cfg.name+" · "+stamp};
+    /* ---------- 시트 2: 요약 ---------- */
+    var hd=X({f:{b:1,c:"FFFFFF"},bg:NAVY,h:"center"}),hdL=X({f:{b:1,c:"FFFFFF"},bg:NAVY,h:"left",ind:1});
+    var tL=X({f:{c:INK},h:"left",ind:1,b:{b:["thin",LINE]}}),tN=X({f:{c:INK},h:"right",n:"#,##0",b:{b:["thin",LINE]}}),tP=X({f:{c:MUT},h:"right",n:"0.0%",b:{b:["thin",LINE]}}),tR=X({f:{c:MUT},h:"center",b:{b:["thin",LINE]}}),tS=X({f:{b:1,c:NAVY},bg:"EAF0FB",h:"right",n:"#,##0",b:{t:["thin","B9C6DD"]}}),tSL=X({f:{b:1,c:NAVY},bg:"EAF0FB",h:"left",ind:1,b:{t:["thin","B9C6DD"]}});
+    var sec=X({f:{b:1,sz:12,c:NAVY},b:{b:["medium",BL]}}),secE=X({b:{b:["medium",BL]}});
+    var total=rows.length,qtyS=rows.reduce(function(a,x){return a+(+x.qty||0)},0),costS=rows.reduce(function(a,x){return a+(+x.cost||0)},0);
+    var R=[],mg=[],cf=[],charts=[],rr=0;
+    var put=function(r,cells,ht){R[r]=row(r,cells,ht)};
+    put(2,[cell(2,1,cfg.name+" · 요약",X({f:{b:1,sz:18,c:NAVY}}))],34);
+    put(3,[cell(3,1,sub,X({f:{c:MUT}}))],20);
+    /* 핵심 수치 */
+    put(5,[cell(5,1,"핵심 수치",sec)].concat([2,3,4,5].map(function(c){return cell(5,c,null,secE)})),24);
+    var kv=function(r,lb,val,fmt,f){put(r,[cell(r,1,lb,tL),cell(r,2,val,X({f:{b:1,sz:12,c:NAVY},h:"right",n:fmt||"#,##0",b:{b:["thin",LINE]}}),f)],22)};
+    kv(6,"총 건수",total,"#,##0\"건\"");kv(7,"불량 수량 합계",qtyS,"#,##0\"개\"");
+    var sites=["성남","동탄","미분류"].filter(function(s){return rows.some(function(x){return x.site===s})}),kr=8;
+    sites.forEach(function(s){var n=rows.filter(function(x){return x.site===s}).length;kv(kr,s,n,"#,##0\"건\"");kr++});
+    if(!isQ){kv(kr,"손실비용 합계(만원)",costS,"#,##0");kr++}
+    /* 월별 */
+    var maxM=0;rows.forEach(function(x){if(x.m>maxM)maxM=x.m});
+    var mr=kr+2;put(mr,[cell(mr,1,"월별 건수",sec)].concat([2,3,4,5].map(function(c){return cell(mr,c,null,secE)})),24);
+    var mh=mr+1,hc=[cell(mh,1,"월",hdL)];sites.forEach(function(s,i){hc.push(cell(mh,2+i,s,hd))});hc.push(cell(mh,2+sites.length,"합계",hd));put(mh,hc,22);
+    var mdata=[],m0=mh+1;
+    for(var m=0;m<=maxM;m++){var r=m0+m,cc=[cell(r,1,(m+1)+"월",tL)],tot=0,vals=[];
+      sites.forEach(function(s,i){var n=rows.filter(function(x){return x.m===m&&x.site===s}).length;tot+=n;vals.push(n);cc.push(cell(r,2+i,n,tN))});
+      cc.push(cell(r,2+sites.length,tot,X({f:{b:1,c:INK},h:"right",n:"#,##0",b:{b:["thin",LINE]}}),"SUM("+cl(2)+r+":"+cl(1+sites.length)+r+")"));put(r,cc,20);mdata.push({m:m,vals:vals,tot:tot})}
+    var m1=m0+maxM,mt=m1+1,tc=[cell(mt,1,"합계",tSL)];
+    for(var i2=0;i2<=sites.length;i2++){var colL=cl(2+i2),sm=mdata.reduce(function(a,d){return a+(i2<sites.length?d.vals[i2]:d.tot)},0);tc.push(cell(mt,2+i2,sm,tS,"SUM("+colL+m0+":"+colL+m1+")"))}put(mt,tc,22);
+    cf.push({ref:cl(2+sites.length)+m0+":"+cl(2+sites.length)+m1,color:"9DBBFF"});
+    var sc=[BL,OR,GY];
+    charts.push({title:"월별 부적합 건수",dir:"col",stack:true,gap:55,cat:{ref:"'요약'!$B$"+m0+":$B$"+m1,v:mdata.map(function(d){return(d.m+1)+"월"})},
+      series:sites.map(function(s,i){return{name:s,nameRef:"'요약'!$"+cl(2+i)+"$"+mh,ref:"'요약'!$"+cl(2+i)+"$"+m0+":$"+cl(2+i)+"$"+m1,v:mdata.map(function(d){return d.vals[i]}),color:sc[["성남","동탄","미분류"].indexOf(s)]}})});
+    var chartRows=[[5,mt+1]],nxt=mt+3;
+    /* TOP 표 */
+    function top(title,key,lbl,n,color){
+      var cnt={};rows.forEach(function(x){var v=x[key];if(v&&v!=="-"&&v!=="N/A")cnt[v]=(cnt[v]||0)+1});
+      var arr=Object.keys(cnt).map(function(k){return[k,cnt[k]]}).sort(function(a,b){return b[1]-a[1]||(a[0]<b[0]?-1:1)}).slice(0,n);if(!arr.length)return;
+      var t0=nxt;put(t0,[cell(t0,1,title,sec)].concat([2,3,4,5].map(function(c){return cell(t0,c,null,secE)})),24);
+      put(t0+1,[cell(t0+1,1,lbl,hdL),cell(t0+1,2,"순위",hd),cell(t0+1,3,"건수",hd),cell(t0+1,4,"비율",hd),cell(t0+1,5,"",hd)],22);
+      arr.forEach(function(a,i){var r=t0+2+i;put(r,[cell(r,1,a[0],tL),cell(r,2,i+1,tR),cell(r,3,a[1],tN),cell(r,4,a[1]/total,tP,"D"+r+"/$C$6"),cell(r,5,"",tN)],20)});
+      var a0=t0+2,a1=t0+1+arr.length;cf.push({ref:"D"+a0+":D"+a1,color:color});
+      charts.push({title:title,dir:"bar",stack:false,gap:45,labels:true,cat:{ref:"'요약'!$B$"+a0+":$B$"+a1,v:arr.map(function(a){return a[0]})},series:[{name:"건수",nameRef:"'요약'!$D$"+(t0+1),ref:"'요약'!$D$"+a0+":$D$"+a1,v:arr.map(function(a){return a[1]}),color:BL}]});
+      chartRows.push([t0,a1+1]);nxt=a1+3}
+    top(isQ?"귀책 TOP 10":"귀책업체 TOP 10","ven",isQ?"귀책":"귀책업체",10,"9DBBFF");
+    top((isQ?"제조 담당자":"발견자")+" TOP 10","finder",isQ?"제조 담당자":"발견자",10,"9DBBFF");
+    top("대분류","c1","대분류",8,"9DBBFF");top("소분류 TOP 10","c3","소분류",10,"9DBBFF");
+    /* 통계 표는 C열(순위) 다음 D열 건수라 열 구조를 맞춤: B=이름, C=순위, D=건수, E=비율 */
+    var nrS=nxt;var rowsXml=[];for(var q2=1;q2<=nrS;q2++)rowsXml.push(R[q2]||"");
+    /* 열 정의: B 이름 / C 순위 / D 건수 / E 비율 / F 여백 */
+    var s2={name:"요약",nc:6,nr:nrS,cols:[2.5,26,11,11,11,11,3,11,11,11,11,11,11,11,11],rows:rowsXml.filter(Boolean),merges:mg,cf:[],land:1,tab:OR,foot:cfg.name+" 요약 · "+stamp};
+    return await finish(s1,s2,charts,chartRows,cf)
+  }catch(e){console.error(e);btn.textContent="엑셀 생성에 실패했어요";setTimeout(function(){btn.textContent="엑셀 내려받기";btn.disabled=false},2200);return}
+    btn.disabled=false;btn.textContent="엑셀 내려받기"},30);
+  async function finish(s1,s2,charts,chartRows,cf){
+    /* 요약 시트의 데이터 막대 / 차트 연결 */
+    s2.cf=cf;s2.drawing=true;
+    var G=charts.map(function(c,i){return{c0:7,c1:16,r0:4+i*18,r1:4+i*18+17}});
+    var cfg=LCFG[SRC],stamp="";
+    var files=[["[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>'+charts.map(function(c,i){return '<Override PartName="/xl/charts/chart'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>'}).join("")+'<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>'],
+      ["_rels/.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>'],
+      ["docProps/core.xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>'+XL.esc(cfg.name)+'</dc:title><dc:creator>NineBell 제조 부적합 대시보드</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">'+new Date().toISOString().replace(/\.\d+Z$/,"Z")+'</dcterms:created></cp:coreProperties>'],
+      ["docProps/app.xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"><Application>Microsoft Excel</Application></Properties>'],
+      ["xl/workbook.xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView xWindow="0" yWindow="0" windowWidth="28800" windowHeight="15000" activeTab="0"/></bookViews><sheets><sheet name="부적합 목록" sheetId="1" r:id="rId1"/><sheet name="요약" sheetId="2" r:id="rId2"/></sheets><definedNames><definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">\'부적합 목록\'!'+s1.filter.replace(/([A-Z]+)(\d+):([A-Z]+)(\d+)/,"$$$1$$$2:$$$3$$$4")+'</definedName><definedName name="_xlnm.Print_Titles" localSheetId="0">\'부적합 목록\'!$4:$4</definedName></definedNames><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>'],
+      ["xl/_rels/workbook.xml.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],
+      ["xl/styles.xml",XL.stylesXml()],
+      ["xl/worksheets/sheet1.xml",XL.sheet(s1)],["xl/worksheets/sheet2.xml",XL.sheet(s2)],
+      ["xl/worksheets/_rels/sheet2.xml.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing" Target="../drawings/drawing1.xml"/></Relationships>'],
+      ["xl/drawings/drawing1.xml",XL.drawing(G)],
+      ["xl/drawings/_rels/drawing1.xml.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+charts.map(function(c,i){return '<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart" Target="../charts/chart'+(i+1)+'.xml"/>'}).join("")+'</Relationships>']];
+    charts.forEach(function(c,i){files.push(["xl/charts/chart"+(i+1)+".xml",XL.chart(c)])});
+    var blob=await XL.zip(files),d=new Date(),z=function(n){return n<10?"0"+n:""+n};
+    var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+    a.download=cfg.name.replace(/\//g,"-")+"_"+(SITE==="all"?"전체":SITE)+"_"+d.getFullYear()+z(d.getMonth()+1)+z(d.getDate())+".xlsx";
+    document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1500);
+    var b=$("lgXls");b.disabled=false;b.textContent="엑셀 내려받기"}
+}
 
 $("fbar").addEventListener("change",function(e){var el=e.target.closest("select");if(!el)return;var S=LS[SRC];S.f[el.dataset.k]=el.value;S.lim=50;render()});
 $("fbar").addEventListener("click",function(e){if(e.target.id==="fReset"){LS[SRC].f={};qs="";$("q").value="";LS[SRC].lim=50;render()}});
@@ -1258,7 +1458,7 @@ $("lgChips").addEventListener("click",function(e){var b=e.target.closest("button
 $("lgTbl").addEventListener("click",function(e){var th=e.target.closest("th");if(th){var S=LS[SRC],k=th.dataset.k;S.sort=S.sort.k===k?{k:k,dir:-S.sort.dir}:{k:k,dir:(k==="d"||k==="qty"||k==="cost")?-1:1};renderLedger();return}
   var tr=e.target.closest("tr.lr");if(tr)openDrawer(tr.dataset.id)});
 $("lgMoreW").addEventListener("click",function(e){if(e.target.id==="lgMore"){LS[SRC].lim+=100;renderLedger()}});
-$("lgCsv").onclick=csvOut;
+$("lgXls").onclick=xlsxOut;
 var rzL;addEventListener("resize",function(){clearTimeout(rzL);rzL=setTimeout(function(){if(SRC!=="nc")drawLedTrend(ledF(ledAll()))},120)});
 
 
