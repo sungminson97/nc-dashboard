@@ -938,9 +938,9 @@ var rzL;addEventListener("resize",function(){clearTimeout(rzL);rzL=setTimeout(fu
 
 
 /* ================= DB 연결 (Supabase) — 아래 두 값을 넣으면 실제 데이터로 동작, 비워두면 예시 데이터 ================= */
-var CFG={url:"",key:""},LIVE=!!(CFG.url&&CFG.key);
+var CFG={url:"https://nqlgkqlkxygyhovrdfmk.supabase.co",key:"sb_publishable_5_VHwpedbqRiprnh2vLL7A_4taihOfg"},LIVE=!!(CFG.url&&CFG.key);
 function rpc(fn,args){
-  return fetch(CFG.url.replace(/\/$/,"")+"/rest/v1/rpc/"+fn,{method:"POST",headers:{"apikey":CFG.key,"Authorization":"Bearer "+CFG.key,"Content-Type":"application/json"},body:JSON.stringify(args||{})})
+  return fetch(CFG.url.replace(/\/$/,"")+"/rest/v1/rpc/"+fn,{method:"POST",headers:(function(){var h={"apikey":CFG.key,"Content-Type":"application/json"};if(CFG.key.indexOf("sb_")!==0)h.Authorization="Bearer "+CFG.key;return h})(),body:JSON.stringify(args||{})})
     .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
 function loadLive(token){
   return rpc("nc_list",{p_token:token}).then(function(rows){
@@ -976,11 +976,12 @@ $("gHome").addEventListener("click",function(e){e.preventDefault();if(LIVE)setSr
 
 /* ================= 로그인 / 로그아웃 (시안: 브라우저 안에서만 동작) ================= */
 (function(){
-  var USERS=[["손성민","편집"],["고현우","관리자"],["나영훈","편집"],["박제민","편집"],["김규태","보기"],["최진혁","보기"]];
+  var USERS=[["손성민","프로"],["고현우","팀장"],["나영훈","프로"],["박제민","프로"],["김규태","프로"],["최재혁","프로"]];
   var DEMO_PIN="0000",MAXF=3,LOCK=10*60e3,IDLE=30*60e3,SK="nc_sess",LK="nc_lock";
   var sel=$("lname"),pins=[0,1,2,3].map(function(i){return $("p"+i)}),err=$("lerr"),go=$("lgo");
-  function fillUsers(){sel.innerHTML='<option value="">이름 선택</option>';USERS.forEach(function(u){var o=document.createElement("option");o.value=u[0];o.textContent=u[0]+" · "+u[1];sel.appendChild(o)})}
+  function fillUsers(){sel.innerHTML='<option value="">이름 선택</option>';USERS.forEach(function(u){var o=document.createElement("option");o.value=u[0];o.textContent=dn(u);sel.appendChild(o)})}
   var TK="";
+  function dn(u){return u[0]+(u[1]==="팀장"?" 팀장":"")}
   if(LIVE){USERS=[];rpc("nc_users").then(function(a){USERS=(a||[]).map(function(x){return[x.name,x.role]});fillUsers()}).catch(function(){show("서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.")})}else fillUsers();
   $("llogo").src=document.querySelector(".gnav .logo").src;
   function st(k,v,keep){try{var a=keep?localStorage:sessionStorage;if(v===null){localStorage.removeItem(k);sessionStorage.removeItem(k)}else a.setItem(k,v)}catch(e){}}
@@ -995,7 +996,7 @@ $("gHome").addEventListener("click",function(e){e.preventDefault();if(LIVE)setSr
   function lockedLeft(){var l=lock();return l.until&&l.until>Date.now()?Math.ceil((l.until-Date.now())/60e3):0}
   function enter(u,keep){
     st(SK,JSON.stringify({n:u[0],r:u[1],t:Date.now(),k:TK}),keep);
-    $("meN").textContent=u[0];$("meR").textContent=u[1];$("meR").className="role"+(u[1]==="관리자"?" adm":"");
+    $("meN").textContent=dn(u);$("meR").style.display="none";
     document.body.classList.remove("locked");$("login").classList.add("off");$("login").setAttribute("aria-hidden","true");
     last=Date.now();if(LIVE)setSrc(SRC==="nc"?"qc":SRC);else drawTrend();
   }
