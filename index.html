@@ -1596,35 +1596,30 @@ function xlsxOut(){
     var S2=LS[SRC],fl=[];Object.keys(S2.f).forEach(function(k){if(S2.f[k]){var n=(cfg.flt.filter(function(a){return a[0]===k})[0]||[k,k])[1];fl.push(n+" "+S2.f[k])}});if(qs)fl.push('검색 "'+qs+'"');
     var lab={m:"이번 달",q:"최근 3개월",y:"올해"}[range],siteL=SITE==="all"?"성남+동탄":SITE;
     var sub=lab+" · "+siteL+(fl.length?" · "+fl.join(", "):"")+" · 총 "+rows.length.toLocaleString()+"건 · 출력 "+stamp;
-    /* ---------- 시트 1: 부적합 목록 ---------- */
-    var C=[["id","번호",10,"c"],["d","발생일",12,"d"],["site","사업장",9,"site"],["ship","출하월",8,"c"],["proj",isQ?"출하 프로젝트":"발주 프로젝트",24,"l"],["part",isQ?"위치 · 품명":"품명 · 위치",24,"l"],["ptype","TYPE",16,"l"]];
-    if(!isQ)C.push(["pn","품번",20,"l"]);
-    C.push(["qty","불량 수량",9,"n"],["ven",isQ?"귀책":"귀책업체",13,"tag"],["c1","대분류",11,"c"],["c2","중분류",11,"c"],["c3","소분류",11,"c"],["gubun",isQ?"검사 구분":"구분",10,"c"]);
+    /* ---------- 시트 1: 부적합 목록 (품질팀 관리대장 모양) ---------- */
+    var C=[["id","NO.",7,"c"],["site","제조\n공장",8,"c"],["ship","출하월",8,"c"],["d","발생일\n(검수일)",11,"d"],["proj",isQ?"출하 프로젝트 명":"발주 프로젝트 명",26,"c"]];
+    if(!isQ)C.push(["pn","품번",22,"c"]);
+    C.push(["ptype","TYPE",17,"c"],["part",isQ?"위치":"품명 · 위치",isQ?13:22,"c"],["qty","불량\n수량",7,"n"],["c1","불량\n(대분류)",11,"c"],["c2","불량\n(중분류)",15,"c"],["c3","불량\n(소분류)",12,"c"],["gubun",isQ?"검사\n구분":"구분",8,"c","y"]);
     if(!isQ)C.push(["cls","분류",9,"c"]);
-    C.push(["finder",isQ?"제조 담당자":"발견자",11,"c"],["owner","담당자",11,"c"]);if(isQ)C.push(["chk","확인 여부",10,"chk"],["chkBy","확인자",10,"c"]);C.push(["desc","불량내용",46,"w"],["act","조치사항",34,"w"],["note",isQ?"세부 조치내용":"비고 / 세부 조치내용",30,"w"]);
-    if(!isQ)C.push(["cost","손실비용(만원)",13,"n"]);
-    var nc=C.length,HR=4,r0=HR+1,out=[],merges=[];
-    var band=X({bg:NAVY});
-    out.push(row(1,[cell(1,0,cfg.name,X({f:{b:1,sz:18,c:"FFFFFF"},bg:NAVY,ind:1}))].concat(C.slice(1).map(function(c,i){return cell(1,i+1,null,band)})),38));
-    out.push(row(2,[cell(2,0,sub,X({f:{sz:10,c:"B9C6E0"},bg:NAVY,ind:1}))].concat(C.slice(1).map(function(c,i){return cell(2,i+1,null,band)})),22));
-    out.push(row(3,[],8));
-    var hs=X({f:{b:1,sz:10,c:"FFFFFF"},bg:NAVY,h:"center",w:1,b:{b:["medium",BL]}});
-    out.push(row(HR,C.map(function(c,i){return cell(HR,i,c[1],hs)}),28));
-    var tintSite={"성남":["E4EDFF","2F5FC8"],"동탄":["FBEBD9","9A5614"],"미분류":["ECEEF2","5B6472"]},tintVen={"기구":["E4EDFF","2F5FC8"],"전장":["FBEBD9","9A5614"]};
-    rows.forEach(function(x,i){var r=r0+i,zb=i%2?ZEB:null,cells=[];
-      C.forEach(function(c,j){var t=c[3],v=x[c[0]],st;
-        var base=function(o){if(!o.bg&&zb)o.bg=zb;o.b={b:["thin",LINE]};return o};
-        if(c[0]==="d"){cells.push(cell(r,j,XL.ser(x.d),X(base({f:{},n:"yyyy-mm-dd",h:"center"}))));return}
-        if(c[0]==="id"){cells.push(cell(r,j,String(v),X(base({f:{c:MUT,sz:9},h:"center"}))));return}
-        if(t==="site"){var ts=tintSite[v]||tintSite["미분류"];cells.push(cell(r,j,v,X(base({f:{b:1,c:ts[1]},bg:ts[0],h:"center"}))));return}
-        if(t==="tag"&&tintVen[v]){var tv=tintVen[v];cells.push(cell(r,j,v,X(base({f:{b:1,c:tv[1]},bg:tv[0],h:"center"}))));return}
-        if(t==="chk"){var ok=v==="확인";cells.push(cell(r,j,v||"",X(base({f:{b:1,c:ok?"14864F":"B8690B"},bg:ok?"E3F6EA":"FDF0DC",h:"center"}))));return}
-                if(t==="n"){var nv=+v||0;cells.push(cell(r,j,nv===0&&c[0]==="cost"?null:nv,X(base({f:{},n:"#,##0",h:"right"}))));return}
-        if(t==="w"){cells.push(cell(r,j,v&&v!=="-"?v:"",X(base({f:{},w:1,v:"top",h:"left"}))));return}
-        var sv=v==null||v==="-"?"":String(v);cells.push(cell(r,j,sv,X(base({f:{b:c[0]==="proj"?1:0,c:c[0]==="proj"?NAVY:INK},h:t==="c"||t==="tag"?"center":"left",w:0}))))});
+    C.push(["ven",isQ?"귀책":"귀책업체",11,"c"],["finder",isQ?"제조\n담당자":"발견자",10,"c"],["owner",isQ?"품질\n담당자":"담당자",10,"c"],["desc","불량내용",62,"w"]);
+    if(isQ)C.push(["chk","확인\n여부",9,"c"],["chkBy","확인자",9,"c"]);
+    C.push(["act","조치사항",18,"w"],["note","세부 조치내용",30,"w"]);
+    if(!isQ)C.push(["cost","손실비용\n(만원)",11,"n"]);
+    var nc=C.length,HR=1,r0=2,out=[],merges=[];
+    var K="000000",GREEN="A9D18E",YEL="FFFF00",tb={l:["thin",K],r:["thin",K],t:["thin",K],b:["thin",K]};
+    var hs=X({f:{b:1,sz:10,c:K},bg:"FFFFFF",h:"center",v:"center",w:1,b:tb}),hy=X({f:{b:1,sz:10,c:K},bg:YEL,h:"center",v:"center",w:1,b:tb});
+    out.push(row(HR,C.map(function(c,i){return cell(HR,i,c[1],c[4]?hy:hs)}),32));
+    rows.forEach(function(x,i){var r=r0+i,cells=[],mfg=x.c1==="제조불량";
+      C.forEach(function(c,j){var t=c[3],v=x[c[0]];
+        var st=function(o){o.f=o.f||{sz:10,c:K};if(mfg)o.bg=GREEN;o.v="center";o.b=tb;return o};
+        if(c[0]==="d"){cells.push(cell(r,j,XL.ser(x.d),X(st({f:{sz:10,c:K},n:"mm/dd",h:"center"}))));return}
+        if(c[0]==="id"){cells.push(cell(r,j,i+1,X(st({f:{sz:10,c:K},h:"center"}))));return}
+        if(t==="n"){var nv=+v||0;cells.push(cell(r,j,nv===0&&c[0]==="cost"?null:nv,X(st({f:{sz:10,c:K},n:"#,##0",h:"center"}))));return}
+        if(t==="w"){cells.push(cell(r,j,v&&v!=="-"?v:"",X(st({f:{sz:10,c:K},w:1,h:"left"}))));return}
+        var sv=v==null?"":String(v);cells.push(cell(r,j,sv,X(st({f:{sz:10,c:K},h:"center"}))))});
       var ln=1;C.forEach(function(c){if(c[3]==='w'){var t=x[c[0]];if(t&&t!=='-')ln=Math.max(ln,xlLines(String(t),c[2]))}});
-      out.push(row(r,cells,Math.min(150,Math.max(22,ln*13.5+8))))});
-        var s1={name:"부적합 목록",nc:nc,nr:r0+rows.length-1,cols:C.map(function(c){return c[2]}),rows:out,merges:merges,freeze:[2,HR],filter:"A"+HR+":"+cl(nc-1)+(r0+rows.length-1),land:1,tab:BL,foot:cfg.name+" · "+stamp};
+      out.push(row(r,cells,Math.max(21,ln*13.5+6)))});
+    var s1={name:"부적합 목록",nc:nc,nr:r0+rows.length-1,cols:C.map(function(c){return c[2]}),rows:out,merges:merges,freeze:[1,HR],filter:"A"+HR+":"+cl(nc-1)+(r0+rows.length-1),land:1,tab:BL,foot:cfg.name+" · "+stamp};
     /* ---------- 시트 2: 요약 ---------- */
     var hd=X({f:{b:1,c:"FFFFFF"},bg:NAVY,h:"center"}),hdL=X({f:{b:1,c:"FFFFFF"},bg:NAVY,h:"left",ind:1});
     var tL=X({f:{c:INK},h:"left",ind:1,b:{b:["thin",LINE]}}),tN=X({f:{c:INK},h:"right",n:"#,##0",b:{b:["thin",LINE]}}),tP=X({f:{c:MUT},h:"right",n:"0.0%",b:{b:["thin",LINE]}}),tR=X({f:{c:MUT},h:"center",b:{b:["thin",LINE]}}),tS=X({f:{b:1,c:NAVY},bg:"EAF0FB",h:"right",n:"#,##0",b:{t:["thin","B9C6DD"]}}),tSL=X({f:{b:1,c:NAVY},bg:"EAF0FB",h:"left",ind:1,b:{t:["thin","B9C6DD"]}});
