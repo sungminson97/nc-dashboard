@@ -1062,6 +1062,7 @@ body.islive #headline{display:none}
 .lwho.done .dot{border:0;background:var(--done);animation:bdPop .35s cubic-bezier(.3,1.6,.5,1) both}
 @keyframes lspin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.lwho,.lwho .dot{animation:none}}
+.lwho[hidden],#lnameW[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -2628,7 +2629,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-0010",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-0025",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
