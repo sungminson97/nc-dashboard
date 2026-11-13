@@ -733,6 +733,10 @@ body.locked #toTop{display:none}
 
 @media(min-width:761px) and (max-width:1520px){#lgTbl .tbl th[data-k="id"],#lgTbl .tbl td[data-k="id"]{display:none}#lgTbl .tbl th,#lgTbl .tbl td{padding-left:8px;padding-right:8px}}
 @media(min-width:761px) and (max-width:1380px){#lgTbl .tbl th[data-k="part"],#lgTbl .tbl td[data-k="part"]{display:none}}
+
+@media(min-width:761px){#lgTbl .tbl td[data-k="pn"]{white-space:nowrap;overflow-wrap:normal;font-size:12px;min-width:0}#lgTbl .tbl td[data-k="gubun"],#lgTbl .tbl td[data-k="cost"],#lgTbl .tbl td[data-k="ship"]{white-space:nowrap;overflow-wrap:normal}#lgTbl .tbl td[data-k="desc"]{min-width:200px}}
+@media(min-width:761px) and (max-width:1520px){#lgTbl .tbl th[data-k="ship"],#lgTbl .tbl td[data-k="ship"]{display:none}}
+@media(min-width:761px) and (max-width:1380px){#lgTbl .tbl td[data-k="pn"]{font-size:11.5px}#lgTbl .tbl th[data-k="cost"],#lgTbl .tbl td[data-k="cost"]{display:none}}
 </style>
 </head>
 <body>
@@ -1299,7 +1303,7 @@ function renderLedger(){
   $("nav3").innerHTML='<h4>귀책 상위</h4>'+vs.map(function(v){return '<button data-v="'+esc(v)+'" style="--p:'+Math.round(vc[v]/vc[vs[0]]*100)+'%" '+(S.f.ven===v?'aria-current="true"':'')+'><span class="l">'+esc(v)+'</span><span class="n">'+vc[v]+'</span></button>'}).join("");
   syncSel();
   drawLedTrend(ledF(all));drawLedBars(rows);drawLedTable(rows);drawChkBar();
-  var un=SRC==="qc"?rows.filter(function(x){return x.chk!=="확인"&&canChk(x)}).length:0,cb=$("lgChkAll");if(cb){cb.style.display=un?"":"none";if(cb.dataset.ask!=="1")cb.textContent="내 미확인 "+un+"건 모두 확인"}}
+  var un=SRC==="qc"?rows.filter(function(x){return x.chk!=="확인"&&canChk(x)}).length:0,cb=$("lgChkAll");if(cb){cb.style.display=un?"":"none";if(cb.dataset.ask!=="1")cb.textContent=(ME.role==="개발자"?"미확인 ":"내 미확인 ")+un+"건 모두 확인"}}
 
 var TS={};
 function drawLedTrend(rows){
@@ -1400,7 +1404,7 @@ $("chkBar").addEventListener("click",function(e){var b=e.target.closest("button.
 /* ================= 분석 (품질검수) ================= */
 /* 20% 감소 목표 — 검수장비 수 / 출하·부적합 건수는 시트 backlog_raw 연결 전까지 아래 값을 직접 입력 (1월~12월) */
 var KEEP={};
-function canChk(x){return !!ME.name&&String(x.finder||"").trim()===String(ME.name).trim()}
+function canChk(x){if(ME.role==="개발자")return true;return !!ME.name&&String(x.finder||"").trim()===String(ME.name).trim()}
 var EQD=[],CHK={},ME={name:"",role:""},CHK_FROM=new Date(2026,10,1),chkBusy=0;
 function applyChk(){(LED.qc||[]).forEach(function(x){var c=CHK[x.ck];x.chk=c?"확인":"미확인";x.chkBy=c?c.by:""})}
 var GOAL={pct:20,target:2.68,steps:[5,10,15,20,25,30],eq:[27,19,30,35,34,31,45,52,40,45,13,0],ship:[14,8,16,4,15,7,7,16,6,7,0,0]};
@@ -1527,7 +1531,7 @@ var XL=(function(){
     x+='<sheetData>'+o.rows.join("")+'</sheetData>';
     if(o.filter)x+='<autoFilter ref="'+o.filter+'"/>';
     if(o.merges&&o.merges.length)x+='<mergeCells count="'+o.merges.length+'">'+o.merges.map(function(m){return '<mergeCell ref="'+m+'"/>'}).join("")+'</mergeCells>';
-    (o.cf||[]).forEach(function(c,i){x+='<conditionalFormatting sqref="'+c.ref+'"><cfRule type="dataBar" priority="'+(i+1)+'"><dataBar><cfvo type="num" val="0"/><cfvo type="max"/><color rgb="FF'+c.color+'"/></dataBar></cfRule></conditionalFormatting>'});
+    [].forEach(function(c,i){x+='<conditionalFormatting sqref="'+c.ref+'"><cfRule type="dataBar" priority="'+(i+1)+'"><dataBar><cfvo type="num" val="0"/><cfvo type="max"/><color rgb="FF'+c.color+'"/></dataBar></cfRule></conditionalFormatting>'});
     x+='<pageMargins left="0.4" right="0.4" top="0.6" bottom="0.6" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="'+(o.land?"landscape":"portrait")+'" fitToWidth="1" fitToHeight="0"/>';
     x+='<headerFooter><oddFooter>&amp;L'+esc(o.foot||"")+'&amp;R&amp;P / &amp;N</oddFooter></headerFooter>';
     if(o.drawing)x+='<drawing r:id="rId1"/>';
@@ -1542,7 +1546,7 @@ var XL=(function(){
       var val='<c:val><c:numRef><c:f>'+esc(s.ref)+'</c:f><c:numCache><c:formatCode>General</c:formatCode><c:ptCount val="'+s.v.length+'"/>'+s.v.map(function(v,j){return '<c:pt idx="'+j+'"><c:v>'+v+'</c:v></c:pt>'}).join("")+'</c:numCache></c:numRef></c:val>';
       return '<c:ser><c:idx val="'+i+'"/><c:order val="'+i+'"/><c:tx><c:strRef><c:f>'+esc(s.nameRef)+'</c:f><c:strCache><c:ptCount val="1"/><c:pt idx="0"><c:v>'+esc(s.name)+'</c:v></c:pt></c:strCache></c:strRef></c:tx>'
         +'<c:spPr><a:solidFill><a:srgbClr val="'+s.color+'"/></a:solidFill></c:spPr><c:invertIfNegative val="0"/>'
-        +(o.labels?'<c:dLbls><c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>'+txp(900,"4B5563")+'<c:showLegendKey val="0"/><c:showVal val="1"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showBubbleSize val="0"/></c:dLbls>':'')
+        +(o.labels?'<c:dLbls><c:spPr><a:noFill/><a:ln><a:noFill/></a:ln></c:spPr>'+txp(900,"4B5563")+(o.stack?'':'<c:dLblPos val="outEnd"/>')+'<c:showLegendKey val="0"/><c:showVal val="1"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showBubbleSize val="0"/></c:dLbls>':'')
         +cat+val+'</c:ser>'}).join("");
     var ax='<c:catAx><c:axId val="111"/><c:scaling><c:orientation val="'+(bar?"maxMin":"minMax")+'"/></c:scaling><c:delete val="0"/><c:axPos val="'+(bar?"l":"b")+'"/><c:numFmt formatCode="General" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:spPr><a:ln w="9525"><a:solidFill><a:srgbClr val="CBD2DD"/></a:solidFill></a:ln></c:spPr>'+txp(900,"374151")+'<c:crossAx val="222"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/><c:noMultiLvlLbl val="0"/></c:catAx>'
       +'<c:valAx><c:axId val="222"/><c:scaling><c:orientation val="minMax"/><c:min val="0"/></c:scaling><c:delete val="0"/><c:axPos val="'+(bar?"b":"l")+'"/><c:majorGridlines><c:spPr><a:ln w="6350"><a:solidFill><a:srgbClr val="E5E9F0"/></a:solidFill></a:ln></c:spPr></c:majorGridlines><c:numFmt formatCode="#,##0" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:spPr><a:ln><a:noFill/></a:ln></c:spPr>'+txp(900,"6B7280")+'<c:crossAx val="111"/><c:crosses val="'+(bar?"max":"autoZero")+'"/><c:crossBetween val="between"/></c:valAx>';
@@ -1657,7 +1661,7 @@ function xlsxOut(){
       put(t0+1,[cell(t0+1,1,lbl,hdL),cell(t0+1,2,"순위",hd),cell(t0+1,3,"건수",hd),cell(t0+1,4,"비율",hd),cell(t0+1,5,"",hd)],22);
       arr.forEach(function(a,i){var r=t0+2+i;put(r,[cell(r,1,a[0],tL),cell(r,2,i+1,tR),cell(r,3,a[1],tN),cell(r,4,a[1]/total,tP,"D"+r+"/$C$6"),cell(r,5,"",tN)],20)});
       var a0=t0+2,a1=t0+1+arr.length;cf.push({ref:"D"+a0+":D"+a1,color:color});
-      charts.push({title:title,dir:"bar",stack:false,gap:45,labels:true,cat:{ref:"'요약'!$B$"+a0+":$B$"+a1,v:arr.map(function(a){return a[0]})},series:[{name:"건수",nameRef:"'요약'!$D$"+(t0+1),ref:"'요약'!$D$"+a0+":$D$"+a1,v:arr.map(function(a){return a[1]}),color:BL}]});
+      charts.push({title:title,dir:"col",stack:false,gap:70,labels:true,cat:{ref:"'요약'!$B$"+a0+":$B$"+a1,v:arr.map(function(a){return a[0]})},series:[{name:"건수",nameRef:"'요약'!$D$"+(t0+1),ref:"'요약'!$D$"+a0+":$D$"+a1,v:arr.map(function(a){return a[1]}),color:BL}]});
       chartRows.push([t0,a1+1]);nxt=a1+3}
     top(isQ?"귀책 TOP 10":"귀책업체 TOP 10","ven",isQ?"귀책":"귀책업체",10,"9DBBFF");
     top((isQ?"제조 담당자":"발견자")+" TOP 10","finder",isQ?"제조 담당자":"발견자",10,"9DBBFF");
