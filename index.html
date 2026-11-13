@@ -1379,7 +1379,8 @@ function anCompute(){
   var Q=LED.qc||[],HE=Q.filter(function(x){return x.c1==="제조불량"}),i,base=GOAL.target/(1-GOAL.pct/100);
   var ft=[];for(i=0;i<12;i++)ft.push(0);HE.forEach(function(x){ft[x.m]+=x.qty});
   var mo=[],cum={eq:0,ft:0,ship:0,tot:0},haseq=EQD.length>0,eqm=[0,0,0,0,0,0,0,0,0,0,0,0];EQD.forEach(function(x){eqm[x.m]++});
-  for(i=0;i<12;i++){var e=haseq?eqm[i]:GOAL.eq[i],sh=GOAL.ship[i],t=ft[i]+sh;mo.push({m:i,eq:e,ft:ft[i],ship:sh,tot:t,r:i<=CM&&e?t/e:null});if(i<=CM){cum.eq+=e;cum.ft+=ft[i];cum.ship+=sh;cum.tot+=t}}
+  var shm=[0,0,0,0,0,0,0,0,0,0,0,0],hasin=(LED.in||[]).length>0;(LED.in||[]).forEach(function(x){if(x.gubun==="출하"&&x.c1==="제조불량")shm[x.m]+=x.qty});
+  for(i=0;i<12;i++){var e=haseq?eqm[i]:GOAL.eq[i],sh=hasin?shm[i]:GOAL.ship[i],t=ft[i]+sh;mo.push({m:i,eq:e,ft:ft[i],ship:sh,tot:t,r:i<=CM&&e?t/e:null});if(i<=CM){cum.eq+=e;cum.ft+=ft[i];cum.ship+=sh;cum.tot+=t}}
   cum.r=cum.eq?cum.tot/cum.eq:null;
   var tiers=[0].concat(GOAL.steps).map(function(p){return{p:p,v:base*(1-p/100)}});
   var tierOf=function(r){if(r==null)return"-";var b=null;tiers.forEach(function(t){if(t.p>0&&r<=t.v+1e-9)b=t.p});return b?b+"%":"미달"};
@@ -1413,7 +1414,7 @@ function drawAnalysis(){
   var rc=function(r){return r==null?"":(r<=GOAL.target+1e-9?"ok":"bad")};
   h+='<tr class="goal"><td>대당 불량(건/대)</td><td class="r b '+rc(A.cum.r)+'">'+f2(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r '+rc(o.r)+'">'+f2(o.r)+'</td>'}).join("")+'</tr>';
   h+='<tr><td>달성 감소율</td><td class="r b">'+A.tierOf(A.cum.r)+'</td>'+A.mo.map(function(o){return '<td class="r">'+A.tierOf(o.r)+'</td>'}).join("")+'</tr>';
-  h+='</tbody></table></div><div class="an-note">대당 불량 = 최종합계 ÷ 검수장비. 목표('+f2(GOAL.target)+') 이하면 초록, 초과면 빨강. 불량수량(FT)은 시트 데이터(제조불량 수량)로 자동 집계되고, 검수장비는 backlog_raw의 QC 완료 장비 수로 자동 집계되고, 출하/부적합은 입력값이에요.</div></div>';
+  h+='</tbody></table></div><div class="an-note">대당 불량 = 최종합계 ÷ 검수장비. 목표('+f2(GOAL.target)+') 이하면 초록, 초과면 빨강. 불량수량(FT)은 시트 데이터(제조불량 수량)로 자동 집계되고, 검수장비는 backlog_raw의 QC 완료 장비 수, 출하/부적합은 수입/공정 탭에서 구분=출하·대분류=제조불량인 불량수량으로 자동 집계돼요.</div></div>';
   /* 1-b. 감소율별 */
   h+='<div class="ac"><div class="ah"><h3>감소율별 목표표</h3><span class="am">'+(A.cum.eq?'올해 누적 검수장비 '+A.cum.eq+'대 · 현재 최종합계 '+A.cum.tot+'건 · 대당 '+f2(A.cum.r):'')+'</span></div><div class="tw"><table class="at"><thead>'+th(["감소율","대당 목표","누적 허용 불량수","현재 불량수","여유(+) / 초과(−)","월별 달성","상태"])+'</thead><tbody>';
   A.tiers.forEach(function(t){var al=Math.round(t.v*A.cum.eq),gap=al-A.cum.tot,okm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null&&o.r<=t.v+1e-9}).length,tm=A.mo.filter(function(o,k){return k<=CM&&o.r!=null}).length;
@@ -1659,7 +1660,7 @@ function xlsxOut(){
       var c11=[cell(11,1,"대당 불량(건/대)",tLb),cell(11,2,A.cum.r,rs(A.cum.r),'IFERROR(C10/C7,"")')];A.mo.forEach(function(o,k){c11.push(o.r==null?cell(11,3+k,null,tE):cell(11,3+k,o.r,rs(o.r),'IFERROR('+cl(3+k)+'10/'+cl(3+k)+'7,"")'))});put(11,c11,24);
       var tc=function(v){return v==="미달"?badC:(v==="-"?tC:okC)};
       var c12=[cell(12,1,"달성 감소율",tL),cell(12,2,A.tierOf(A.cum.r),tc(A.tierOf(A.cum.r)))];A.mo.forEach(function(o,k){var t=A.tierOf(o.r);c12.push(o.r==null?cell(12,3+k,null,tE):cell(12,3+k,t,tc(t)))});put(12,c12,22);
-      put(13,[cell(13,1,"대당 불량 = 최종합계 ÷ 검수장비. 목표 "+GOAL.target.toFixed(2)+" 이하는 초록, 초과는 빨강. 검수장비·출하/부적합은 입력값입니다.",note)],18);
+      put(13,[cell(13,1,"대당 불량 = 최종합계 ÷ 검수장비. 목표 "+GOAL.target.toFixed(2)+" 이하는 초록, 초과는 빨강. 검수장비(backlog_raw)와 출하/부적합(수입/공정 탭 구분=출하·제조불량)은 자동 집계입니다.",note)],18);
       /* 2 */
       secRow(15,"감소율별 목표표");
       put(16,[cell(16,1,"감소율",hdL),cell(16,2,"대당 목표",hd),cell(16,3,"누적 허용 불량수",hd),cell(16,4,"현재 불량수",hd),cell(16,5,"여유(+) / 초과(-)",hd),cell(16,6,"월별 달성",hd),cell(16,7,"상태",hd)],34);
@@ -1910,9 +1911,17 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   var BASE=null,PEND=null,bar=$("syncBar"),polling=false;
   function hideBar(){bar.classList.remove("on")}
   function showBar(r){
-    var cnt=(+r.n_in||0)+(+r.n_qc||0)-(LED.in.length+LED.qc.length);
-    $("syncMsg").textContent=cnt>0?"새 부적합 "+cnt+"건이 등록되었어요":"기록이 수정되었어요";
-    PEND=r.v;bar.classList.add("on")}
+    if(VERNEW)return;
+    var dq=(+r.n_qc||0)-LED.qc.length,di=(+r.n_in||0)-LED.in.length,pt=[];
+    if(dq>0)pt.push("품질검수 "+dq+"건");if(di>0)pt.push("수입/공정 "+di+"건");
+    $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
+    $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
+  /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
+  var VER=null,VERNEW=false;
+  function verSig(){return fetch(location.href.split("#")[0].split("?")[0],{method:"HEAD",cache:"no-store"}).then(function(r){if(!r.ok)throw 0;var e=(r.headers.get("etag")||"")+"|"+(r.headers.get("last-modified")||"");return e==="|"?(r.headers.get("content-length")||""):e})}
+  function verCheck(){if(VERNEW||document.hidden&&VER!==null)return;verSig().then(function(g){if(!g)return;if(VER===null){VER=g;return}
+    if(g!==VER){VERNEW=true;$("syncMsg").textContent="최신 버전으로 업데이트되었어요";$("syncGo").dataset.ver="1";bar.classList.add("on")}}).catch(function(){})}
+  verCheck();setInterval(verCheck,45000);document.addEventListener("visibilitychange",function(){if(!document.hidden)verCheck()});
   function poll(){
     if(!LIVE||!TK||polling||document.body.classList.contains("locked")||document.hidden)return;
     polling=true;
@@ -1924,6 +1933,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
       if(r.v!==BASE&&r.v!==PEND)showBar(r)
     }).catch(function(){polling=false})}
   $("syncGo").onclick=function(){
+    if(this.dataset.ver==="1"){location.reload();return}
     var b=this;b.disabled=true;b.textContent="불러오는 중";
     loadLive(TK,true).then(function(){BASE=PEND;PEND=null;hideBar();buildFbar();render()})
       .catch(function(){logout("다시 로그인해 주세요.")})
