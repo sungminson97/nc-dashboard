@@ -1790,6 +1790,13 @@ html.nomo *,html.nomo *::before,html.nomo *::after{animation-duration:.001s!impo
 @media (max-width:760px){.bd-svg.mc .mc-vl.sm{display:none}}
 
 /* 요약 칸 자세히 */
+.rg-menu{position:fixed;z-index:400;width:232px;padding:12px;border-radius:12px;background:var(--surface);border:1px solid var(--line);box-shadow:0 18px 48px rgba(0,0,0,.42);animation:rgIn .16s ease both}
+.rg-menu p{margin:0 0 9px 2px;font-size:11.5px;color:var(--fg4)}
+.rg-g{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.rg-g button{height:32px;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--fg2);background:var(--track);border:1px solid transparent;font-variant-numeric:tabular-nums;transition:background .12s,color .12s,border-color .12s}
+.rg-g button:hover,.rg-g button:focus-visible{color:var(--fg);border-color:var(--line);outline:0}
+.rg-g button[aria-pressed="true"]{background:var(--accent);color:#fff}
+@keyframes rgIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 .stat .stl{list-style:none;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--line);display:grid;gap:7px;font-size:12px;line-height:1.5;color:var(--fg3)}
 .stat .stl:empty{display:none}
 .stat .stl li{text-wrap:pretty;word-break:keep-all;overflow-wrap:anywhere}
@@ -1983,6 +1990,7 @@ html.nomo *,html.nomo *::before,html.nomo *::after{animation-duration:.001s!impo
           <button data-r="m" aria-pressed="true">이번 달</button>
           <button data-r="q" aria-pressed="false">3개월</button>
           <button data-r="y" aria-pressed="false">올해</button>
+          <button data-r="p" id="rgPick" aria-pressed="false" aria-haspopup="true">월 선택</button>
         </div>
         <div class="seg" id="site" role="group" aria-label="사업장">
           <button data-st="all" aria-pressed="true">전체</button>
@@ -2159,11 +2167,11 @@ var $=function(i){return document.getElementById(i)};
 function fd(d){return (d.getMonth()+1)+"/"+d.getDate()}
 function late(x){return x.st!==3&&x.rd<TODAY}
 function sOK(x){return SITE==="all"||x.site===SITE}
-function inR(x){return sOK(x)&&(range==="m"?x.m===CM:range==="q"?x.m>=CM-2:true)}
+function inR(x){return sOK(x)&&(range==="m"?x.m===CM:range==="p"?x.m===PM:range==="q"?x.m>=CM-2:true)}
 function ago(d){var n=Math.round((TODAY-d)/DAY);return n<=0?"오늘":n+"일 전"}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 var SRC="nc",SITE="all";
-var range="m",metric="n",dim="ven",filt="open",view="overview",vendor="",qs="",curList=[],curId="";
+var PM=0,range="m",metric="n",dim="ven",filt="open",view="overview",vendor="",qs="",curList=[],curId="";
 
 /* 상태 원 */
 function ring(st,s){s=s||14;var c=COL[st],pie="";
@@ -2190,9 +2198,9 @@ function matchQ(x){if(!qs)return true;var s=(x.id+" "+x.eq+" "+x.pn+" "+x.ven+" 
 
 function renderNC(){
   var rows=base(),open=rows.filter(function(x){return x.st!==3}),lt=rows.filter(late),out=rows.filter(function(x){return x.st===1}),done=rows.length-open.length;
-  var lab={m:"이번 달 (11/1~11/13)",q:"최근 3개월 (9/1~11/13)",y:"올해 (1/1~11/13)"}[range];
+  var lab={m:"이번 달 (11/1~11/13)",q:"최근 3개월 (9/1~11/13)",y:"올해 (1/1~11/13)"}[range]||rgName();
   $("hlB").textContent="미처리 "+open.length+"건";
-  $("hLab").textContent={m:"이번 달 부적합",q:"최근 3개월 부적합",y:"올해 부적합"}[range];
+  $("hLab").textContent=({m:"이번 달 부적합",q:"최근 3개월 부적합",y:"올해 부적합"}[range]||rgName()+" 부적합");
   countTo($("hNum"),rows.length);
   var prev=data.filter(function(x){return x.m===CM-1&&x.d.getDate()<=13&&sOK(x)}).length,cur=data.filter(function(x){return x.m===CM&&sOK(x)}).length,df=cur-prev;
   $("hDl").innerHTML=range==="m"?'<span class="delta '+(df>0?"dUp":"dDn")+'">'+(df>0?"+":"")+df+'건</span>지난달 같은 기간 <em>'+prev+'건</em>':'불량 수량 합계 <em>'+rows.reduce(function(a,x){return a+x.qty},0)+'개</em>';
@@ -2342,8 +2350,23 @@ $("scrim").onclick=closeDrawer;
 
 /* ================= 이벤트 ================= */
 function seg(id,attr,set){$(id).addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+  if(b.id==="rgPick"){rgOpen(b);return}if(id==="range")rgClose();
   set(b.getAttribute(attr));[].forEach.call(this.querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x===b)});showAll=false;render()})}
-seg("range","data-r",function(v){range=v});
+seg("range","data-r",function(v){range=v;rgLbl()});
+/* 월 선택: 지난 달을 눌러서 골라 봐요 (이번 달은 '이번 달' 버튼) */
+function rgLbl(){var b=$("rgPick");if(!b)return;b.textContent=range==="p"?(PM+1)+"월":"월 선택";b.hidden=CM<1}
+function rgClose(){var m=$("rgMenu");if(m)m.remove();document.removeEventListener("mousedown",rgOut,true);document.removeEventListener("keydown",rgKey,true)}
+function rgOut(e){if(!e.target.closest("#rgMenu")&&!e.target.closest("#rgPick"))rgClose()}
+function rgKey(e){if(e.key==="Escape"){rgClose();$("rgPick").focus()}}
+function rgOpen(b){if($("rgMenu")){rgClose();return}
+  var m=document.createElement("div"),h='<p>지난 달 보기</p><div class="rg-g">';m.id="rgMenu";m.className="rg-menu";m.setAttribute("role","menu");
+  for(var i=0;i<CM;i++)h+='<button type="button" role="menuitem" data-pm="'+i+'" aria-pressed="'+(range==="p"&&PM===i)+'">'+(i+1)+'월</button>';
+  m.innerHTML=h+'</div>';document.body.appendChild(m);
+  var r=b.getBoundingClientRect(),w=m.offsetWidth;m.style.top=(r.bottom+8)+"px";m.style.left=Math.max(12,Math.min(window.innerWidth-w-12,r.right-w))+"px";
+  m.onclick=function(e){var x=e.target.closest("button[data-pm]");if(!x)return;PM=+x.dataset.pm;range="p";
+    [].forEach.call($("range").querySelectorAll("button"),function(q){q.setAttribute("aria-pressed",q===b)});rgLbl();rgClose();showAll=false;render()};
+  setTimeout(function(){document.addEventListener("mousedown",rgOut,true);document.addEventListener("keydown",rgKey,true);var f=m.querySelector('[aria-pressed="true"]')||m.querySelector("button");if(f)f.focus()},0)}
+rgLbl();
 seg("site","data-st",function(v){SITE=v});
 seg("metric","data-m",function(v){metric=v;$("trendSub").textContent=v==="n"?"제조불량 · 귀책 N/A 제외":"불량 수량 합계"});
 seg("dim","data-d",function(v){dim=v});
@@ -2414,7 +2437,8 @@ LCFG.f1={name:"1차 검수 부적합",
 var LS={qc:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},in:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},f1:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50}};
 var SC={"성남":"var(--st1)","동탄":"var(--st2)","미분류":"var(--st3)"};
 function ledAll(){return LED[SRC].filter(sOK)}
-function inRg(x){return range==="m"?x.m===CM:range==="q"?x.m>=CM-2:true}
+function inRg(x){return range==="m"?x.m===CM:range==="p"?x.m===PM:range==="q"?x.m>=CM-2:true}
+function rgName(){return range==="p"?(PM+1)+"월":{m:"이번 달",q:"최근 3개월",y:"올해"}[range]}
 function ledF(rows){var S=LS[SRC];return rows.filter(function(x){for(var k in S.f){if(k==="chk"&&KEEP[x.id])continue;if(k==="proj"){if(S.f.proj&&String(x.proj||"").toLowerCase().indexOf(S.f.proj.toLowerCase())<0)return false;continue}if(S.f[k]&&String(x[k])!==S.f[k])return false}
   if(qs){var t=(x.id+" "+x.proj+" "+x.part+" "+x.pn+" "+x.ven+" "+x.c1+" "+x.c3+" "+x.finder+" "+x.desc).toLowerCase();if(!qs.toLowerCase().split(/\s+/).every(function(w){return t.indexOf(w)>=0}))return false}return true})}
 function fmtCost(v){return v?v.toLocaleString()+"만":"-"}
@@ -2449,21 +2473,23 @@ function buildFbar(){
 
 function renderLedger(){
   var cfg=LCFG[SRC],S=LS[SRC],all=ledAll(),rows=ledF(all.filter(inRg));
-  var lab={m:"이번 달",q:"최근 3개월",y:"올해"}[range];
+  var lab=rgName();
   $("lgLab").textContent=cfg.name+" · "+lab+" · "+(SITE==="all"?"성남+동탄":SITE);
   countTo($("lgNum"),rows.length);
-  var PR=ledF(all.filter(function(x){return x.m===CM-1&&x.d.getDate()<=TODAY.getDate()})),prev=PR.length,cur=ledF(all.filter(function(x){return x.m===CM})).length,df=cur-prev;
-  $("lgDl").innerHTML=range==="m"?'<span class="delta '+(df>0?"dUp":"dDn")+'">'+(df>0?"+":"")+df+'건</span>지난달 같은 기간 <em>'+prev+'건</em>':'필터 반영 결과';
+  /* 비교 기준: 이번 달은 지난달 1일~오늘 날짜까지, 고른 달은 그 앞 달 전체 */
+  var isP=range==="p",BM=isP?PM:CM,cmpOn=(range==="m"||isP)&&BM>0,dd=TODAY.getDate(),pvL=BM+"월"+(isP?"":(dd>1?" 1~"+dd+"일":" 1일"));
+  var PR=ledF(all.filter(function(x){return x.m===BM-1&&(isP||x.d.getDate()<=dd)})),prev=PR.length,cur=ledF(all.filter(function(x){return x.m===BM})).length,df=cur-prev;
+  $("lgDl").innerHTML=cmpOn?'<span class="delta '+(df>0?"dUp":"dDn")+'">'+(df>0?"+":"")+df+'건</span>'+pvL+' <em>'+prev+'건</em>':'필터 반영 결과';
   var qty=rows.reduce(function(a,x){return a+x.qty},0),sn=rows.filter(function(x){return x.site==="성남"}).length;
   var vc={};rows.forEach(function(x){if(x.ven!=="N/A")vc[x.ven]=(vc[x.ven]||0)+1});
   var tv=Object.keys(vc).sort(function(a,b){return vc[b]-vc[a]})[0];
   var FA=ledF(all),mser=function(fn){var a=[];for(var i=0;i<=CM;i++)a.push(0);FA.forEach(function(x){if(x.m<=CM)a[x.m]+=fn(x)});return a};
   var shareV=function(p,c){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class="sviz"><div class="sbar"><i style="width:'+p+'%;background:'+(c||"var(--accent)")+'"></i></div><em>'+p+'%</em></div>'};
   /* 요약 칸: 숫자 + 비율 + 지난달 같은 기간과 비교(이번 달 보기일 때) */
-  var isM=range==="m"&&CM>0,pmN=CM+"월",sumQ=function(a){return a.reduce(function(t,x){return t+(+x.qty||0)},0)},isMf2=function(x){return x.c1==="제조불량"},
+  var isM=cmpOn,pmN=pvL,sumQ=function(a){return a.reduce(function(t,x){return t+(+x.qty||0)},0)},isMf2=function(x){return x.c1==="제조불량"},
       pc2=function(a,b){return b?Math.round(a/b*100):0},topOf=function(a,key,skip){var c={};a.forEach(function(x){var k=x[key];if(!k||k==="-"||k==="N/A"||k==="미지정")return;c[k]=(c[k]||0)+1});return Object.keys(c).sort(function(p,q){return c[q]-c[p]}).filter(function(k){return k!==skip}).map(function(k){return[k,c[k]]})};
   var cmpL=function(cur,pv,u,goodDown){if(!isM)return null;var d=cur-pv,good=goodDown===false?d>0:d<0;
-    return {t:pmN+' 같은 기간 <b>'+pv.toLocaleString()+u+'</b><br>'+(d===0?'<i>변동 없음</i>':'<i class="'+(good?"st-g":"st-r")+'">'+Math.abs(d).toLocaleString()+u+' '+(d>0?"늘었어요":"줄었어요")+(goodDown===false?"":(good?" · 개선 중":" · 주의"))+'</i>')}};
+    return {t:pmN+' <b>'+pv.toLocaleString()+u+'</b><br>'+(d===0?'<i>변동 없음</i>':'<i class="'+(good?"st-g":"st-r")+'">'+Math.abs(d).toLocaleString()+u+' '+(d>0?"늘었어요":"줄었어요")+(goodDown===false?"":(good?" · 개선 중":" · 주의"))+'</i>')}};
   var line=function(t){return {t:t}};
   var mfR=rows.filter(isMf2),mfPR=PR.filter(isMf2),mfTop=topOf(mfR,SRC==="in"?"c2":"c3"),mfWho=topOf(mfR,"finder");
   var stMf=["제조불량",mfR.length,"건","",shareV(rows.length?mfR.length/rows.length*100:0,"var(--bad)"),[
@@ -2482,7 +2508,7 @@ function renderLedger(){
   var un=rows.filter(function(x){return x.site==="미분류"}).length;var dt=rows.length-sn-un,tt3=Math.max(1,rows.length),snP=PR.filter(function(x){return x.site==="성남"}).length,dtP=PR.filter(function(x){return x.site==="동탄"}).length;
   st.push(["성남 / 동탄",sn+" / "+dt,"","",'<div class="sviz"><div class="sbar split"><i style="width:'+(sn/tt3*100)+'%;background:var(--st1)"></i><i style="width:'+(dt/tt3*100)+'%;background:var(--st2)"></i><i style="width:'+(un/tt3*100)+'%;background:var(--st3)"></i></div></div>',[
       line('성남 <b>'+pc2(sn,rows.length)+'%</b> · 동탄 <b>'+pc2(dt,rows.length)+'%</b>'),
-      isM?line(pmN+' 같은 기간 <b>'+snP+' / '+dtP+'</b>'):null,
+      isM?line(pmN+' <b>'+snP+' / '+dtP+'</b>'):null,
       isM?line('성남 '+(sn-snP===0?"변동 없음":'<i class="'+(sn<snP?"st-g":"st-r")+'">'+Math.abs(sn-snP)+'건 '+(sn>snP?"늘었어요":"줄었어요")+'</i>')+'<br>동탄 '+(dt-dtP===0?"변동 없음":'<i class="'+(dt<dtP?"st-g":"st-r")+'">'+Math.abs(dt-dtP)+'건 '+(dt>dtP?"늘었어요":"줄었어요")+'</i>')):null,
       un?line('사업장 미기재 <b>'+un+'건</b> 별도'):null]]);
   var tvs=topOf(rows,"ven"),tvP=topOf(PR,"ven"),tvPrev=tv&&isM?PR.filter(function(x){return x.ven===tv}).length:0;
@@ -2491,7 +2517,7 @@ function renderLedger(){
       tv?cmpL(vc[tv],tvPrev,"건"):null,
       tvs.length>1?line('2위 · <b>'+esc(tvs[1][0])+'</b> '+tvs[1][1]+'건'):null]]);
   var mfa=rows.filter(function(x){return x.c1==="제조불량"}).length,mfp=rows.length?Math.round(mfa/rows.length*100):0;
-  var mfPv=mfPR.length,mfD=mfa-mfPv,mfCmp=isM?' '+pmN+' 같은 기간 제조불량 '+mfPv+'건보다 '+(mfD===0?'변동이 없어요.':'<b class="'+(mfD<0?"g":"mf")+'">'+Math.abs(mfD)+'건 '+(mfD>0?"늘었어요":"줄어서 개선 중이에요")+'</b>.'):'';
+  var mfPv=mfPR.length,mfD=mfa-mfPv,mfCmp=isM?' '+pmN+' 제조불량 '+mfPv+'건보다 '+(mfD===0?'변동이 없어요.':'<b class="'+(mfD<0?"g":"mf")+'">'+Math.abs(mfD)+'건 '+(mfD>0?"늘었어요":"줄어서 개선 중이에요")+'</b>.'):'';
   $("lgMf").innerHTML=SRC==="in"?'<b>'+rows.length+'건</b>은 수입 · 공정 검사에서 나온 <u>전체 부적합</u>이에요. 이 중 <b class="mf">제조불량은 '+mfa+'건</b>('+mfp+'%)이고, 나머지 '+(rows.length-mfa)+'건은 업체 · 설계 등 다른 귀책이에요.'+mfCmp
     :SRC==="qc"?'품질검수에서 <u>발견된 부적합</u> 건수예요(검수한 장비 수가 아니에요). 이 중 <b class="mf">제조불량은 '+mfa+'건</b>('+mfp+'%)이에요.'+mfCmp:'';
   $("lgStats").classList.toggle("s5",st.length===5);
@@ -2798,7 +2824,7 @@ function xlsxOut(){
     var thin=function(c){return{b:["thin",c||LINE]}};
     var now=new Date(),z=function(n){return n<10?"0"+n:""+n},stamp=now.getFullYear()+"-"+z(now.getMonth()+1)+"-"+z(now.getDate())+" "+z(now.getHours())+":"+z(now.getMinutes());
     var S2=LS[SRC],fl=[];Object.keys(S2.f).forEach(function(k){if(S2.f[k]){var n=(cfg.flt.filter(function(a){return a[0]===k})[0]||[k,k])[1];fl.push(n+" "+S2.f[k])}});if(qs)fl.push('검색 "'+qs+'"');
-    var lab={m:"이번 달",q:"최근 3개월",y:"올해"}[range],siteL=SITE==="all"?"성남+동탄":SITE;
+    var lab=rgName(),siteL=SITE==="all"?"성남+동탄":SITE;
     var sub=lab+" · "+siteL+(fl.length?" · "+fl.join(", "):"")+" · 총 "+rows.length.toLocaleString()+"건 · 출력 "+stamp;
     /* ---------- 시트 1: 부적합 목록 ---------- */
     var C=[["id","번호",10,"c"],["d","발생일",12,"d"],["site","사업장",9,"site"],["ship","출하월",8,"c"],["proj",isQ?"출하 프로젝트":"발주 프로젝트",24,"l"],["part",isQ?"위치 · 품명":"품명 · 위치",24,"l"],["ptype","TYPE",16,"l"]];
@@ -3155,7 +3181,7 @@ function bdRank(title,sub,rows,unit,Y,fk,src){
 function drawBoard(){
   var host=$("bdIn");if(!host)return;
   if(!(LED.qc||[]).length&&!(LED.in||[]).length){host.innerHTML='<div class="bd-sk"><i></i><i></i><i></i><i></i><i></i><i class="w"></i></div>';return}
-  var D=bdCompute(),A=D.A,cm=D.cm,sm=D.sm,Y=BD.per==="y",cur=sm===cm,mon=(sm+1)+"월",pmn=D.pm>=0?(D.pm+1)+"월":"",gp=cur?" 같은 기간":"";
+  var D=bdCompute(),A=D.A,cm=D.cm,sm=D.sm,Y=BD.per==="y",cur=sm===cm,mon=(sm+1)+"월",pmn=D.pm>=0?(D.pm+1)+"월":"",gp=cur?(D.dc>1?" 1~"+D.dc+"일":" 1일"):"";
   var qN=Y?D.qy:D.qc,iN=Y?D.iy:D.ic,mfN=Y?D.mfy:D.mfc,tot=qN.length+iN.length,totp=D.qp.length+D.ip.length,cost=Y?D.costY:D.costC;
   var rC=Y?A.cum.r:A.mo[sm].r,rP=sm>0?A.mo[sm-1].r:null,okR=rC!=null&&rC<=GOAL.target+0.005,mine=D.unchk.filter(function(x){return x.finder===ME.name}).length;
   var done=cm>0?D.tt.slice(0,cm):[],avg=done.length?Math.round(done.reduce(function(s,v){return s+v},0)/done.length):0,lastM=cm>0?D.tt[cm-1]:0;
@@ -3163,7 +3189,7 @@ function drawBoard(){
   if(Y)sum='<b>올해 부적합 '+tot+'건</b>'+(avg?' (완료된 달 월평균 '+avg+'건)':'')+', 대당 불량 누적 '+(rC==null?"집계 전":'<b class="'+(okR?"ok":"bad")+'">'+f2(rC)+'건</b>으로 목표('+f2(GOAL.target)+')'+(okR?" 안이에요":"를 넘었어요"))+'.';
   var imf0=iN.filter(function(x){return x.c1==="제조불량"}).length,mfS=' 이 중 <b>제조불량은 '+(mfN.length+imf0)+'건</b>(품질검수 '+mfN.length+' · 수입/공정 '+imf0+')이에요.';
   if(Y)sum+=mfS;
-  else sum='<b>'+mon+' 부적합 '+tot+'건</b>'+(pmn?'은 '+pmn+(cur?' 같은 기간('+D.dc+'일까지)':'')+'보다 '+(pc===null?"새로 늘었고":(pc===0?"비슷하고":Math.abs(pc)+'% '+(pc>0?"늘었고":"줄었고")))+', ':', ')+'대당 불량은 '+(rC==null?"집계 전":'<b class="'+(okR?"ok":"bad")+'">'+f2(rC)+'건</b>으로 목표('+f2(GOAL.target)+')'+(okR?" 안이에요":"를 넘었어요"))+'.'+mfS;
+  else sum='<b>'+mon+' 부적합 '+tot+'건</b>'+(pmn?'은 '+pmn+(cur?' 1~'+D.dc+'일':'')+'보다 '+(pc===null?"새로 늘었고":(pc===0?"비슷하고":Math.abs(pc)+'% '+(pc>0?"늘었고":"줄었고")))+', ':', ')+'대당 불량은 '+(rC==null?"집계 전":'<b class="'+(okR?"ok":"bad")+'">'+f2(rC)+'건</b>으로 목표('+f2(GOAL.target)+')'+(okR?" 안이에요":"를 넘었어요"))+'.'+mfS;
   var k='',sq=function(a){return a.reduce(function(s,x){return s+(+x.qty||0)},0)};
   var tn=function(c,p){var v=bdPct(c,p);return v===null||v>0?'bad':v<0?'ok':''};
   var isMf=function(x){return x.c1==="제조불량"},imf=iN.filter(isMf).length,imfP=D.ip.filter(isMf).length,mfT=mfN.length+imf,mfTP=D.mfp.length+imfP,
@@ -3172,8 +3198,8 @@ function drawBoard(){
     d:Y?'<em>전체 부적합 '+tot+'건 중</em>':(pmn?bdChip(mfT,mfTP)+'<em>'+pmn+gp+' '+mfTP+'건</em>':''),
     s:'품질검수 '+mfN.length+' · 수입/공정 '+imf+' · 전체 부적합 '+tot+'건 중',sp:bdSpark(tmAll,"var(--accent)")});
   k+=bdKpi({t:Y?'':tn(D.mfc.length,D.mfp.length),i:1,l:Y?'올해 품질검수 제조불량':'품질검수 제조불량',v:bdNum(mfN.length),u:'건',
-    d:Y?'<em>월평균 '+(cm?Math.round(D.tm.slice(0,cm).reduce(function(s,v){return s+v},0)/cm):0)+'건</em>':(pmn?bdChip(D.mfc.length,D.mfp.length)+'<em>'+pmn+' '+D.mfp.length+'건</em>':''),
-    s:'품질검수 부적합 '+qN.length+'건 중 · 수량 '+sq(mfN)+'개',sp:bdSpark(D.tm,"var(--bad)")});
+    d:Y?'<em>월평균 '+(cm?Math.round(D.tm.slice(0,cm).reduce(function(s,v){return s+v},0)/cm):0)+'건</em>':(pmn?bdChip(D.mfc.length,D.mfp.length)+'<em>'+pmn+gp+' '+D.mfp.length+'건</em>':''),
+    s:'품질검수 전체 '+qN.length+'건 중 제조불량 '+mfN.length+'건 ('+(qN.length?Math.round(mfN.length/qN.length*100):0)+'%) · 수량 '+sq(mfN)+'개',sp:bdSpark(D.tm,"var(--bad)")});
   k+=bdKpi({t:rC==null?'':(okR?'ok':'bad'),i:2,l:(Y?'올해 누적 대당 불량':'대당 불량')+' (목표 '+f2(GOAL.target)+')',v:bdNum(rC,2),u:'건/대',
     d:Y?(rC!=null?bdChip(rC,A.base)+'<em>기준 '+f2(A.base)+'건/대 대비</em>':''):(rP!=null&&rC!=null?bdChip(rC,rP)+'<em>'+pmn+' '+f2(rP)+'건/대 대비</em>':''),
     s:rC==null?'장비 데이터 연결 후 표시':(okR?'목표 달성 · 감소율 '+A.tierOf(rC):'목표 초과 · '+f2(rC-GOAL.target)+'건/대 높음'),sp:bdSpark(A.mo.slice(0,cm+1).map(function(o){return o.r||0}),okR?"var(--done)":"var(--bad)")});
@@ -3263,7 +3289,7 @@ function bdXlsx(){
     var pct=function(c,p){return p>0?(c-p)/p:null};
     /* 한눈에 보기: 큰 숫자 4칸 */
     secRow(5,"한눈에 보기");
-    var okR=rC!=null&&rC<=GOAL.target+0.005,dPct=function(c,p,unit){if(Y||p==null)return"";var d=pct(c,p);return pmn+(cur?" 같은 기간 ":" ")+(unit==="d"?f2(p):p)+(unit==="d"?"건/대":"건")+(d==null?"":" · "+(d>0?"▲ ":"▼ ")+Math.abs(Math.round(d*100))+"%")};
+    var okR=rC!=null&&rC<=GOAL.target+0.005,dPct=function(c,p,unit){if(Y||p==null)return"";var d=pct(c,p);return pmn+(cur?" 1~"+D.dc+"일 ":" ")+(unit==="d"?f2(p):p)+(unit==="d"?"건/대":"건")+(d==null?"":" · "+(d>0?"▲ ":"▼ ")+Math.abs(Math.round(d*100))+"%")};
     var tiles=[
       {l:(Y?"올해":per)+" 제조불량 합계",v:mfT,n:'#,##0" 건"',s:Y?"전체 부적합 "+tot+"건 중":dPct(mfT,mfTP),up:mfT>mfTP,c:BL},
       {l:"품질검수 제조불량",v:mfN.length,n:'#,##0" 건"',s:Y?"품질검수 부적합 "+qN.length+"건 중":dPct(mfN.length,D.mfp.length),up:mfN.length>D.mfp.length,c:RD},
@@ -3279,10 +3305,10 @@ function bdXlsx(){
     put(6,r6,24);put(7,r7,44);put(8,r8,24);
     /* 핵심 지표 */
     secRow(10,"핵심 지표");
-    put(11,[cell(11,1,"지표",hdL),cell(11,2,"값",hd),cell(11,3,Y?"월평균/기준":pmn+(cur?"(같은 기간)":""),hd),cell(11,4,"증감",hd),cell(11,5,"비고",hdL),cell(11,6,null,hd),cell(11,7,null,hd)],24);MG.push("F11:H11");
+    put(11,[cell(11,1,"지표",hdL),cell(11,2,"값",hd),cell(11,3,Y?"월평균/기준":pmn+(cur?" 1~"+D.dc+"일":""),hd),cell(11,4,"증감",hd),cell(11,5,"비고",hdL),cell(11,6,null,hd),cell(11,7,null,hd)],24);MG.push("F11:H11");
     var cmpV=Y?Math.round(avg):totp;
     var K=[["제조불량 합계(건)",mfT,tB,Y?null:mfTP,tN,Y?null:pct(mfT,mfTP),"품질검수 "+mfN.length+" · 수입/공정 "+imf+" (제조 귀책만)"],
-      ["품질검수 제조불량(건)",mfN.length,tN,Y?null:D.mfp.length,tN,Y?null:pct(mfN.length,D.mfp.length),"품질검수 부적합 "+qN.length+"건 중 · 수량 "+mfN.reduce(function(a,x){return a+(+x.qty||0)},0)+"개"],
+      ["품질검수 제조불량(건)",mfN.length,tN,Y?null:D.mfp.length,tN,Y?null:pct(mfN.length,D.mfp.length),"품질검수 전체 "+qN.length+"건 중 제조불량 "+mfN.length+"건 ("+(qN.length?Math.round(mfN.length/qN.length*100):0)+"%) · 수량 "+mfN.reduce(function(a,x){return a+(+x.qty||0)},0)+"개"],
       ["전체 부적합(건)",tot,tN,cmpV,tN,Y?(avg?pct(D.tt[cm-1]||0,avg):null):pct(tot,totp),"품질검수 "+qN.length+" · 수입/공정 "+iN.length+" (귀책 구분 없음)"],
       ["대당 불량(건/대)",rC,rC==null?tM:(okR?tGood:tBad),Y?A.base:rP,tD,Y?(rC!=null?pct(rC,A.base):null):(rP!=null&&rC!=null?pct(rC,rP):null),"목표 "+f2(GOAL.target)+(rC!=null?(okR?" · 달성":" · 초과"):"")],
       ["수입/공정 손실비용(만원)",cost,tN,Y?null:D.costP,tN,Y?null:pct(D.costC,D.costP),"수입/공정 "+iN.length+"건"],
@@ -3309,7 +3335,7 @@ function bdXlsx(){
       nxt+=unm.length+2;if(un0){put(nxt,[cell(nxt,1,"담당자 미기재",tL),cell(nxt,2,un0,tN)],21);nxt++}nxt+=1}
     /* 순위 표 */
     var rk=function(title,rows,lbl){
-      secRow(nxt,title);put(nxt+1,[cell(nxt+1,1,lbl,hdL),cell(nxt+1,2,"순위",hd),cell(nxt+1,3,"건수",hd),cell(nxt+1,4,Y?"":pmn+(cur?"(같은 기간)":""),hd),cell(nxt+1,5,Y?"":"증감",hd)],24);
+      secRow(nxt,title);put(nxt+1,[cell(nxt+1,1,lbl,hdL),cell(nxt+1,2,"순위",hd),cell(nxt+1,3,"건수",hd),cell(nxt+1,4,Y?"":pmn+(cur?" 1~"+D.dc+"일":""),hd),cell(nxt+1,5,Y?"":"증감",hd)],24);
       if(!rows.length){put(nxt+2,[cell(nxt+2,1,"기록 없음",tL)],21);nxt+=4;return}
       rows.forEach(function(x,i){var r=nxt+2+i;put(r,[cell(r,1,x.n,i===0?X({f:{b:1,c:NAVY},h:"left",ind:1,b:bo}):tL),cell(r,2,i+1,tC),cell(r,3,x.c,i===0?tB:tN),cell(r,4,Y?"":x.p,Y?tM:tN),cell(r,5,Y||!x.p?"":(x.c-x.p)/x.p,Y||!x.p?tM:tP((x.c-x.p)/x.p))],21)});
       nxt+=rows.length+4};
@@ -3467,7 +3493,7 @@ function f1Bars(m,unit,max,cls){
   var a=Object.keys(m).map(function(k){return[k,m[k]]}).sort(function(x,y){return y[1]-x[1]}).slice(0,max||6),mx=a.length?a[0][1]:1;
   return a.length?'<div class="f1-hb">'+a.map(function(o,i){return '<div class="hb-r" style="--i:'+i+'"><span class="nm" title="'+esc(o[0])+'">'+esc(o[0])+'</span><span class="bar"><i class="'+(cls||"")+'" style="width:'+(o[1]/mx*100)+'%"></i></span><span class="v">'+o[1]+'<small>'+unit+'</small></span></div>'}).join("")+'</div>':'<div class="bd-empty">기록이 없어요</div>'}
 function drawF1(){
-  var host=$("f1In");if(!host)return;var D=f1Data(),A=D.all,R=D.R,mon=(D.sm+1)+"월",pmn=D.sm>0?D.sm+"월":"",gp=D.cur?" 같은 기간":"";
+  var host=$("f1In");if(!host)return;var D=f1Data(),A=D.all,R=D.R,mon=(D.sm+1)+"월",pmn=D.sm>0?D.sm+"월":"",gp=D.cur?" 1~"+TODAY.getDate()+"일":"";
   var months=[];for(var i=0;i<=D.cm;i++)months.push(i);
   var per='<div class="bd-per" id="f1Per" role="group" aria-label="기간"><button data-p="y" aria-pressed="'+D.Y+'">전체</button>'+months.map(function(i){return '<button data-p="'+i+'" aria-pressed="'+(!D.Y&&D.sm===i)+'">'+(i+1)+'월</button>'}).join("")+'</div>';
   var vd=D.c1["업체불량"]||0,mf=D.c1["제조불량"]||0,et=R.length-vd-mf,vp=R.length?Math.round(vd/R.length*100):0,avg=D.eq.length?R.length/D.eq.length:0;
@@ -3505,7 +3531,7 @@ function drawF1(){
     var r=e.target.closest(".fd-r");if(r){openLed(r.dataset.id);return}})})();
 /* ===== 업데이트 기록 (Rev) — 새 버전을 올릴 때 맨 위에 한 줄씩 추가 ===== */
 var REV=[
- {n:12,d:"2026-11-14",t:"제조불량 따로 보기 · 부드러운 화면 전환",i:["현황판 월별 그래프에서 수입/공정은 제조불량만 보여 주고, '휴먼에러' 보기를 골라 소분류별로 볼 수 있어요","현황판 엑셀을 보기 좋게 다시 만들었어요 (요약 칸 · 색 구분 · 꺾은선 그래프 · 미확인 담당자)","목록 엑셀에 요약 줄 · 합계 줄 · 제조불량 색 표시가 들어가고, 요약 시트에 제조불량 건수와 비율이 나와요","요약 칸에서 지난달 같은 기간과 비교해 줄었는지 늘었는지 알려 줘요","수입/공정 · 품질검수 요약에서 전체 부적합과 제조불량을 따로 보여 줘요","현황판 첫 칸이 '제조불량 합계'로 바뀌었어요 (품질검수 + 수입/공정의 제조 귀책)","월별 그래프 막대를 누르면 그 막대만의 내용(소분류 · 담당자 · 귀책 1위)이 나와요","탭을 바꾸거나 담당자를 누를 때 화면이 부드럽게 넘어가요","목록의 수량을 가운데로 맞췄어요"]},
+ {n:12,d:"2026-11-14",t:"제조불량 따로 보기 · 부드러운 화면 전환",i:["현황판 월별 그래프에서 수입/공정은 제조불량만 보여 주고, '휴먼에러' 보기를 골라 소분류별로 볼 수 있어요","현황판 엑셀을 보기 좋게 다시 만들었어요 (요약 칸 · 색 구분 · 꺾은선 그래프 · 미확인 담당자)","목록 엑셀에 요약 줄 · 합계 줄 · 제조불량 색 표시가 들어가고, 요약 시트에 제조불량 건수와 비율이 나와요","요약 칸에서 지난달 같은 기간과 비교해 줄었는지 늘었는지 알려 줘요","품질검수 · 수입/공정에서 '월 선택'을 눌러 지난 달을 골라 볼 수 있어요","비교 기준을 '10월 1~14일'처럼 날짜로 적었어요","수입/공정 · 품질검수 요약에서 전체 부적합과 제조불량을 따로 보여 줘요","현황판 첫 칸이 '제조불량 합계'로 바뀌었어요 (품질검수 + 수입/공정의 제조 귀책)","월별 그래프 막대를 누르면 그 막대만의 내용(소분류 · 담당자 · 귀책 1위)이 나와요","탭을 바꾸거나 담당자를 누를 때 화면이 부드럽게 넘어가요","목록의 수량을 가운데로 맞췄어요"]},
  {n:11,d:"2026-11-14",t:"미확인 불량은 한 건씩 확인 · 연결 끊김 안내",i:["로그인하면 인사말과 함께 현황판이 부드럽게 열려요","재발 방지를 위해 '모두 확인' 버튼을 없앴어요. 내용을 읽고 한 건씩 확인해 주세요","인터넷이나 서버 연결이 끊기면 화면 위에 알려 주고, 마지막으로 받은 데이터를 그대로 보여 줘요","연결이 돌아오면 자동으로 다시 이어져요","그래프를 겹치지 않게 다시 그려서 보기 편해졌어요"]},
  {n:10,d:"2026-11-14",t:"알림 · 미확인 불량 현황",i:["1차 검수 · 품질검수(제조) · 수입/공정(제조불량) 기록이 추가되거나 수정되면 알림이 와요","내가 담당자인 기록은 '내 담당'으로 따로 표시돼요","알림을 누르면 그 기록이 있는 목록으로 바로 가요","현황판에서 담당자별 미확인 불량과 확인률을 한눈에 볼 수 있어요","로그아웃 화면을 새로 꾸몄어요"]},
  {n:9,d:"2026-11-14",t:"쪽지 보내기",i:["오른쪽 위 쪽지 버튼으로 가입한 사람에게 쪽지를 보낼 수 있어요","받는 사람 이름을 입력하면 명단을 확인한 뒤에 내용을 쓸 수 있어요","새 쪽지가 오면 화면에 알림이 떠요","짧은 시간에 쪽지를 너무 많이 보내면 8시간 동안 보낼 수 없어요"]},
@@ -3928,7 +3954,7 @@ $("mout").onclick=function(){logout()};
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261115-1200",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261115-1300",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
