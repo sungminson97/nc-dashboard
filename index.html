@@ -2199,7 +2199,7 @@ function setView(v){
   $("crumb").textContent=v==="list"?"부적합 목록":"개요";$("ov").style.display=v==="list"?"none":"grid";
   if(v==="list")filt="all";showAll=false;drawRows();if(v==="overview")drawTrend();scrollTo({top:0,behavior:"auto"})}
 $("nav1").addEventListener("click",function(e){var b=e.target.closest("button");if(b)setView(b.dataset.v)});
-$("bnav").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;if(b.dataset.s==="search"){if(SRC==="bd")setSrc("qc");scrollTo({top:0,behavior:"auto"});$("q").focus();return}setSrc(b.dataset.s)});
+$("bnav").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;if(b.dataset.s==="search"){if(SRC==="bd")setSrc("qc");scrollTo({top:0,behavior:"auto"});$("q").focus();return}tabGo(b.dataset.s)});
 $("q").addEventListener("input",function(){qs=this.value.trim();showAll=false;if(LEDS()){LS[SRC].lim=50;render();return}drawRows();if(qs&&view==="overview")toList()});
 $("sbtn").onclick=function(){$("q").focus()};
 function toggleTheme(){var l=document.documentElement.getAttribute("data-theme")!=="light";document.documentElement.setAttribute("data-theme",l?"light":"dark");$("theme").textContent=$("mtheme").textContent=l?"다크":"라이트";render()}
@@ -3248,11 +3248,11 @@ function revToast(){var s=revSeen();if(!s){revMark();return}if(s>=REV[0].n)retur
 
 SLD.init();
 $("navB").addEventListener("click",function(e){var b=e.target.closest("button[data-go]");if(!b)return;var g=b.dataset.go;
-  if(g==="in"){setSrc("in");return}
-  if(g==="f1"){setSrc("f1");return}
+  if(g==="in"){tabGo("in");return}
+  if(g==="f1"){tabGo("f1");return}
   if(g==="mine"){LS.qc.f={chk:"미확인",finder:ME.name};KEEP={};LV="ov";setSrc("qc");return}
-  if(g==="an"){LV="an";setSrc("qc");return}
-  LV="ov";setSrc("qc")});
+  if(g==="an"){LS.qc.f={};KEEP={};qs="";$("q").value="";LV="an";setSrc("qc");return}
+  tabGo("qc")});
 
 var LV="ov";
 function applyLV(){var q=SRC==="qc";if(!q)LV="ov";$("lgView").style.display=q?"flex":"none";$("lg").classList.toggle("an",LV==="an");[].forEach.call($("lgView").querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x.dataset.v===LV)})}
@@ -3268,7 +3268,9 @@ function setSrc(v){
   if(led)buildFbar();
   render();scrollTo({top:0,behavior:"auto"});playIn();
   var sw=$(bd?"bd":"lg");if(sw&&(bd||led)){sw.classList.remove("swap");void sw.offsetWidth;sw.classList.add("swap")}SLD.all()}
-document.querySelector(".gnav").addEventListener("click",function(e){var b=e.target.closest("button[data-g]");if(b)setSrc(b.dataset.g)});
+/* 탭 · 메뉴로 들어갈 때는 걸러 보기를 모두 풀고 처음 화면으로 */
+function tabGo(v){if(v==="qc"||v==="in"||v==="f1"){LS[v].f={};LS[v].lim=50;KEEP={};qs="";$("q").value="";if(v==="qc")LV="ov"}setSrc(v)}
+document.querySelector(".gnav").addEventListener("click",function(e){var b=e.target.closest("button[data-g]");if(b)tabGo(b.dataset.g)});
 $("gHome").addEventListener("click",function(e){e.preventDefault();if(LIVE)setSrc("bd");else{setSrc("nc");setView("overview")}});
 
 /* 시안 모드(DB 미연결)용 가짜 서버 — 이 기기 안에서만 저장 */
@@ -3625,7 +3627,7 @@ $("mout").onclick=function(){logout()};
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261115-0100",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261115-0110",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
