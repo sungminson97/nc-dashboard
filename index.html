@@ -1291,6 +1291,34 @@ body.isf1 #lg>.hero,body.isf1 #lg>.cols{display:none!important}
 .rqt .go{color:var(--accent2);font-weight:600;font-size:13px;white-space:nowrap}
 .rqt .x{color:var(--fg4);font-size:17px;line-height:1;padding:0 4px}
 @media (max-width:760px){.rqt{left:16px;right:16px;top:calc(62px + env(safe-area-inset-top,0px))}}
+/* ===== 크리스마스 (11/23 ~ 12/31 자동) ===== */
+#xmSnow{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:8}
+#login #xmSnow{z-index:1}.xmas .lside{position:relative;z-index:2}
+#xmSnow[hidden],.xm-ban[hidden]{display:none!important}
+.xmas .gnav::before,.xmas .gnav::after,.xmas .mhead::before,.xmas .mhead::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:12px;pointer-events:none;background-repeat:repeat-x;background-size:112px 12px}
+.xmas .gnav::before,.xmas .mhead::before{background-image:radial-gradient(circle at 14px 6px,#ff6b6b 0 2.4px,rgba(255,107,107,.35) 3.2px,transparent 6px),radial-gradient(circle at 70px 6px,#ffd36b 0 2.4px,rgba(255,211,107,.35) 3.2px,transparent 6px)}
+.xmas .gnav::after,.xmas .mhead::after{background-image:radial-gradient(circle at 42px 6px,#4ade80 0 2.4px,rgba(74,222,128,.35) 3.2px,transparent 6px),radial-gradient(circle at 98px 6px,#7cc4ff 0 2.4px,rgba(124,196,255,.35) 3.2px,transparent 6px)}
+.xm-ban{display:none}
+.xmas .xm-ban{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px 28px;align-items:center;position:relative;overflow:hidden;padding:22px 26px;border-radius:16px;border:1px solid rgba(255,211,107,.24);
+  background:radial-gradient(90% 160% at 0% 0%,rgba(220,38,38,.26),transparent 60%),radial-gradient(80% 160% at 100% 100%,rgba(22,163,74,.24),transparent 60%),var(--surface)}
+.xm-ban::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(circle,rgba(255,255,255,.55) 0 1px,transparent 1.6px),radial-gradient(circle,rgba(255,255,255,.35) 0 .8px,transparent 1.3px);
+  background-size:46px 46px,29px 29px;background-position:0 0,13px 17px;-webkit-mask-image:linear-gradient(90deg,transparent 30%,#000);mask-image:linear-gradient(90deg,transparent 30%,#000)}
+.xm-ban>*{position:relative;z-index:1;min-width:0}
+.xm-ban .xm-s{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:15px;color:#ffd36b;letter-spacing:.01em}
+.xm-ban h3{margin:4px 0 0;font-size:20px;font-weight:600;letter-spacing:-.02em;text-wrap:balance}
+.xm-ban p{margin:6px 0 0;color:var(--fg3);font-size:13px;line-height:1.6}
+.xm-r{display:flex;align-items:center;gap:20px}
+.xm-cd{display:grid;justify-items:end;line-height:1.1}
+.xm-cd b{font-size:34px;font-weight:700;letter-spacing:-.03em;color:#ffd36b;font-variant-numeric:tabular-nums}
+.xm-cd span{font-size:12px;color:var(--fg3);margin-top:4px}
+.xm-sw{height:32px;padding:0 13px;border-radius:16px;border:1px solid var(--line2);color:var(--fg2);font-size:12.5px;white-space:nowrap;transition:background .15s,color .15s}
+.xm-sw:hover{background:var(--hover);color:var(--fg)}
+:root[data-theme="light"] .xm-ban .xm-s,:root[data-theme="light"] .xm-cd b{color:#b7791f}
+:root[data-theme="light"] .xmas .xm-ban{border-color:rgba(183,121,31,.3)}
+:root[data-theme="light"] .xm-ban::after{opacity:0}
+@media (max-width:760px){.xmas .xm-ban{grid-template-columns:minmax(0,1fr);padding:18px}.xm-r{justify-content:space-between}.xm-cd{justify-items:start}}
+@media (prefers-reduced-motion:no-preference){.xmas .xm-ban{animation:bdUp .6s cubic-bezier(.2,.7,.2,1) both}}
 </style>
 </head>
 <body>
@@ -1517,7 +1545,7 @@ body.isf1 #lg>.hero,body.isf1 #lg>.cols{display:none!important}
       </section>
 
 
-      <section id="bd" style="display:none"><div id="bdIn"></div></section>
+      <section id="bd" style="display:none"><div class="xm-ban" id="xmBan" hidden></div><div id="bdIn"></div></section>
       <section id="lg">
         <div class="vsw" id="lgView" style="display:none"><button data-v="ov" aria-pressed="true">현황</button><button data-v="an" aria-pressed="false">분석</button></div>
         <div id="chkBar" class="chkb" style="display:none"></div>
@@ -2912,10 +2940,47 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
 
 
   /* ---- 로그인 후 로딩 화면: 화면 곳곳의 데이터 입자가 가운데 구체로 빨려 들어가며 분석되는 연출 ---- */
+  /* ---- 크리스마스 테마: 해마다 11/23 ~ 12/31 자동 (주소 끝 ?xmas=1 미리보기, ?xmas=0 끄기) ---- */
+  var XM=(function(){
+    var q=location.search,d0=new Date(),mo=d0.getMonth(),dy=d0.getDate();
+    var on=/[?&]xmas=1/.test(q)||(!/[?&]xmas=0/.test(q)&&((mo===10&&dy>=23)||mo===11));
+    if(!on)return{on:false,ban:function(){}};
+    document.documentElement.classList.add("xmas");
+    var cv=document.createElement("canvas");cv.id="xmSnow";cv.setAttribute("aria-hidden","true");document.body.appendChild(cv);
+    var ctx=cv.getContext&&cv.getContext("2d"),W=0,H=0,fl=[],run=false,last=0,raf=0,off=false,
+        rm=window.matchMedia?matchMedia("(prefers-reduced-motion: reduce)"):{matches:false};
+    try{localStorage.removeItem("nc_snow")}catch(e){}
+    function mk(any){var r=Math.random();return{x:Math.random()*W,y:any?Math.random()*H:-8,r:.7+r*r*2.4,v:.22+r*.85,s:Math.random()*6.28,w:.25+Math.random()*.6,a:.22+r*.42}}
+    function size(){var k=Math.min(1.5,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=Math.round(W*k);cv.height=Math.round(H*k);ctx.setTransform(k,0,0,k,0,0);
+      var n=Math.round(Math.max(24,Math.min(80,W*H/24000)));while(fl.length<n)fl.push(mk(true));fl.length=n}
+    function place(){var lk=document.body.classList.contains("locked"),host=lk?document.getElementById("login"):document.body;if(host&&cv.parentNode!==host)host.insertBefore(cv,host.firstChild)}
+    function frame(t){raf=requestAnimationFrame(frame);if(t-last<32)return;place();var dt=Math.min(3,(t-last)/16.7);last=t;
+      ctx.clearRect(0,0,W,H);ctx.fillStyle=document.documentElement.getAttribute("data-theme")==="light"?"#8ea6c8":"#ffffff";
+      for(var i=0;i<fl.length;i++){var f=fl[i];f.y+=f.v*dt;f.s+=.011*dt;f.x+=Math.sin(f.s)*f.w*.45*dt;
+        if(f.y>H+8){fl[i]=mk(false);continue}if(f.x<-8)f.x=W+8;else if(f.x>W+8)f.x=-8;
+        ctx.globalAlpha=f.a;ctx.beginPath();ctx.arc(f.x,f.y,f.r,0,6.2832);ctx.fill()}
+      ctx.globalAlpha=1}
+    function start(){if(run||off||rm.matches||document.hidden||!ctx)return;run=true;cv.hidden=false;size();last=performance.now();raf=requestAnimationFrame(frame)}
+    function stop(){if(!run)return;run=false;cancelAnimationFrame(raf);ctx.clearRect(0,0,W,H);cv.hidden=true}
+    var rt=0;addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(function(){if(run)size()},150)});
+    document.addEventListener("visibilitychange",function(){document.hidden?stop():start()});
+    function dleft(){var t=new Date(),y=t.getFullYear(),a=new Date(y,t.getMonth(),t.getDate());return{x:Math.round((new Date(y,11,25)-a)/864e5),e:Math.round((new Date(y,11,31)-a)/864e5)+1,y:y}}
+    function ban(name){var b=document.getElementById("xmBan");if(!b)return;var L=dleft(),cd;
+      cd=L.x>0?['D-'+L.x,'크리스마스까지']:L.x===0?['오늘','메리 크리스마스']:[L.e+'일',L.y+'년 남은 날'];
+      b.hidden=false;
+      b.innerHTML='<div><span class="xm-s">Merry Christmas &amp; Happy New Year</span><h3>'+esc(name||"")+(name?'님, ':'')+'올 한 해도 수고 많았어요</h3><p>'+L.y+'년 부적합 기록을 마무리하는 연말이에요. 남은 날도 안전하게 마무리해요.</p></div>'
+        +'<div class="xm-r"><div class="xm-cd"><b>'+cd[0]+'</b><span>'+cd[1]+'</span></div></div>';
+}
+    var hl=document.querySelector(".lhero h1"),hp=document.querySelector(".lhero p");
+    if(hl)hl.innerHTML='올 한 해도<br>수고 많았어요';
+    if(hp)hp.innerHTML='부적합 기록으로 돌아보는 '+d0.getFullYear()+'년.<br>남은 연말도 안전하게 마무리해요.';
+    start();
+    return{on:true,ban:ban,start:start,stop:stop}})();
+
   var SP=(function(){
     var el=$("splash"),cv=$("spCv"),ctx=cv.getContext&&cv.getContext("2d"),run=false,p=0,tgt=0,t0=0,fin=false,raf=0,pts=[],W=0,H=0,mi=-1,
-        MS=["데이터를 불러오고 있어요","AI가 부적합 기록을 분석하고 있어요","AI가 불량 추세를 계산하고 있어요","현황판을 준비하고 있어요"],
-        COL=["#7aa8ff","#22d3ee","#a78bfa","#3d7bff"];
+        MS=XM.on?["데이터를 불러오고 있어요","AI가 올해 부적합 기록을 정리하고 있어요","AI가 연말 마무리 현황을 계산하고 있어요","크리스마스 현황판을 준비하고 있어요"]:["데이터를 불러오고 있어요","AI가 부적합 기록을 분석하고 있어요","AI가 불량 추세를 계산하고 있어요","현황판을 준비하고 있어요"],
+        COL=XM.on?["#ff6b6b","#4ade80","#ffd36b","#ffffff"]:["#7aa8ff","#22d3ee","#a78bfa","#3d7bff"];
     $("spLogo").src=document.querySelector(".gnav .logo").src;
     function size(){var d=Math.min(2,devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0)}
     function spawn(){var a=Math.random()*Math.PI*2,r=Math.max(W,H)*(.45+Math.random()*.35);return{a:a,r:r,v:.004+Math.random()*.006,s:.8+Math.random()*1.8,c:COL[(Math.random()*4)|0]}}
@@ -3024,7 +3089,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   function enter(u,keep){
     document.documentElement.classList.remove("boot");
     ME={name:u[0],role:u[1]};st(SK,JSON.stringify({n:u[0],r:u[1],t:Date.now(),k:TK}),keep);
-    $("meN").textContent=dn(u);$("meR").style.display="none";
+    $("meN").textContent=dn(u);XM.ban(dn(u));$("meR").style.display="none";
     document.body.classList.remove("locked");document.body.classList.add("entered");$("login").classList.add("off");$("login").setAttribute("aria-hidden","true");
     last=Date.now();if(LIVE){try{setSrc("bd")}catch(e){console.error("화면 그리기 오류",e)}setTimeout(poll,1200)}else drawTrend();
   }
@@ -3050,7 +3115,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-1040",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-1120",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
