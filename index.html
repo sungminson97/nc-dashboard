@@ -1233,7 +1233,8 @@ body.isf1 #lg>.hero,body.isf1 #lg>.cols{display:none!important}
 .bell{position:relative;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--fg3);border:1px solid var(--line2);background:transparent;transition:color .15s,border-color .15s,background .15s}
 .bell:hover,.bell[aria-expanded="true"]{color:var(--fg);background:var(--hover)}
 .bell svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.bell.has{color:var(--fg);border-color:rgba(242,106,106,.45)}
+.bell.has{color:var(--bad);border-color:rgba(242,106,106,.55);background:var(--bad-bg)}
+.bell.has svg{fill:currentColor;fill-opacity:.25}
 .bell .bdg{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;font-variant-numeric:tabular-nums;box-shadow:0 0 0 2px var(--bg);transform:scale(0);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 .bell.has .bdg{transform:scale(1)}
 @media (prefers-reduced-motion:no-preference){.bell.ring svg{animation:bring .9s ease-in-out 2;transform-origin:50% 10%}}
@@ -1485,8 +1486,9 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 .dv-t tr.off td{opacity:.5}
 .dv-ft{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--fg4);font-size:12px}
 .dv-rc{display:grid;gap:0}.dv-rc div{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line);font-size:13px}.dv-rc div:first-child{border-top:0}.dv-rc span{color:var(--fg3);font-variant-numeric:tabular-nums}
-.dv-lk button{height:30px;padding:0 12px;border-radius:9px;border:1px solid var(--line2);font-size:12.5px;color:var(--fg2);margin-top:10px}
-.dv-lk button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
+.dv-ub{height:24px;padding:0 9px;margin-left:8px;border-radius:7px;border:1px solid var(--line2);font-size:12px;color:var(--fg2)}.dv-ub:hover{background:var(--hover);color:var(--fg)}
+.dv-lk>button{height:30px;padding:0 12px;border-radius:9px;border:1px solid var(--line2);font-size:12.5px;color:var(--fg2);margin-top:10px}
+.dv-lk>button.arm{background:var(--bad);border-color:var(--bad);color:#fff}
 .dv-msg{position:sticky;bottom:0;align-self:center;padding:9px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--line2);font-size:13px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 .dv-msg[hidden]{display:none}
 @media (max-width:1100px){.dv-k{grid-template-columns:repeat(3,minmax(0,1fr))}.dv-r{grid-template-columns:minmax(0,1fr)}}
@@ -1494,9 +1496,11 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 /* ===== 쪽지 ===== */
 .msbtn{position:relative;height:34px;padding:0 14px;border-radius:17px;border:1px solid var(--line2);color:var(--fg2);font-size:13px;font-weight:600;background:transparent;transition:color .15s,background .15s,border-color .15s}
 .msbtn:hover,.msbtn[aria-expanded="true"]{color:var(--fg);background:var(--hover)}
-.msbtn.has{color:var(--fg);border-color:rgba(79,140,255,.5)}
-.msbtn .bdg,#mmsg .bdg{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;font-variant-numeric:tabular-nums;box-shadow:0 0 0 2px var(--bg);transform:scale(0);transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
-.msbtn.has .bdg,#mmsg.has .bdg{transform:scale(1)}
+.msbtn.has{color:var(--fg)}
+.msbtn,#mmsg{display:inline-flex;align-items:center;justify-content:center}
+.msbtn .bdg,#mmsg .bdg{display:none;width:16px;height:16px;margin-left:6px;border-radius:50%;background:var(--bad);color:#fff;font-size:10px;font-weight:800;line-height:16px;text-align:center;letter-spacing:0}
+.msbtn.has .bdg,#mmsg.has .bdg{display:inline-block;animation:msPop .3s cubic-bezier(.3,1.6,.5,1)}
+@keyframes msPop{from{transform:scale(0)}to{transform:scale(1)}}
 #mmsg{position:relative}
 .msbtn[hidden],#mmsg[hidden],#msNew[hidden],#msList[hidden],#msW[hidden],#msSt[hidden],#msCool[hidden]{display:none!important}
 @media (min-width:761px){.msp{width:420px}}
@@ -1539,8 +1543,17 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 .ms-cnt.full{color:var(--bad)}
 .ms-send{display:block;width:100%;height:42px;margin-top:10px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:14px}
 .ms-send:disabled{opacity:.45}
-.ms-cool{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(245,166,35,.1);color:#f5a623;font-size:12.5px;line-height:1.5;font-variant-numeric:tabular-nums}
-:root[data-theme="light"] .ms-cool{color:#b26b00}
+.ms-cool{margin-top:10px;padding:11px 13px;border-radius:10px;background:var(--bad-bg);border:1px solid rgba(242,106,106,.35);color:var(--bad);font-size:12.5px;line-height:1.55;font-variant-numeric:tabular-nums;display:grid;gap:2px}
+.ms-cool b{font-size:13.5px}.ms-cool span:last-child{color:var(--fg3)}
+.ms-st.warn{color:#f5a623;font-weight:600}:root[data-theme="light"] .ms-st.warn{color:#b26b00}
+.msabg{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.55);opacity:0;transition:opacity .2s}.msabg.on{opacity:1}
+.msa{position:fixed;z-index:81;left:50%;top:50%;width:min(400px,calc(100vw - 32px));transform:translate(-50%,-46%);opacity:0;transition:opacity .2s,transform .25s cubic-bezier(.2,.8,.2,1);background:var(--surface);border:1px solid rgba(242,106,106,.45);border-radius:16px;padding:22px 22px 18px;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.msa.on{opacity:1;transform:translate(-50%,-50%)}
+.msa h3{margin:0 0 10px;font-size:17px;color:var(--bad)}
+.msa p{margin:0 0 6px;font-size:13.5px;line-height:1.6;color:var(--fg2)}
+.msa p.u{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}.msa p.s{color:var(--fg4);font-size:12.5px}
+.msa button{display:block;width:100%;height:42px;margin-top:12px;border-radius:10px;background:var(--bad);color:#fff;font-weight:600;font-size:14px}
+.msa[hidden],.msabg[hidden]{display:none!important}
 .ms-hint{margin:12px 0 0;font-size:12px;color:var(--fg4);line-height:1.6}
 @media (prefers-reduced-motion:reduce){.ms-st.ing::after{animation:none;content:"..."}}
 </style>
@@ -1867,7 +1880,7 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 <div class="devbg" id="devBg" hidden></div><div class="devp" id="devP" role="dialog" aria-modal="true" aria-labelledby="devH" hidden><div class="dv-hd"><h3 id="devH">개발자 도구</h3><span class="dv-tag">DEV</span><span class="dv-at" id="devAt"></span><button type="button" id="devR">새로고침</button><button type="button" id="devX">닫기</button></div><div id="devBody"></div><div class="dv-msg" id="devMsg" hidden></div></div>
 <div class="rqp" id="rqP" role="dialog" aria-modal="false" aria-labelledby="rqH" hidden><div class="rq-hd"><div><h3 id="rqH">요청 확인</h3><p>가입 승인 · PIN 재설정 요청</p></div><button class="rq-x" id="rqX" type="button" aria-label="닫기">×</button></div><div id="rqBody"></div><div class="rq-ft" id="rqNo" hidden></div></div>
 <div class="rqbg" id="msBg" hidden></div>
-<div class="rqp msp" id="msP" role="dialog" aria-modal="false" aria-labelledby="msH" hidden><div class="rq-hd"><div><h3 id="msH">쪽지</h3><p>가입한 사람끼리 주고받아요 · 10분에 1번 보낼 수 있어요</p></div><button class="rq-x" id="msX" type="button" aria-label="닫기">×</button></div>
+<div class="rqp msp" id="msP" role="dialog" aria-modal="false" aria-labelledby="msH" hidden><div class="rq-hd"><div><h3 id="msH">쪽지</h3><p>가입한 사람끼리 주고받아요</p></div><button class="rq-x" id="msX" type="button" aria-label="닫기">×</button></div>
 <div class="ms-tabs" id="msTabs"><button type="button" data-t="in" aria-pressed="true">받은 쪽지<b id="msNIn"></b></button><button type="button" data-t="out" aria-pressed="false">보낸 쪽지</button><button type="button" data-t="new" aria-pressed="false">쪽지 쓰기</button></div>
 <div id="msBody"><div id="msList"></div>
 <div class="ms-new" id="msNew" hidden><div class="ms-cool" id="msCool" hidden></div>
@@ -1875,7 +1888,8 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 <div class="ms-to"><input id="msTo" type="text" placeholder="이름을 입력해 주세요" maxlength="20" autocomplete="off"><button type="button" id="msChk">확인</button></div>
 <p class="ms-st" id="msSt" hidden></p>
 <div id="msW" hidden><label class="ms-lab" for="msTx">내용</label><textarea id="msTx" maxlength="500" rows="6" placeholder="할 말을 적어 주세요"></textarea><div class="ms-cnt"><span id="msCnt">0 / 500</span></div><button type="button" class="ms-send" id="msGo" disabled>보내기</button></div>
-<p class="ms-hint">가입을 마친 사람에게만 보낼 수 있어요. 보낸 쪽지는 받는 사람이 로그인하면 알림으로 떠요.</p></div></div></div>
+<p class="ms-hint">가입을 마친 사람에게만 보낼 수 있어요. 받는 사람 화면에는 1분 안에 알림이 떠요.<br>짧은 시간에 너무 많이 보내면 8시간 동안 쪽지를 보낼 수 없어요.</p></div></div></div>
+<div class="msabg" id="msABg" hidden></div><div class="msa" id="msA" role="alertdialog" aria-modal="true" aria-labelledby="msAH" hidden><h3 id="msAH">쪽지 보내기가 8시간 동안 막혔어요</h3><p id="msAT"></p><p class="u" id="msAU"></p><p class="s">받은 쪽지는 그대로 볼 수 있어요. 잘못 막혔다면 손성민님께 말해 주세요.</p><button type="button" id="msAOk">확인</button></div>
 <div class="rqt" id="rqT" role="status" aria-live="polite"></div>
 <div id="syncBar" role="status" aria-live="polite"><span class="dot"></span><span id="syncMsg">새 기록이 반영되었어요</span><button class="go" id="syncGo" type="button">새로고침</button><button class="x" id="syncX" type="button" aria-label="닫기">×</button></div>
 <script>
@@ -3110,7 +3124,7 @@ function drawF1(){
     var r=e.target.closest(".fd-r");if(r){openLed(r.dataset.id);return}})})();
 /* ===== 업데이트 기록 (Rev) — 새 버전을 올릴 때 맨 위에 한 줄씩 추가 ===== */
 var REV=[
- {n:9,d:"2026-11-14",t:"쪽지 보내기",i:["오른쪽 위 쪽지 버튼으로 가입한 사람에게 쪽지를 보낼 수 있어요","받는 사람 이름을 입력하면 명단을 확인한 뒤에 내용을 쓸 수 있어요","쪽지는 10분에 1번 보낼 수 있어요","새 쪽지가 오면 화면에 알림이 떠요"]},
+ {n:9,d:"2026-11-14",t:"쪽지 보내기",i:["오른쪽 위 쪽지 버튼으로 가입한 사람에게 쪽지를 보낼 수 있어요","받는 사람 이름을 입력하면 명단을 확인한 뒤에 내용을 쓸 수 있어요","새 쪽지가 오면 화면에 알림이 떠요","짧은 시간에 쪽지를 너무 많이 보내면 8시간 동안 보낼 수 없어요"]},
  {n:8,d:"2026-11-14",t:"PIN 찾기 개선",i:["가입할 때 본인 확인 질문을 정해요","PIN을 잊으면 질문에 답하고 바로 새 PIN으로 바꿀 수 있어요","이미 가입한 분은 로그인하면 질문을 정하는 창이 한 번 떠요"]},
  {n:7,d:"2026-11-14",t:"업데이트 기록 · 만든 사람 표시",i:["왼쪽 메뉴 아래와 화면 맨 아래에서 지금까지 바뀐 점을 볼 수 있어요","새 버전이 올라오면 로그인할 때 바뀐 점을 한 번 알려 줘요"]},
  {n:6,d:"2026-11-14",t:"탭 순서 변경 · 스크롤 개선",i:["탭 순서가 현황판 → 1차 검수 → 품질검수(제조) → 수입/공정으로 바뀌었어요","스크롤할 때 버벅이던 문제를 고쳤어요"]},
@@ -3347,7 +3361,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("devA").addEventListener("keydown",function(e){if(e.key==="Enter"&&!$("devGo").disabled)$("devGo").click()});
   $("devGo").onclick=function(){if(busy)return;var b=this;busy=true;b.disabled=true;b.textContent="확인 중";
     call("nc_dev_login",{p_pin:DEVPIN,p_answer:$("devA").value}).then(function(r){busy=false;b.textContent="확인";
-      if(r&&r.ok){DEVPIN="";show("vLogin");$("lgo").disabled=true;return enterWith(r,false)}
+      if(r&&r.ok){DEVPIN="";show("vLogin");P1.ins.forEach(function(v){v.value="0"});setTimeout(function(){var f=document.activeElement;if(f&&f.blur)f.blur()},60);$("lgo").disabled=true;return enterWith(r,false)}
       $("devA").value="";
       if(r&&r.restart){DEVPIN="";show("vLogin");msg(r.msg||"처음부터 다시 해 주세요.");return}
       msg(r&&r.msg||"답이 맞지 않아요.");$("devA").focus()})};
@@ -3434,7 +3448,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     last=Date.now();if(LIVE){try{setSrc("bd")}catch(e){console.error("화면 그리기 오류",e)}setTimeout(poll,1200)}else drawTrend();setTimeout(revToast,1800);devSync();msVis();
   }
   function logout(m){
-    if(LIVE&&TK){rpc("nc_logout",{p_token:TK}).catch(function(){});LED={qc:[],in:[],f1:[]}}TK="";BASE=null;PEND=null;hideBar();QA.shown=false;RQ.adm=false;RQ.n=null;RQ.data=null;rqClose();rqBadge(0);ME={name:"",role:""};devSync();msClose();MS.n=null;MS.data=null;MS.next=0;msReset();msBadge(0);msVis();$("rqT").classList.remove("on");
+    if(LIVE&&TK){rpc("nc_logout",{p_token:TK}).catch(function(){});LED={qc:[],in:[],f1:[]}}TK="";BASE=null;PEND=null;hideBar();QA.shown=false;RQ.adm=false;RQ.n=null;RQ.data=null;rqClose();rqBadge(0);ME={name:"",role:""};devSync();msClose();MS.n=null;MS.data=null;MS.ban=null;MS.bl=null;msReset();msBadge(0);msVis();$("rqT").classList.remove("on");
     st(SK,null);closeDrawer();document.body.classList.add("locked");document.body.classList.remove("entered");
     $("login").classList.remove("off");$("login").removeAttribute("aria-hidden");
     P1.clear();$("lname").value="";$("lgo").textContent="로그인";show("vLogin");chkLogin();msg(m||"로그아웃되었습니다.",true);scrollTo(0,0);
@@ -3447,7 +3461,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   function devWhen(t){if(!t)return"-";var d=new Date(t),z=function(n){return(n<10?"0":"")+n};return (d.getMonth()+1)+"/"+d.getDate()+" "+z(d.getHours())+":"+z(d.getMinutes())}
   function devOpen(){$("devBg").hidden=false;$("devP").hidden=false;requestAnimationFrame(function(){$("devBg").classList.add("on");$("devP").classList.add("on")});if(!DV.data)$("devBody").innerHTML='<div class="dv-ft">불러오는 중</div>';devLoad()}
   function devClose(){$("devBg").classList.remove("on");$("devP").classList.remove("on");setTimeout(function(){$("devBg").hidden=true;$("devP").hidden=true},220)}
-  function devLoad(){return rpc("nc_dev_overview",{p_token:TK}).then(function(d){if(!d){$("devBody").innerHTML='<div class="dv-ft">개발자 모드 데이터를 불러오지 못했어요. 서버에 supabase_개발자모드.sql이 실행됐는지 확인해 주세요.</div>';return}DV.data=d;devDraw()})
+  function devLoad(){return Promise.all([rpc("nc_dev_overview",{p_token:TK}),rpc("nc_dev_msg",{p_token:TK}).catch(function(){return null})]).then(function(a){var d=a[0];DV.msg=a[1];if(!d){$("devBody").innerHTML='<div class="dv-ft">개발자 모드 데이터를 불러오지 못했어요. 서버에 supabase_개발자모드.sql이 실행됐는지 확인해 주세요.</div>';return}DV.data=d;devDraw()})
     .catch(function(){$("devBody").innerHTML='<div class="dv-ft">서버에 연결할 수 없어요.</div>'})}
   function devFlash(t){var e=$("devMsg");e.textContent=t;e.hidden=false;clearTimeout(DV.ft);DV.ft=setTimeout(function(){e.hidden=true},3000)}
   var SYN=[["qc","품질검수(제조)","synced_qc"],["in","수입/공정","synced_in"],["f1","1차 검수","synced_f1"],["eq","장비 목록","synced_eq"]];
@@ -3475,6 +3489,10 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
         return '<tr class="'+(u.active?'':'off')+'"><td class="n">'+nm+(u.admin?' <span class="dv-st vio">승인 담당</span>':'')+'</td><td>'+esc(u.role||'-')+'</td><td>'+st+'</td><td>'+(u.joined?(u.q?'<span class="dv-st ok">설정</span>':'<span class="dv-st warn">없음</span>'):'-')+'</td><td>'+(u.via_req?'요청 승인':'명단')+'</td><td class="num" title="'+devWhen(u.last_login)+'">'+devAgo(u.last_login)+'</td><td class="num">'+(u.n7||0)+'회</td><td class="num">'+(u.sess||0)+'</td>'
           +'<td class="dv-ac">'+(u.locked?'<button type="button" data-a="unlock" data-n="'+nm+'">잠금 해제</button>':'')+(+u.sess?'<button type="button" data-a="logout" data-n="'+nm+'">로그아웃</button>':'')+(u.joined?'<button type="button" data-a="reset_pin" data-n="'+nm+'">PIN 초기화</button>':'')+'<button type="button" data-a="toggle_active" data-n="'+nm+'">'+(u.active?'사용 중지':'다시 사용')+'</button></td></tr>'}).join(""):'<tr><td colspan="9" style="text-align:center;color:var(--fg4);padding:22px">해당하는 사람이 없어요</td></tr>')
       +'</tbody></table></div></div>';
+    var M=DV.msg;
+    if(M){var bans=M.bans||[],top=M.top||[];
+      h+='<div class="dv-r"><div class="dv-c"><h4>쪽지<small>오늘 '+M.today+'통 · 최근 7일 '+M.week+'통</small></h4><div class="dv-rc">'+(top.length?top.map(function(x){return '<div><b>'+esc(x.name)+'</b><span>최근 7일 '+x.n+'통 보냄</span></div>'}).join(""):'<div><span>최근 7일 동안 보낸 쪽지가 없어요</span></div>')+'</div></div>'
+        +'<div class="dv-c dv-lk"><h4>쪽지 금지<small>도배로 8시간 막힌 사람</small></h4><div class="dv-rc">'+(bans.length?bans.map(function(x){return '<div><b>'+esc(x.name)+'</b><span>'+devWhen(x.until)+'까지 · '+esc(x.reason)+' <button type="button" class="dv-ub" data-u="'+esc(x.name)+'">풀기</button></span></div>'}).join(""):'<div><span>막힌 사람이 없어요</span></div>')+'</div></div></div>'}
     var lk=d.locks||[];
     h+='<div class="dv-r"><div class="dv-c"><h4>최근 로그인<small>최근 15번</small></h4><div class="dv-rc">'+((d.recent||[]).length?d.recent.map(function(r){return '<div><b>'+esc(r.name)+'</b><span>'+devWhen(r.at)+' · '+devAgo(r.at)+'</span></div>'}).join(""):'<div><span>아직 기록이 없어요</span></div>')+'</div></div>'
       +'<div class="dv-c dv-lk"><h4>잠금 현황<small>PIN을 여러 번 틀린 곳</small></h4><div class="dv-rc">'+(lk.length?lk.map(function(l){var nm=l.ip==="*all*"?"전체 (모든 접속 합계)":l.ip==="*dev*"?"개발자 모드":l.ip;return '<div><b>'+esc(nm)+'</b><span>'+(l.until&&new Date(l.until)>new Date()?'잠김 · '+devWhen(l.until)+'까지':'틀린 횟수 '+l.fails+'번')+'</span></div>'}).join(""):'<div><span>잠긴 곳이 없어요</span></div>')+'</div><button type="button" data-a="clear_locks">모든 잠금 풀기</button></div></div>';
@@ -3486,6 +3504,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("devBody").addEventListener("input",function(e){if(e.target.id==="devQ"){DV.q=e.target.value.trim();var p=e.target.selectionStart;devDraw();var q=$("devQ");q.focus();try{q.setSelectionRange(p,p)}catch(x){}}});
   $("devBody").addEventListener("click",function(e){
     var f=e.target.closest("#devF button");if(f){DV.f=f.dataset.f;devDraw();return}
+    var ub=e.target.closest("button[data-u]");if(ub){ub.disabled=true;rpc("nc_dev_unban",{p_token:TK,p_name:ub.dataset.u}).then(function(r){devFlash(r&&r.msg||"처리하지 못했어요");devLoad()}).catch(function(){ub.disabled=false;devFlash("서버에 연결할 수 없어요")});return}
     var b=e.target.closest("button[data-a]");if(!b)return;var a=b.dataset.a,n=b.dataset.n||null;
     var danger=a==="reset_pin"||a==="toggle_active"||a==="clear_locks";
     if(danger&&!b.classList.contains("arm")){[].forEach.call($("devBody").querySelectorAll("button.arm"),function(x){x.classList.remove("arm");x.textContent=x.dataset.t});b.dataset.t=b.textContent;b.classList.add("arm");b.textContent="한 번 더";clearTimeout(DV.arm);DV.arm=setTimeout(function(){b.classList.remove("arm");b.textContent=b.dataset.t},3500);return}
@@ -3508,7 +3527,7 @@ $("mout").onclick=function(){logout()};
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-2200",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-2400",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
@@ -3586,14 +3605,16 @@ $("mout").onclick=function(){logout()};
     }).catch(function(){it.classList.remove("busy");var m=document.createElement("p");m.className="rq-err";m.textContent="서버에 연결할 수 없어요. 다시 시도해 주세요.";it.appendChild(m)})});
 
   /* ---- 쪽지 (가입한 사람끼리 · 10분에 1번) ---- */
-  var MS={n:null,data:null,open:false,tab:"in",to:null,next:0,tick:0,arm:0,busy:false};
+  var MS={n:null,data:null,open:false,tab:"in",to:null,ban:null,arm:0,busy:false,bl:null};
   function msVis(){var on=!!TK&&!!(ME&&ME.name)&&!isDev();$("msBtn").hidden=$("mmsg").hidden=!on;if(!on&&MS.open)msClose()}
-  function msBadge(n){["msBtn","mmsg"].forEach(function(id){var b=$(id);b.classList.toggle("has",n>0);b.setAttribute("aria-label",n>0?"안 읽은 쪽지 "+n+"개":"쪽지");b.querySelector(".bdg").textContent=n>99?"99+":(n||"")});$("msNIn").textContent=n>0?(n>99?"99+":n):""}
+  function msBadge(n){["msBtn","mmsg"].forEach(function(id){var b=$(id);b.classList.toggle("has",n>0);b.setAttribute("aria-label",n>0?"안 읽은 쪽지 "+n+"개":"쪽지");b.querySelector(".bdg").textContent=n>0?"N":""});$("msNIn").textContent=n>0?(n>99?"99+":n):""}
   function msSync(r){msVis();if(!r||isDev())return;var n=+r.msg||0,prev=MS.n;MS.n=n;msBadge(n);
+    var hadBan=msBanned();MS.ban=r.mban||null;if(MS.open&&MS.tab==="new")msBanUI();if(!hadBan&&msBanned()&&prev!==null)msBanAlert();
     if(prev!==null&&n>prev&&r.msg_last)msNotify(r.msg_last.from);
     else if(prev===null&&n>0)setTimeout(function(){msToast("안 읽은 쪽지가 "+n+"개 있어요")},$("rqT").classList.contains("on")?6000:0);
-    if(MS.open&&MS.tab==="in"&&prev!==n)msLoad()}
-  function msToast(t){var e=$("rqT");e.innerHTML='<span class="dot" style="background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)"></span><span class="tx">'+esc(t)+'</span><button type="button" class="go" data-k="ms">열어 보기</button><button type="button" class="x" aria-label="닫기">×</button>';
+    if(MS.open&&MS.tab==="in"&&prev!==n)msLoad();
+    if(r.ban_last){var k=r.ban_last.name+"|"+r.ban_last.at;if(MS.bl!==null&&MS.bl!==k)msToast(r.ban_last.name+"님이 쪽지를 너무 많이 보내서 8시간 동안 막혔어요",1);MS.bl=k}else if(MS.bl===null)MS.bl="";}
+  function msToast(t,warn){var e=$("rqT");e.innerHTML='<span class="dot"'+(warn?'':' style="background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)"')+'></span><span class="tx">'+esc(t)+'</span>'+(warn?'':'<button type="button" class="go" data-k="ms">열어 보기</button>')+'<button type="button" class="x" aria-label="닫기">×</button>';
     e.classList.add("on");clearTimeout(rqTT);rqTT=setTimeout(function(){e.classList.remove("on")},10000)}
   function msNotify(from){var t=from+"님이 쪽지를 보냈어요";msToast(t);
     try{if(document.hidden&&"Notification" in window&&Notification.permission==="granted"){var no=new Notification("제조 부적합 대시보드",{body:t,tag:"nc-msg"});no.onclick=function(){try{focus()}catch(e){}msOpen("in");no.close()}}}catch(e){}}
@@ -3601,15 +3622,15 @@ $("mout").onclick=function(){logout()};
     requestAnimationFrame(function(){$("msP").classList.add("on");$("msBg").classList.add("on")});
     ["msBtn","mmsg"].forEach(function(id){$(id).setAttribute("aria-expanded","true")});$("rqT").classList.remove("on");
     msTab(t||(MS.n>0?"in":MS.tab));msLoad()}
-  function msClose(){if(!MS.open)return;MS.open=false;clearInterval(MS.tick);$("msP").classList.remove("on");$("msBg").classList.remove("on");
+  function msClose(){if(!MS.open)return;MS.open=false;$("msP").classList.remove("on");$("msBg").classList.remove("on");
     ["msBtn","mmsg"].forEach(function(id){$(id).setAttribute("aria-expanded","false")});
     setTimeout(function(){if(!MS.open){$("msP").hidden=true;$("msBg").hidden=true}},230)}
   function msTab(t){MS.tab=t;[].forEach.call(document.querySelectorAll("#msTabs button"),function(b){b.setAttribute("aria-pressed",b.dataset.t===t)});
     $("msList").hidden=t==="new";$("msNew").hidden=t!=="new";
-    if(t==="new"){msCool();setTimeout(function(){(MS.to?$("msTx"):$("msTo")).focus()},60)}else{clearInterval(MS.tick);msDraw()}}
+    if(t==="new"){msBanUI();setTimeout(function(){(MS.to?$("msTx"):$("msTo")).focus()},60)}else msDraw()}
   function msLoad(){if(!TK)return Promise.resolve();
-    return rpc("nc_msg_list",{p_token:TK}).then(function(d){if(!d)return;var sk=Date.now()-new Date(d.now).getTime();MS.data=d;
-      MS.next=d.next?new Date(d.next).getTime()+sk:0;if(MS.tab==="new")msCool();else msDraw();
+    return rpc("nc_msg_list",{p_token:TK}).then(function(d){if(!d)return;MS.data=d;
+      MS.ban=d.ban||null;if(MS.tab==="new")msBanUI();else msDraw();
       if(MS.open&&MS.tab==="in"&&d.inbox.some(function(x){return !x.read}))rpc("nc_msg_read",{p_token:TK}).then(function(){MS.n=0;msBadge(0)}).catch(function(){})})
       .catch(function(){if(!MS.data)$("msList").innerHTML='<div class="ms-empty">쪽지를 불러오지 못했어요.<br>잠시 후 다시 열어 주세요.</div>'})}
   function msDraw(){var d=MS.data,L=$("msList");if(!d){L.innerHTML='<div class="ms-empty">불러오는 중</div>';return}
@@ -3620,11 +3641,12 @@ $("mout").onclick=function(){logout()};
         +(inb?(!x.read?'<span class="ms-tg n">새 쪽지</span>':''):(x.read?'<span class="ms-tg r">읽음</span>':'<span class="ms-tg u">안 읽음</span>'))
         +'<span class="ms-at" title="'+rqWhen(x.at)+'">'+rqAgo(x.at)+'</span></div><p class="ms-b">'+esc(x.body)+'</p>'
         +'<div class="ms-act"><button type="button" data-a="del">지우기</button>'+(inb?'<button type="button" class="re" data-a="re" data-n="'+esc(nm)+'">답장</button>':'')+'</div></div>'}).join("")}
-  function msLeft(){return Math.max(0,MS.next-Date.now())}
-  function msCool(){var l=msLeft(),e=$("msCool");clearInterval(MS.tick);
-    if(l>0){var s=Math.ceil(l/1000);e.hidden=false;e.textContent="쪽지는 10분에 1번 보낼 수 있어요. 다음 쪽지는 "+Math.floor(s/60)+"분 "+(s%60)+"초 뒤에 보낼 수 있어요.";MS.tick=setInterval(function(){if(!MS.open||MS.tab!=="new"){clearInterval(MS.tick);return}msCool()},1000)}
-    else e.hidden=true;msCk()}
-  function msCk(){var v=$("msTx").value,n=v.length;$("msCnt").textContent=n+" / 500";$("msCnt").parentNode.classList.toggle("full",n>=500);$("msGo").disabled=MS.busy||!MS.to||!v.trim()||msLeft()>0}
+  function msBanned(){return !!(MS.ban&&new Date(MS.ban.until).getTime()>Date.now())}
+  function msBanUI(){var e=$("msCool");if(msBanned()){e.hidden=false;e.innerHTML='<b>쪽지 보내기가 막혀 있어요</b><span>'+rqWhen(MS.ban.until)+'까지 · '+esc(MS.ban.reason)+'</span><span>짧은 시간에 쪽지를 너무 많이 보내면 8시간 동안 보낼 수 없어요.</span>'}else e.hidden=true;msCk()}
+  function msBanAlert(m){$("msAT").textContent=m||"짧은 시간에 쪽지를 너무 많이 보내서 8시간 동안 쪽지를 보낼 수 없어요.";$("msAU").textContent=MS.ban?rqWhen(MS.ban.until)+"까지 · "+MS.ban.reason:"";
+    $("msABg").hidden=false;$("msA").hidden=false;requestAnimationFrame(function(){$("msABg").classList.add("on");$("msA").classList.add("on")});setTimeout(function(){$("msAOk").focus()},60)}
+  function msBanClose(){$("msABg").classList.remove("on");$("msA").classList.remove("on");setTimeout(function(){$("msABg").hidden=true;$("msA").hidden=true},200)}
+  function msCk(){var v=$("msTx").value,n=v.length;$("msCnt").textContent=n+" / 500";$("msCnt").parentNode.classList.toggle("full",n>=500);$("msGo").disabled=MS.busy||!MS.to||!v.trim()||msBanned()}
   function msSt(t,c){var e=$("msSt");e.hidden=!t;e.textContent=t||"";e.className="ms-st"+(c?" "+c:"")}
   function msReset(keepName){MS.to=null;var i=$("msTo");i.readOnly=false;if(!keepName)i.value="";$("msChk").textContent="확인";$("msChk").classList.remove("alt");$("msChk").disabled=false;msSt("");$("msW").hidden=true;msCk()}
   function msCheck(){if(MS.to){msReset(true);$("msTo").select();return}
@@ -3636,8 +3658,8 @@ $("mout").onclick=function(){logout()};
       .catch(function(){b.disabled=false;$("msTo").readOnly=false;msSt("서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.","no")})}
   function msSend(){if($("msGo").disabled)return;MS.busy=true;var b=$("msGo"),to=MS.to;b.textContent="보내는 중";msCk();
     rpc("nc_msg_send",{p_token:TK,p_to:to,p_body:$("msTx").value}).then(function(r){MS.busy=false;b.textContent="보내기";
-      if(r&&r.ok){MS.next=Date.now()+600000;$("msTx").value="";msReset();rqToastMsg(to+"님께 쪽지를 보냈어요");msTab("out");msLoad();return}
-      if(r&&r.wait){MS.next=Date.now()+r.wait*1000;msCool();return}
+      if(r&&r.ok){$("msTx").value="";msCk();if(r.warn){msSt(r.warn,"warn");msToast(r.warn,1)}else{msSt(to+"님께 보냈어요. 이어서 더 보낼 수 있어요.","ok");rqToastMsg(to+"님께 쪽지를 보냈어요")}$("msTx").focus();msLoad();return}
+      if(r&&r.ban){MS.ban={until:r.until,reason:r.reason};msBanUI();msSt("");msBanAlert(r.msg);return}
       if(r&&r.auth){logout(r.msg);return}msSt(r&&r.msg||"보내지 못했어요. 다시 시도해 주세요.","no");msCk()})
       .catch(function(){MS.busy=false;b.textContent="보내기";msSt("서버에 연결할 수 없어요. 쓴 내용은 그대로 있어요.","no");msCk()})}
   $("msBtn").onclick=$("mmsg").onclick=function(){MS.open?msClose():msOpen()};
@@ -3650,6 +3672,7 @@ $("mout").onclick=function(){logout()};
   $("msTx").addEventListener("input",msCk);
   $("msTx").addEventListener("keydown",function(e){if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();msSend()}});
   $("msGo").onclick=msSend;
+  $("msAOk").onclick=msBanClose;$("msABg").onclick=msBanClose;
   $("msList").addEventListener("click",function(e){var b=e.target.closest("button[data-a]");if(!b)return;var it=b.closest(".ms-it");
     if(b.dataset.a==="re"){msTab("new");msReset();$("msTo").value=b.dataset.n;msCheck();return}
     if(!b.classList.contains("arm")){[].forEach.call($("msList").querySelectorAll("button.arm"),function(x){x.classList.remove("arm");x.textContent="지우기"});b.classList.add("arm");b.textContent="한 번 더 누르면 지워져요";clearTimeout(MS.arm);MS.arm=setTimeout(function(){b.classList.remove("arm");b.textContent="지우기"},3500);return}
