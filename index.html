@@ -1820,6 +1820,79 @@ html.nomo *,html.nomo *::before,html.nomo *::after{animation-duration:.001s!impo
 .e3-c.mine{border-color:rgba(79,140,255,.55);background:radial-gradient(200px 80px at 0 0,var(--accent-soft),transparent 70%),var(--bg)}
 .e3-n small{white-space:nowrap}
 .e3-s{line-height:1.75}
+.e3-mh{min-height:22px}
+/* ===== 금일 QC 장비 ===== */
+.vsw-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.vsw-row .vsw{margin:0}
+.vsw-row #qtQc{display:inline-flex}.vsw-row #qtQc[hidden]{display:none}
+.qt-btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 15px 0 13px;border-radius:10px;border:1px solid rgba(76,183,130,.38);background:radial-gradient(140px 60px at 0 0,rgba(76,183,130,.14),transparent 75%),var(--panel,var(--surface));color:var(--fg2);font-size:13px;font-weight:500;white-space:nowrap;transition:border-color .15s,transform .15s,background .15s}
+.qt-btn:hover{border-color:rgba(76,183,130,.75);color:var(--fg);transform:translateY(-1px)}.qt-btn:active{transform:scale(.97)}
+.qt-btn>i{width:7px;height:7px;border-radius:50%;background:var(--done);box-shadow:0 0 0 4px rgba(76,183,130,.16);animation:buPulse 2s ease-in-out infinite}
+.qt-btn b{font-size:17px;font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums;letter-spacing:-.02em;margin-left:2px}
+.qt-btn small{font-size:12px;color:var(--fg3);margin-left:-5px}
+.qt-btn.zero{border-color:var(--line2);background:var(--panel,var(--surface))}.qt-btn.zero>i{background:var(--fg4);box-shadow:none;animation:none}.qt-btn.zero b{color:var(--fg3)}
+.qt-bg{position:fixed;inset:0;z-index:180;background:rgba(4,6,10,.62);backdrop-filter:blur(3px);opacity:0;transition:opacity .2s}
+.qt-bg.on{opacity:1}
+.qt-p{position:fixed;z-index:181;left:50%;top:50%;width:min(720px,calc(100vw - 32px));max-height:min(84vh,760px);display:flex;flex-direction:column;background:var(--panel,var(--surface));border:1px solid var(--line2);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.55);opacity:0;transform:translate(-50%,-48%) scale(.98);transition:opacity .2s,transform .24s cubic-bezier(.2,.8,.2,1);overflow:hidden}
+.qt-p.on{opacity:1;transform:translate(-50%,-50%)}
+.qt-p[hidden],.qt-bg[hidden]{display:none}
+.qt-p::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,var(--done),rgba(76,183,130,.1) 60%,transparent)}
+.qt-hd{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:18px;padding:22px 20px 16px 24px}
+.qt-hd h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.02em}.qt-hd p{margin:4px 0 0;font-size:12.5px;color:var(--fg3)}
+.qt-n b{font-size:34px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}.qt-n small{font-size:13px;color:var(--fg3);margin-left:3px}
+.qt-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;padding:0 24px 16px;border-bottom:1px solid var(--line)}
+.qt-days button{display:grid;justify-items:center;gap:3px;padding:8px 2px 7px;border-radius:10px;border:1px solid transparent;color:var(--fg3);transition:background .12s,border-color .12s}
+.qt-days button:hover{background:var(--hover)}
+.qt-days button[aria-pressed="true"]{background:var(--sel);border-color:var(--line2);color:var(--fg)}
+.qt-days em{font-style:normal;font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;color:inherit}
+.qt-days span{display:flex;align-items:flex-end;justify-content:center;width:100%;height:30px}
+.qt-days span i{display:block;width:16px;border-radius:3px 3px 1px 1px;background:var(--done);opacity:.4;transform-origin:bottom;animation:e3Up .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--k,0)*35ms)}
+.qt-days button[aria-pressed="true"] span i{opacity:1}
+.qt-days b{font-size:11.5px;font-weight:500;color:inherit;font-variant-numeric:tabular-nums}.qt-days small{font-size:10.5px;color:var(--fg4)}
+.qt-who{display:flex;flex-wrap:wrap;gap:6px;padding:14px 24px 4px}
+.qt-who span{height:26px;padding:0 10px;border-radius:13px;background:var(--track);font-size:12px;line-height:26px;color:var(--fg2);white-space:nowrap}
+.qt-who span b{font-weight:600;color:var(--fg);margin-left:2px;font-variant-numeric:tabular-nums}
+.qt-who span.mine{background:var(--accent-soft);color:var(--accent2)}
+.qt-list{overflow:auto;padding:8px 14px 6px;min-height:0;overscroll-behavior:contain}
+.qt-r{display:grid;grid-template-columns:30px minmax(0,1.7fr) minmax(0,.9fr) minmax(0,.7fr) 58px;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 10px;border-radius:10px;font-size:13px;border-top:1px solid var(--line)}
+.qt-r.qt-th{position:sticky;top:0;z-index:1;background:var(--panel,var(--surface));border-top:0;padding-top:6px;padding-bottom:8px;font-size:11.5px;color:var(--fg4)}
+.qt-th+.qt-r{border-top-color:transparent}
+button.qt-r:hover{background:var(--hover)}
+.qt-r:not(.qt-th){animation:arrHi .35s ease both;animation-delay:calc(var(--k,0)*28ms)}
+.qt-r .no{color:var(--fg4);font-size:11.5px;text-align:center;font-variant-numeric:tabular-nums}
+.qt-th span:first-child{text-align:center}.qt-th span:last-child{text-align:right}
+.qt-r .pj{display:grid;min-width:0}.qt-r .pj b{font-weight:600;color:var(--fg);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt-r .pj em{font-style:normal;font-size:11.5px;color:var(--fg3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt-r .st,.qt-r .ow{color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.qt-r .ow{font-weight:500}.qt-r .ow i{font-style:normal;color:var(--fg4);font-weight:400}
+.qt-r.mine .ow{color:var(--accent2)}
+.qt-r .nc{text-align:right;font-size:12px;color:var(--fg4);font-variant-numeric:tabular-nums}.qt-r .nc.has{color:var(--wait);font-weight:600}
+.qt-no{display:grid;gap:6px;justify-items:center;text-align:center;padding:44px 24px 40px}.qt-no b{font-size:14.5px;color:var(--fg2);font-weight:600}.qt-no span{font-size:12.5px;color:var(--fg4)}
+.qt-ft{margin:0;padding:11px 24px 14px;border-top:1px solid var(--line);font-size:11.5px;color:var(--fg4);line-height:1.5;word-break:keep-all}
+@media (max-width:760px){.qt-p{left:0;right:0;top:auto;bottom:0;width:auto;max-height:86vh;border-radius:18px 18px 0 0;transform:translateY(24px);padding-bottom:env(safe-area-inset-bottom,0px)}.qt-p.on{transform:none}
+ .qt-hd{padding:20px 14px 14px 18px;gap:12px}.qt-days{padding:0 12px 14px;gap:3px}.qt-who{padding:12px 16px 2px}.qt-list{padding:6px 8px}.qt-ft{padding:10px 16px 12px}
+ .qt-r{grid-template-columns:22px minmax(0,1.5fr) minmax(0,.8fr) 46px;gap:8px;padding:10px 6px}.qt-r .st{display:none}.qt-th span:nth-child(3){display:none}
+ .bd-ctl .qt-btn{order:3}.qt-btn{height:36px}}
+.e3-k{display:flex;align-items:center;gap:8px}
+.e3-k i{font-style:normal;height:19px;padding:0 8px;border-radius:10px;background:var(--accent-soft);color:var(--accent2);font-size:11px;font-weight:600;line-height:19px}
+.e3-b{position:relative}
+.e3-b i{position:relative;overflow:hidden}
+.e3-b i::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:40%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:e3Sheen 3.2s ease-in-out infinite;animation-delay:calc(1.2s + var(--k,0)*.25s)}
+@keyframes e3Sheen{0%{left:-40%}45%,100%{left:110%}}
+.e3-mh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:14px;font-size:12px;color:var(--fg3)}
+.e3-mh>em{font-style:normal;color:var(--fg4)}.e3-mh b{font-weight:600;color:var(--fg);font-variant-numeric:tabular-nums}
+.e3-m{display:flex;align-items:flex-end;gap:3px;height:74px;margin-top:6px}
+.e3-m>span{flex:1;min-width:0;height:100%;display:grid;grid-template-rows:13px minmax(0,1fr) 14px;justify-items:center;align-items:end}
+.e3-m em{font-style:normal;font-size:9.5px;line-height:13px;color:var(--fg4);font-variant-numeric:tabular-nums}
+.e3-m i{display:block;width:100%;max-width:16px;border-radius:3px 3px 1px 1px;background:var(--accent2);opacity:.38;align-self:end;transform-origin:bottom}
+.e3-m b{font-size:9.5px;line-height:14px;font-weight:400;color:var(--fg4);font-variant-numeric:tabular-nums}
+.e3-m .pk i{opacity:.7}
+.e3-m .cur i{opacity:1;background:linear-gradient(180deg,var(--accent2),var(--accent))}
+.e3-m .cur em,.e3-m .cur b{color:var(--fg);font-weight:600}
+@keyframes e3Up{from{transform:scaleY(0)}}
+#bdIn.anim .e3-m i{animation:e3Up .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.45s + var(--k,0)*.12s + var(--m,0)*35ms)}
+#bdIn.anim .e3-m em{animation:arrHi .4s ease both;animation-delay:calc(.95s + var(--k,0)*.12s + var(--m,0)*35ms)}
+#bdIn.anim .e3-b i{animation-delay:calc(.3s + var(--k,0)*.12s)}
+#bdIn.anim .e3-rb u{animation-delay:calc(.5s + var(--k,0)*.1s)}
 .e3-dl{font-style:normal;display:inline-block;margin-left:6px;padding:0 7px;height:19px;line-height:19px;border-radius:10px;font-size:11px;font-weight:600;background:var(--track);color:var(--fg3);font-variant-numeric:tabular-nums;vertical-align:1px}
 .e3-dl.up{background:var(--accent-soft);color:var(--accent2)}.e3-dl.dn{background:var(--track);color:var(--fg2)}
 .e3-rs{display:grid;gap:7px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
@@ -2119,7 +2192,7 @@ html.nomo *,html.nomo *::before,html.nomo *::after{animation-duration:.001s!impo
 
       <section id="bd" style="display:none"><div class="xm-ban" id="xmBan" hidden></div><div id="bdIn"></div></section>
       <section id="lg">
-        <div class="vsw" id="lgView" style="display:none"><button data-v="ov" aria-pressed="true">현황</button><button data-v="an" aria-pressed="false">분석</button></div>
+        <div class="vsw-row" id="vswRow" style="display:none"><div class="vsw" id="lgView" style="display:none"><button data-v="ov" aria-pressed="true">현황</button><button data-v="an" aria-pressed="false">분석</button></div><span id="qtQc" hidden></span></div>
         <div id="chkBar" class="chkb" style="display:none"></div>
         <div id="f1b"><div id="f1In"></div></div>
         <div class="hero">
@@ -2529,7 +2602,7 @@ function cell(k,x){
   return esc(x[k]==null?"":x[k])}
 function syncSel(){var S=LS[SRC];[].forEach.call($("fbar").querySelectorAll("input[data-k]"),function(el){if(document.activeElement!==el)el.value=S.f[el.dataset.k]||"";el.classList.toggle("on",!!S.f[el.dataset.k])});[].forEach.call($("fbar").querySelectorAll("select"),function(el){el.value=S.f[el.dataset.k]||"";el.classList.toggle("on",!!el.value)})}
 function buildFbar(){
-  var cfg=LCFG[SRC],S=LS[SRC],h="";
+  var cfg=LCFG[SRC],S=LS[SRC],h="";if(!cfg||!S||!LED[SRC])return;   /* 현황판처럼 목록이 없는 화면에서는 건너뛰어요 */
   var pj={};LED[SRC].forEach(function(x){if(x.proj&&x.proj!=="-")pj[x.proj]=1});
   cfg.flt.forEach(function(f){if(f[0]==="proj"){h+='<label class="fsel fprj"><span>프로젝트</span><input type="search" data-k="proj" placeholder="번호·이름 검색" autocomplete="off" list="prjL" value="'+esc(S.f.proj||"")+'"></label><datalist id="prjL">'+Object.keys(pj).sort(function(a,b){return a.localeCompare(b,"ko")}).map(function(v){return '<option value="'+esc(v)+'">'}).join("")+'</datalist>';return}
     var vals={};LED[SRC].forEach(function(x){vals[x[f[0]]]=1});
@@ -3095,11 +3168,46 @@ var CFG={url:"https://nqlgkqlkxygyhovrdfmk.supabase.co",key:"sb_publishable_5_VH
 function rpc(fn,args){
   return fetch(CFG.url.replace(/\/$/,"")+"/rest/v1/rpc/"+fn,{method:"POST",headers:(function(){var h={"apikey":CFG.key,"Content-Type":"application/json"};if(CFG.key.indexOf("sb_")!==0)h.Authorization="Bearer "+CFG.key;return h})(),body:JSON.stringify(args||{})})
     .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()})}
-var GTK="",SHP=null;
+var GTK="",SHP=null,QCD=null;
+/* ===== 금일 QC 장비: 날짜는 볼 때마다 새로 계산해요(자정이 지나면 그날 것으로 바뀜) ===== */
+var QT={off:0,open:false};
+function qtSrc(){return QCD||(typeof EQD!=="undefined"&&EQD&&EQD.length?EQD:null)}
+function qtDay(off){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(off||0));return d}
+function qtRows(off){var S=qtSrc(),d=qtDay(off);if(!S)return[];return S.filter(function(x){return x.d.getFullYear()===d.getFullYear()&&x.d.getMonth()===d.getMonth()&&x.d.getDate()===d.getDate()}).sort(function(a,b){return (a.owner||"힣").localeCompare(b.owner||"힣","ko")||a.proj.localeCompare(b.proj)})}
+function qtBtn(cls){if(!qtSrc())return "";var n=qtRows(0).length;return '<button type="button" class="qt-btn'+(n?"":" zero")+(cls?" "+cls:"")+'" data-qt aria-haspopup="dialog"><i></i><span>금일 QC 장비</span><b>'+n+'</b><small>대</small></button>'}
+function qtSync(){var n=qtSrc()?qtRows(0).length:0;[].forEach.call(document.querySelectorAll("[data-qt]"),function(b){var e=b.querySelector("b");if(e&&e.textContent!==String(n))e.textContent=n;b.classList.toggle("zero",!n)});var h=$("qtQc");if(h)h.hidden=!qtSrc()}
+function qtNc(proj){var k=String(proj||"").trim().toUpperCase();if(!k)return 0;return (LED.qc||[]).filter(function(x){return String(x.proj||"").trim().toUpperCase()===k}).length}
+function qtDraw(){
+  var wd=["일","월","화","수","목","금","토"],R=qtRows(QT.off),d=qtDay(QT.off),by={},i,mx=1,days=[];
+  for(i=6;i>=0;i--){var c=qtRows(i).length;days.push({off:i,n:c,d:qtDay(i)});if(c>mx)mx=c}
+  R.forEach(function(x){var o=x.owner||"담당자 미기재";by[o]=(by[o]||0)+1});
+  var who=Object.keys(by).sort(function(a,b){return by[b]-by[a]||a.localeCompare(b,"ko")}),lab=QT.off===0?"금일":QT.off===1?"어제":QT.off+"일 전";
+  var h='<div class="qt-hd"><div><h3 id="qtH">QC 검수 장비</h3><p>'+(d.getMonth()+1)+'월 '+d.getDate()+'일 '+wd[d.getDay()]+'요일 · '+lab+'</p></div><div class="qt-n"><b>'+R.length+'</b><small>대</small></div><button class="rq-x" id="qtX" type="button" aria-label="닫기">×</button></div>'
+   +'<div class="qt-days" role="group" aria-label="날짜">'+days.map(function(o,k){return '<button type="button" data-off="'+o.off+'" aria-pressed="'+(o.off===QT.off)+'" style="--k:'+k+'"><em>'+o.n+'</em><span><i style="height:'+(o.n?Math.max(10,o.n/mx*100):4).toFixed(0)+'%"></i></span><b>'+(o.off===0?"오늘":(o.d.getMonth()+1)+"/"+o.d.getDate())+'</b><small>'+wd[o.d.getDay()]+'</small></button>'}).join("")+'</div>';
+  if(!R.length)h+='<div class="qt-no"><b>'+(QT.off===0?"오늘은 아직 QC 검수한 장비가 없어요":"이 날은 QC 검수한 장비가 없어요")+'</b><span>backlog_raw_nc 탭의 QC 칸에 날짜가 들어오면 여기에 나타나요.</span></div>';
+  else h+='<div class="qt-who">'+who.map(function(n){return '<span'+(n===ME.name?' class="mine"':'')+'>'+esc(n)+' <b>'+by[n]+'대</b></span>'}).join("")+'</div>'
+   +'<div class="qt-list"><div class="qt-r qt-th"><span>No.</span><span>장비명</span><span>사업장</span><span>담당자</span><span>부적합</span></div>'
+   +R.map(function(x,k){var nc=qtNc(x.proj);return '<'+(nc?'button type="button"':'div')+' class="qt-r'+(x.owner&&x.owner===ME.name?' mine':'')+'" style="--k:'+Math.min(k,14)+'"'+(nc?' data-proj="'+esc(x.proj)+'" title="이 장비의 품질검수 부적합 목록 보기"':'')+'><span class="no">'+(k+1)+'</span><span class="pj"><b title="'+esc(x.proj)+'">'+(esc(x.proj)||"-")+'</b><em title="'+esc(x.type)+'">'+(esc(x.type)||"TYPE 미기재")+'</em></span><span class="st">'+(esc(x.site)||"-")+'</span><span class="ow">'+(esc(x.owner)||'<i>미기재</i>')+'</span><span class="nc'+(nc?" has":"")+'">'+(nc?nc+"건":"없음")+'</span></'+(nc?"button":"div")+'>'}).join("")+'</div>';
+  h+='<p class="qt-ft">backlog_raw_nc 탭 QC 날짜 기준 · 부적합은 올해 품질검수(제조)에 같은 장비명으로 기록된 건수예요</p>';
+  $("qtP").innerHTML=h}
+function qtOpen(){if(!qtSrc())return;var p=$("qtP");if(!p){var bg=document.createElement("div");bg.id="qtBg";bg.className="qt-bg";bg.hidden=true;p=document.createElement("div");p.id="qtP";p.className="qt-p";p.hidden=true;p.setAttribute("role","dialog");p.setAttribute("aria-modal","true");p.setAttribute("aria-labelledby","qtH");document.body.appendChild(bg);document.body.appendChild(p);
+    bg.onclick=qtClose;
+    p.addEventListener("click",function(e){if(e.target.closest("#qtX")){qtClose();return}
+      var b=e.target.closest(".qt-days button");if(b){QT.off=+b.dataset.off;qtDraw();var f=p.querySelector('.qt-days [aria-pressed="true"]');if(f)f.focus();return}
+      var r=e.target.closest(".qt-r[data-proj]");if(r){var pj=r.dataset.proj,rb=document.querySelector('#range button[data-r="y"]');qtClose();goSrc("qc",function(){LS.qc.f={};KEEP={};LV="ov";qs=pj;$("q").value=pj},function(){if(rb)rb.click();goList()})}});
+    document.addEventListener("keydown",function(e){if(QT.open&&e.key==="Escape"){e.stopPropagation();qtClose()}},true)}
+  QT.off=0;QT.open=true;QT.from=document.activeElement;qtDraw();p.hidden=false;$("qtBg").hidden=false;
+  requestAnimationFrame(function(){p.classList.add("on");$("qtBg").classList.add("on");var x=$("qtX");if(x)x.focus()})}
+function qtClose(){if(!QT.open)return;QT.open=false;var p=$("qtP"),bg=$("qtBg");p.classList.remove("on");bg.classList.remove("on");setTimeout(function(){if(!QT.open){p.hidden=true;bg.hidden=true}},220);if(QT.from&&QT.from.focus)try{QT.from.focus()}catch(e){}}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-qt]");if(b)qtOpen()});
+setInterval(function(){qtSync();if(QT.open)qtDraw()},60000);
 function loadLive(token,keep){GTK=token;
   return Promise.all([rpc("nc_list",{p_token:token}),rpc("nc_equip_list",{p_token:token}).catch(function(){return null}),rpc("nc_checks_list",{p_token:token}).catch(function(){return null}),rpc("nc_ship_list",{p_token:token}).catch(function(){return null})]).then(function(res){
     /* 출하 장비(Factory Out Date 기준 · 오늘까지 출하된 것만) */
-    SHP=res[3]?res[3].map(function(r){var p=String(r.out_date).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);return{d:d,m:d.getMonth(),owner:String(r.owner||"").trim(),proj:r.project||"",type:r.etype||"",site:r.site||""}}).filter(function(x){var e=new Date();e.setHours(23,59,59,999);return x.d.getFullYear()===2026&&x.d<=e}):null;
+    var shD=function(v){if(!v)return null;var p=String(v).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);return isNaN(d)?null:d},shO=function(r,d){return{d:d,m:d.getMonth(),owner:String(r.owner||"").trim(),proj:String(r.project||"").trim(),type:String(r.etype||"").trim(),site:String(r.site||"").trim()}},shE=new Date();shE.setHours(23,59,59,999);
+    SHP=res[3]?res[3].map(function(r){var d=shD(r.out_date);return d?shO(r,d):null}).filter(function(x){return x&&x.d.getFullYear()===2026&&x.d<=shE}):null;
+    /* QC 검수 장비(QC 날짜 기준). 서버가 아직 QC 날짜를 안 주면 null → 기존 장비 목록으로 대신해요 */
+    QCD=res[3]&&res[3].some(function(r){return "qc_date" in r})?res[3].map(function(r){var d=shD(r.qc_date);return d?shO(r,d):null}).filter(function(x){return x&&x.d.getFullYear()===2026}):null;
     var rows=res[0],eqr=res[1];CHK={};(res[2]||[]).forEach(function(c){CHK[c.k]={by:c.by,at:c.at}});
     if(!rows)throw new Error("expired");
     var eod=new Date();eod.setHours(23,59,59,999);
@@ -3281,8 +3389,8 @@ function drawBoard(){
   var per='<div class="bd-per" id="bdPer" role="group" aria-label="기간"><button data-p="y" aria-pressed="'+Y+'">전체</button>'+A.mo.slice(0,cm+1).map(function(o,i){return '<button data-p="'+i+'" aria-pressed="'+(!Y&&sm===i)+'">'+(i+1)+'월</button>'}).join("")+'</div>';
   var hr=new Date().getHours(),hi=hr<5?"늦은 시간까지 수고 많으세요":hr<11?"좋은 아침이에요":hr<14?"점심은 맛있게 드셨나요":hr<18?"좋은 오후예요":hr<22?"좋은 저녁이에요":"늦은 시간까지 수고 많으세요",wdn=["일","월","화","수","목","금","토"][TODAY.getDay()];
   var todo=!ME.name||ME.role==="개발자"?"":mine?'확인할 불량이 <b class="w">'+mine+'건</b> 있어요.':'내가 확인할 불량은 <b class="g">모두 확인</b>했어요.';
-  var h='<div class="bd-head"><div><h2>'+(ME.name&&ME.role!=="개발자"?'<span class="hi-n">'+esc(ME.name)+'님,</span> ':'')+hi+'</h2><p>'+(cm+1)+'월 '+D.dc+'일 '+wdn+'요일 · 성남+동탄 전체 현황판'+(todo?' · '+todo:'')+'</p></div>'+'<div class="bd-ctl">'+per+'<button class="fbtn" id="bdXls">엑셀 내려받기</button></div><div class="bd-sum">'+sum+'</div></div>'
-   +bdMe(D,mine)+bdUn(D)+bdEq3(D,Y,mon,mfN)
+  var h='<div class="bd-head"><div><h2>'+(ME.name&&ME.role!=="개발자"?'<span class="hi-n">'+esc(ME.name)+'님,</span> ':'')+hi+'</h2><p>'+(cm+1)+'월 '+D.dc+'일 '+wdn+'요일 · 성남+동탄 전체 현황판'+(todo?' · '+todo:'')+'</p></div>'+'<div class="bd-ctl">'+per+qtBtn()+'<button class="fbtn" id="bdXls">엑셀 내려받기</button></div><div class="bd-sum">'+sum+'</div></div>'
+   +bdMe(D,mine)+bdUn(D)+bdEq3(D)
    +'<div class="bd-kpis">'+k+'</div>'
    +(function(){var svg=bdChart1(D),he=BD.mc==="he";return '<div class="bd-two"><div class="bd-card"><div class="bd-ch2 mc-hd"><h3>'+(he?"월별 휴먼에러":"월별 부적합 건수")+'</h3><div class="mc-sw" id="mcSw" role="group" aria-label="그래프 보기"><button type="button" data-mc="nc" aria-pressed="'+(!he)+'">부적합 건수</button><button type="button" data-mc="he" aria-pressed="'+he+'">휴먼에러</button></div></div>'
      +'<div class="mc-sub"><span class="bd-lg mc-lg">'+BD.mcLeg+'</span><em>'+(he?"품질검수 제조불량 · 올해 많이 나온 소분류 3개":"수입/공정은 제조불량만")+' · 막대를 누르면 자세히</em></div>'+svg+'</div>'})()
@@ -3308,7 +3416,7 @@ function drawBoard(){
     if(e.target.closest("#bdMine")){var mb=document.querySelector('#navB button[data-go="mine"]');if(mb)mb.click();return}
     var bup=e.target.closest(".bu-p[data-n]");if(bup){var bn=bup.dataset.n;bup.classList.add("tap");goSrc("qc",function(){LS.qc.f={chk:"미확인",finder:bn};LS.qc.lim=50;KEEP={};qs="";$("q").value="";LV="ov"},goList);return}
     var go=function(src,k,v){var rb=document.querySelector('#range button[data-r="'+(BD.per==="y"||D0.sm!==D0.cm?"y":"m")+'"]');goSrc(src,function(){LS[src].f={};LS[src].f[k]=v;KEEP={};qs="";$("q").value="";LV="ov"},function(){if(rb)rb.click();goList()})},D0=bdCompute();
-    var e3=e.target.closest(".e3-c[data-who]");if(e3){e3.classList.add("tap");go("qc","finder",e3.dataset.who);return}
+    var e3=e.target.closest(".e3-c[data-who]");if(e3){e3.classList.add("tap");var e3w=e3.dataset.who,e3y=document.querySelector('#range button[data-r="y"]');goSrc("qc",function(){LS.qc.f={finder:e3w};KEEP={};qs="";$("q").value="";LV="ov"},function(){if(e3y)e3y.click();goList()});return}
     var rcb=e.target.closest(".bd-rc");if(rcb){go("qc","proj",rcb.dataset.proj);var rb2=document.querySelector('#range button[data-r="y"]');if(rb2)rb2.click();return}
     var rr=e.target.closest(".bd-r[data-fk]");if(rr){go(rr.dataset.src,rr.dataset.fk,rr.dataset.fv);return}var b=e.target.closest("#bdPer button");if(!b)return;BD.per=b.dataset.p;BD.anim=true;drawBoard()})})();
 
@@ -3460,34 +3568,35 @@ function bdSide(D){
   el.innerHTML='<h4>바로가기</h4><button data-go="f1"><span class="l">1차 검수</span><span class="n">'+(LED.f1||[]).filter(function(x){return x.m===D.cm}).length+'</span></button><button data-go="qc"><span class="l">품질검수(제조)</span><span class="n">'+cmQ+'</span></button><button data-go="in"><span class="l">수입/공정</span><span class="n">'+cmI+'</span></button>'
     +(ME.name?'<button data-go="mine"><span class="l">내 미확인 불량</span><span class="n'+(mine?" hot":"")+'">'+mine+'</span></button>':'')+'<button data-go="an"><span class="l">분석 (20% 감소 목표)</span></button>'}
 
-/* 장비 TOP 3: 고른 기간에 출하(Factory Out Date)된 장비를 제조1팀 담당자별로 센 순위 */
-function bdEq3(D,Y,mon,M){
+/* 장비 TOP 3: 올해 출하(Factory Out Date)된 장비를 제조1팀 담당자별로 센 순위. 현황판에서 고른 기간과 상관없이 올해 누계예요 */
+function bdEq3(D){
   if(!SHP)return "";
-  var cur=!Y&&D.sm===D.cm,inP=function(x){return Y||x.m===D.sm},S=SHP.filter(inP),tot=S.length,by={},pby={},mfBy={},
-      per=Y?"1/1~"+(D.cm+1)+"/"+D.dc:cur?(D.cm+1)+"/1~"+(D.cm+1)+"/"+D.dc:mon+" 한 달",
-      hasP=!Y&&D.sm>0,pL=hasP?D.sm+"월"+(cur?(D.dc>1?" 1~"+D.dc+"일":" 1일"):""):"",
-      P=hasP?SHP.filter(function(x){return x.m===D.sm-1&&(!cur||x.d.getDate()<=D.dc)}):[];
-  P.forEach(function(x){if(x.owner)pby[x.owner]=(pby[x.owner]||0)+1});
-  (M||[]).forEach(function(x){var f=String(x.finder||"").trim();if(f)mfBy[f]=(mfBy[f]||0)+1});
-  S.forEach(function(x){if(!x.owner)return;var o=by[x.owner]||(by[x.owner]={n:x.owner,c:0,st:{},ty:{},ls:[]});o.c++;
+  var cm=D.cm,dc=D.dc,S=SHP,tot=S.length,by={},mfBy={},nm=cm+1,
+      mT=S.filter(function(x){return x.m===cm}).length,pT=cm>0?S.filter(function(x){return x.m===cm-1&&x.d.getDate()<=dc}).length:0,
+      pL=cm>0?cm+"월"+(dc>1?" 1~"+dc+"일":" 1일"):"";
+  (D.mfy||[]).forEach(function(x){var f=String(x.finder||"").trim();if(f)mfBy[f]=(mfBy[f]||0)+1});
+  S.forEach(function(x){if(!x.owner)return;var o=by[x.owner];if(!o){o=by[x.owner]={n:x.owner,c:0,st:{},ty:{},ls:[],mo:[],pv:0};for(var i=0;i<=cm;i++)o.mo.push(0)}
+    o.c++;if(x.m<=cm)o.mo[x.m]++;if(cm>0&&x.m===cm-1&&x.d.getDate()<=dc)o.pv++;
     var st=/^동탄/.test(x.site)?"동탄":(x.site||"미기재");o.st[st]=(o.st[st]||0)+1;if(x.type)o.ty[x.type]=(o.ty[x.type]||0)+1;o.ls.push(x)});
   var all=Object.keys(by).map(function(k){return by[k]}).sort(function(a,b){return b.c-a.c||(a.n<b.n?-1:1)}),A=all.slice(0,3),rest=all.slice(3,6),sum=A.reduce(function(t,o){return t+o.c},0),
       top=function(c){return Object.keys(c).sort(function(a,b){return c[b]-c[a]||(a<b?-1:1)})},mx=A.length?A[0].c:1,sh=tot?Math.round(sum/tot*100):0,
-      dl=function(c,p,u){var d=c-p;return d===0?'<i class="e3-dl">변동 없음</i>':'<i class="e3-dl '+(d>0?"up":"dn")+'">'+(d>0?"+":"-")+Math.abs(d)+u+'</i>'},md=function(d){return (d.getMonth()+1)+"/"+d.getDate()};
-  var L='<div class="e3-l"><span class="e3-k">장비 TOP 3</span><span class="e3-n"><span class="cu" data-to="'+tot+'" data-d="0">'+tot+'</span><small>대 출하</small></span>'
-    +'<span class="e3-s">'+(A.length?'상위 '+A.length+'명이 <b>'+sum+'대</b>('+sh+'%)를 맡았어요':'이 기간에 출하된 장비가 아직 없어요')+(hasP?'<br>'+pL+' <b>'+P.length+'대</b> '+dl(tot,P.length,"대"):'')+'</span>'
-    +(rest.length?'<div class="e3-rs">'+rest.map(function(o,i){return '<span class="e3-rr"><i>'+(i+4)+'</i><b>'+esc(o.n)+'</b><span class="e3-rb"><u style="width:'+Math.max(6,o.c/mx*100).toFixed(0)+'%"></u></span><em>'+o.c+'대</em></span>'}).join("")+'</div>':'')
-    +'<div class="e3-ft"><em>'+per+' 출하 · Factory Out Date 기준<br>제조1팀 담당자 '+all.length+'명</em></div></div>';
-  if(!A.length)return '<div class="bd-e3">'+L+'<p class="e3-no">'+(Y?"올해":mon)+' 출하된 장비가 없어요.</p></div>';
-  return '<div class="bd-e3">'+L+'<div class="e3-cs">'+A.map(function(o,i){var st=top(o.st),ty=top(o.ty),pc=tot?Math.round(o.c/tot*100):0,me=o.n===ME.name,mf=mfBy[o.n]||0,pv=pby[o.n]||0,
-      ls=o.ls.slice().sort(function(a,b){return b.d-a.d}).slice(0,2);
+      dl=function(c,p,u){var d=c-p;return d===0?'<i class="e3-dl">변동 없음</i>':'<i class="e3-dl '+(d>0?"up":"dn")+'">'+(d>0?"+":"-")+Math.abs(d)+u+'</i>'},md=function(d){return (d.getMonth()+1)+"/"+d.getDate()},
+      cu=function(v){return '<span class="cu" data-to="'+v+'" data-d="0">'+v+'</span>'};
+  var L='<div class="e3-l"><span class="e3-k">장비 TOP 3<i>올해</i></span><span class="e3-n">'+cu(tot)+'<small>대 출하</small></span>'
+    +'<span class="e3-s">'+(A.length?'올해 상위 '+A.length+'명이 <b>'+sum+'대</b>('+sh+'%)를 맡았어요':'올해 출하된 장비가 아직 없어요')+'<br>'+nm+'월 <b>'+mT+'대</b>'+(cm>0?' · '+pL+' '+pT+'대 '+dl(mT,pT,"대"):'')+'</span>'
+    +(rest.length?'<div class="e3-rs">'+rest.map(function(o,i){return '<span class="e3-rr" style="--k:'+i+'"><i>'+(i+4)+'</i><b>'+esc(o.n)+'</b><span class="e3-rb"><u style="width:'+Math.max(6,o.c/mx*100).toFixed(0)+'%"></u></span><em>'+o.c+'대</em></span>'}).join("")+'</div>':'')
+    +'<div class="e3-ft"><em>1/1~'+nm+'/'+dc+' 출하 · Factory Out Date 기준<br>제조1팀 담당자 '+all.length+'명</em></div></div>';
+  if(!A.length)return '<div class="bd-e3">'+L+'<p class="e3-no">올해 출하된 장비가 없어요.</p></div>';
+  return '<div class="bd-e3">'+L+'<div class="e3-cs">'+A.map(function(o,i){var st=top(o.st),ty=top(o.ty),pc=tot?Math.round(o.c/tot*100):0,me=o.n===ME.name,mf=mfBy[o.n]||0,
+      ls=o.ls.slice().sort(function(a,b){return b.d-a.d}).slice(0,2),mm=Math.max.apply(null,o.mo.concat([1])),tm=o.mo[cm];
+    var bars='<span class="e3-m" aria-hidden="true">'+o.mo.map(function(v,m){return '<span class="'+(m===cm?"cur":"")+(v===mm&&v>0?" pk":"")+'" style="--m:'+m+'"><em>'+(v||"")+'</em><i style="height:'+(v?Math.max(8,v/mm*100):3).toFixed(0)+'%"></i><b>'+(m+1)+'</b></span>'}).join("")+'</span>';
     return '<button type="button" class="e3-c'+(i===0?' first':'')+(me?' mine':'')+'" data-who="'+esc(o.n)+'" style="--k:'+i+'"><span class="e3-h"><i class="e3-r">'+(i+1)+'</i><span class="e3-p">'+esc(o.n)+'</span>'+(me?'<i class="e3-me">나</i>':'')+'</span>'
-      +'<span class="e3-v"><b>'+o.c+'<small>대</small></b><em>전체 출하의 <strong>'+pc+'%</strong></em></span>'
+      +'<span class="e3-v"><b>'+cu(o.c)+'<small>대</small></b><em>올해 출하의 <strong>'+pc+'%</strong></em></span>'
       +'<span class="e3-b"><i style="width:'+Math.max(6,o.c/mx*100).toFixed(0)+'%"></i></span>'
-      +(hasP?'<span class="e3-cp">'+pL+' <b>'+pv+'대</b>'+dl(o.c,pv,"대")+'</span>':'')
+      +'<span class="e3-mh"><em>월별 출하</em><span>'+nm+'월 <b>'+tm+'대</b>'+(cm>0?dl(tm,o.pv,"대"):'')+'</span></span>'+bars
       +'<span class="e3-d"><span><em>사업장</em><b>'+st.slice(0,2).map(function(k){return esc(k)+' '+o.st[k]}).join(' · ')+(st.length>2?' 외':'')+'</b></span>'
       +'<span><em>많은 TYPE</em><b title="'+(ty.length?esc(ty[0]):"")+'">'+(ty.length?esc(ty[0])+' '+o.ty[ty[0]]+'대':"-")+'</b></span>'
-      +'<span><em>같은 기간 제조불량</em><b>'+(mf?'<u>'+mf+'건</u>':'0건')+'</b></span></span>'
+      +'<span><em>올해 제조불량</em><b>'+(mf?'<u>'+mf+'건</u>':'0건')+'</b></span></span>'
       +'<span class="e3-ls"><em>최근 출하</em>'+ls.map(function(x){return '<span><time>'+md(x.d)+'</time><b title="'+esc(x.proj)+'">'+(esc(x.proj)||"-")+'</b></span>'}).join("")+'</span>'
       +'<span class="e3-go">불량 목록</span></button>'}).join("")+'</div></div>'}
 function bdUn(D){
@@ -3632,7 +3741,7 @@ function drawF1(){
     var r=e.target.closest(".fd-r");if(r){openLed(r.dataset.id);return}})})();
 /* ===== 업데이트 기록 (Rev) — 새 버전을 올릴 때 맨 위에 한 줄씩 추가 ===== */
 var REV=[
- {n:12,d:"2026-11-14",t:"제조불량 따로 보기 · 부드러운 화면 전환",i:["현황판 월별 그래프에서 수입/공정은 제조불량만 보여 주고, '휴먼에러' 보기를 골라 소분류별로 볼 수 있어요","현황판 엑셀을 보기 좋게 다시 만들었어요 (요약 칸 · 색 구분 · 꺾은선 그래프 · 미확인 담당자)","목록 엑셀에 요약 줄 · 합계 줄 · 제조불량 색 표시가 들어가고, 요약 시트에 제조불량 건수와 비율이 나와요","요약 칸에서 지난달 같은 기간과 비교해 줄었는지 늘었는지 알려 줘요","현황판에 장비 TOP 3가 생겼어요 (담당자별 출하 대수 · 지난달 비교 · 사업장 · 최근 출하)","품질검수 · 수입/공정에서 '월 선택'을 눌러 지난 달을 골라 볼 수 있어요","비교 기준을 '10월 1~14일'처럼 날짜로 적었어요","수입/공정 · 품질검수 요약에서 전체 부적합과 제조불량을 따로 보여 줘요","현황판 첫 칸이 '제조불량 합계'로 바뀌었어요 (품질검수 + 수입/공정의 제조 귀책)","월별 그래프 막대를 누르면 그 막대만의 내용(소분류 · 담당자 · 귀책 1위)이 나와요","탭을 바꾸거나 담당자를 누를 때 화면이 부드럽게 넘어가요","목록의 수량을 가운데로 맞췄어요"]},
+ {n:12,d:"2026-11-14",t:"제조불량 따로 보기 · 부드러운 화면 전환",i:["현황판 월별 그래프에서 수입/공정은 제조불량만 보여 주고, '휴먼에러' 보기를 골라 소분류별로 볼 수 있어요","현황판 엑셀을 보기 좋게 다시 만들었어요 (요약 칸 · 색 구분 · 꺾은선 그래프 · 미확인 담당자)","목록 엑셀에 요약 줄 · 합계 줄 · 제조불량 색 표시가 들어가고, 요약 시트에 제조불량 건수와 비율이 나와요","요약 칸에서 지난달 같은 기간과 비교해 줄었는지 늘었는지 알려 줘요","현황판에 장비 TOP 3가 생겼어요 (올해 담당자별 출하 대수 · 월별 출하 · 사업장 · 최근 출하)","금일 QC 장비가 생겼어요 (현황판 · 품질검수에서 누르면 장비명 · 담당자 · 최근 7일)","품질검수 · 수입/공정에서 '월 선택'을 눌러 지난 달을 골라 볼 수 있어요","비교 기준을 '10월 1~14일'처럼 날짜로 적었어요","수입/공정 · 품질검수 요약에서 전체 부적합과 제조불량을 따로 보여 줘요","현황판 첫 칸이 '제조불량 합계'로 바뀌었어요 (품질검수 + 수입/공정의 제조 귀책)","월별 그래프 막대를 누르면 그 막대만의 내용(소분류 · 담당자 · 귀책 1위)이 나와요","탭을 바꾸거나 담당자를 누를 때 화면이 부드럽게 넘어가요","목록의 수량을 가운데로 맞췄어요"]},
  {n:11,d:"2026-11-14",t:"미확인 불량은 한 건씩 확인 · 연결 끊김 안내",i:["로그인하면 인사말과 함께 현황판이 부드럽게 열려요","재발 방지를 위해 '모두 확인' 버튼을 없앴어요. 내용을 읽고 한 건씩 확인해 주세요","인터넷이나 서버 연결이 끊기면 화면 위에 알려 주고, 마지막으로 받은 데이터를 그대로 보여 줘요","연결이 돌아오면 자동으로 다시 이어져요","그래프를 겹치지 않게 다시 그려서 보기 편해졌어요"]},
  {n:10,d:"2026-11-14",t:"알림 · 미확인 불량 현황",i:["1차 검수 · 품질검수(제조) · 수입/공정(제조불량) 기록이 추가되거나 수정되면 알림이 와요","내가 담당자인 기록은 '내 담당'으로 따로 표시돼요","알림을 누르면 그 기록이 있는 목록으로 바로 가요","현황판에서 담당자별 미확인 불량과 확인률을 한눈에 볼 수 있어요","로그아웃 화면을 새로 꾸몄어요"]},
  {n:9,d:"2026-11-14",t:"쪽지 보내기",i:["오른쪽 위 쪽지 버튼으로 가입한 사람에게 쪽지를 보낼 수 있어요","받는 사람 이름을 입력하면 명단을 확인한 뒤에 내용을 쓸 수 있어요","새 쪽지가 오면 화면에 알림이 떠요","짧은 시간에 쪽지를 너무 많이 보내면 8시간 동안 보낼 수 없어요"]},
@@ -3673,7 +3782,7 @@ $("navB").addEventListener("click",function(e){var b=e.target.closest("button[da
   tabGo("qc")});
 
 var LV="ov";
-function applyLV(){var q=SRC==="qc";if(!q)LV="ov";$("lgView").style.display=q?"flex":"none";$("lg").classList.toggle("an",LV==="an");[].forEach.call($("lgView").querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x.dataset.v===LV)})}
+function applyLV(){var q=SRC==="qc";if(!q)LV="ov";var qh=$("qtQc");$("vswRow").style.display=q?"flex":"none";if(qh){if(q&&qtSrc()){if(!qh.firstChild)qh.innerHTML=qtBtn();qh.hidden=false;qtSync()}else qh.hidden=true}$("lgView").style.display=q?"flex":"none";$("lg").classList.toggle("an",LV==="an");[].forEach.call($("lgView").querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x.dataset.v===LV)})}
 function LEDS(){return SRC==="qc"||SRC==="in"||SRC==="f1"}
 function render(){if(SRC==="bd"){drawBoard();return}if(SRC==="f1")drawF1();if(SRC==="nc")renderNC();else{renderLedger();applyLV();if(LV==="an"&&SRC==="qc")drawAnalysis()}}
 function setSrc(v){
@@ -4064,7 +4173,7 @@ $("mout").onclick=function(){logout()};
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261115-1530",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261115-1700",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
@@ -4295,8 +4404,9 @@ $("mout").onclick=function(){logout()};
   $("syncGo").onclick=function(){
     if(this.dataset.ver==="1"){location.reload();return}
     var b=this;b.disabled=true;b.textContent="불러오는 중";
-    loadLive(TK,true).then(function(){BASE=PEND;PEND=null;hideBar();buildFbar();render()})
-      .catch(function(){logout("다시 로그인해 주세요.")})
+    /* 로그인이 끝난 경우에만 로그아웃해요. 화면 그리기 오류로는 로그아웃하지 않아요 */
+    loadLive(TK,true).then(function(){BASE=PEND;PEND=null;hideBar();try{buildFbar();render()}catch(e){console.error(e)}},
+      function(e){if(String(e&&e.message)==="expired")logout("다시 로그인해 주세요.");else{$("syncMsg").textContent="불러오지 못했어요. 잠시 뒤 다시 눌러 주세요"}})
       .then(function(){b.disabled=false;b.textContent="새로고침"})};
   $("syncX").onclick=function(){BASE=PEND;PEND=null;hideBar()};
   setInterval(poll,60000);
