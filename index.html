@@ -1190,6 +1190,7 @@ body.isf1 #lg>.hero,body.isf1 #lg>.cols{display:none!important}
 @media (max-width:760px){.eq-r{grid-template-columns:20px minmax(0,1fr) 46px 36px}.eq-r .mix{display:none}.f1-donut .dn{width:112px;height:112px}}
 
 /* ===== 1차 검수 표: 동탄 관리대장 틀 (칸 이름·순서 그대로, 제조 부적합 스타일로) ===== */
+@media (min-width:761px){
 #lgTbl .tbl.f1t{table-layout:auto;font-size:12.5px}
 #lgTbl .tbl.f1t th{text-align:center!important;line-height:1.3;font-size:11.5px;padding:10px 6px;white-space:nowrap;vertical-align:middle}
 #lgTbl .tbl.f1t td{text-align:center;padding:11px 6px;white-space:nowrap;vertical-align:middle}
@@ -1197,6 +1198,8 @@ body.isf1 #lg>.hero,body.isf1 #lg>.cols{display:none!important}
 #lgTbl .tbl.f1t td[data-k="id"]{color:var(--fg3);font-variant-numeric:tabular-nums}
 #lgTbl .tbl.f1t td[data-k="proj"],#lgTbl .tbl.f1t td[data-k="d"],#lgTbl .tbl.f1t td[data-k="qty"]{font-weight:600}
 #lgTbl .tbl.f1t [data-k]{display:table-cell!important}
+#lgTbl:has(.f1t){scrollbar-width:thin}
+}
 .fc{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;border:1px solid transparent}
 .fc-p{background:var(--track);color:var(--fg2);border-color:var(--line2);font-weight:500}
 .fc-r{background:var(--bad-bg);color:var(--bad);border-color:rgba(242,106,106,.3)}
@@ -1207,10 +1210,6 @@ body.isf1 #lg>.hero,body.isf1 #lg>.cols{display:none!important}
 .fc-n{background:transparent;color:var(--fg4);border-color:var(--line2)}
 .fz{color:var(--fg4)}
 :root[data-theme="light"] .fc-v{color:#7c3aed}
-@container (max-width:1450px){#lgTbl .tbl.f1t [data-k="owner"],#lgTbl .tbl.f1t [data-k="gubun"]{display:none!important}}
-@container (max-width:1300px){#lgTbl .tbl.f1t [data-k="pn"],#lgTbl .tbl.f1t [data-k="c2"]{display:none!important}}
-@container (max-width:1120px){#lgTbl .tbl.f1t [data-k="ptype"],#lgTbl .tbl.f1t [data-k="ship"]{display:none!important}}
-@container (max-width:900px){#lgTbl .tbl.f1t [data-k="site"],#lgTbl .tbl.f1t [data-k="id"],#lgTbl .tbl.f1t [data-k="part"]{display:none!important}}
 /* ===== 가입 요청 · 승인 ===== */
 .rqp[hidden],.rqbg[hidden],.bell[hidden],.rq-ft[hidden]{display:none!important}
 .lerr.info{color:var(--fg2);background:var(--accent-soft);border:1px solid rgba(61,123,255,.28);border-radius:10px;padding:11px 13px;line-height:1.6;font-size:13px}
@@ -1861,7 +1860,7 @@ var LCFG={
 LCFG.f1={name:"1차 검수 부적합",
     flt:[["proj","프로젝트"],["c1","대분류"],["ven","귀책"],["c2","중분류"],["c3","소분류"],["ship","출하월"],["finder","제조 담당자"]],
     dims:[["ven","귀책"],["c1","대분류"],["c3","소분류"],["finder","제조 담당자"]],
-    cols:[["id","NO.","mono"],["site","사업장",""],["ship","출하월",""],["d","발생일<br>(검수일)",""],["proj","출하 프로젝트 명","m"],["pn","발주 프로젝트 명",""],["ptype","TYPE",""],["part","위치",""],["qty","불량<br>수량","r"],["c1","불량<br>(대분류)",""],["c2","불량<br>(중분류)",""],["c3","불량<br>(소분류)",""],["ven","귀책",""],["gubun","검사구분",""],["owner","업체<br>담당자",""],["finder","제조<br>담당자",""],["desc","불량내용",""]]};
+    cols:[["id","NO.","mono"],["site","사업장",""],["ship","출하월",""],["d","발생일<br>(검수일)",""],["proj","출하 프로젝트 명","m"],["pn","발주 프로젝트 명",""],["ptype","TYPE",""],["part","위치",""],["qty","불량<br>수량","r"],["c1","불량<br>(대분류)",""],["c2","불량<br>(중분류)",""],["c3","불량<br>(소분류)",""],["ven","귀책",""],["gubun","검사구분",""],["owner","업체<br>담당자",""],["insp","제조<br>검수자",""],["finder","제조<br>담당자",""],["desc","불량내용",""]]};
 var LS={qc:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},in:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},f1:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50}};
 var SC={"성남":"var(--st1)","동탄":"var(--st2)","미분류":"var(--st3)"};
 function ledAll(){return LED[SRC].filter(sOK)}
@@ -1878,7 +1877,7 @@ function cell(k,x){
     if(k==="c1"&&v)return '<span class="fc '+(v==="업체불량"?"fc-r":v==="제조불량"?"fc-b":"fc-g")+'">'+esc(v)+'</span>';
     if(k==="ven"&&v)return v==="N/A"?'<span class="fc fc-n">N/A</span>':'<span class="fc fc-v">'+esc(v)+'</span>';
     if(k==="gubun"&&v)return '<span class="fc fc-ok">'+esc(v)+'</span>';
-    if(k==="owner"||k==="finder"||k==="c2"||k==="c3"||k==="ptype"||k==="pn")return v?esc(v):'<span class="fz">-</span>';
+    if(k==="owner"||k==="insp"||k==="finder"||k==="c2"||k==="c3"||k==="ptype"||k==="pn")return v?esc(v):'<span class="fz">-</span>';
   }
   if(k==="d")return fd(x.d);
   if(k==="site")return '<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>';
@@ -2106,7 +2105,7 @@ function openLed(id){
   var P=[["번호",x.n],["사업장",'<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>'],["발생일",fd(x.d)],["출하월",x.ship],[SRC==="in"?"발주 프로젝트":"출하 프로젝트",'<span class="chip">'+esc(x.proj)+'</span>'],["품명 · 위치",esc(x.part)],["TYPE",esc(x.ptype||"-")],["품번",'<span style="font-family:var(--mono);font-size:12px">'+esc(x.pn)+'</span>'],["불량 수량",x.qty+"개"],["귀책"+(SRC==="in"?"업체":""),'<span class="chip">'+esc(x.ven)+'</span>'],["대분류",esc(x.c1)],["중분류",esc(x.c2)],["소분류",esc(x.c3)],["발견자",esc(x.finder)]];
   if(x.note)P.push(["비고",esc(x.note)]);
   if(SRC==="qc"&&x.chk==="대상 아님"){P.push(["확인",'<span class="ckna">대상 아님</span> <span class="mut">'+(CHK_FROM.getMonth()+1)+'/'+CHK_FROM.getDate()+' 이전 발생분이에요</span>'])}else if(SRC==="qc"){var ok=x.chk==="확인";var mm=canChk(x);P.push(["확인",'<button class="ck'+(ok?' on':'')+(mm?'':' lock')+'" data-ck="'+esc(x.id)+'" data-dr="1"'+(mm?'':' disabled')+'>'+(ok?"확인 완료":"미확인")+'</button>'+(ok?' <span class="mut">'+esc(x.chkBy)+'</span>':(mm?'':' <span class="mut">담당자 본인만 확인할 수 있어요</span>'))])}
-  if(SRC==="f1"){P=P.filter(function(r){return r[0]!=="품번"&&r[0]!=="품명 · 위치"&&r[0]!=="발견자"}).map(function(r){return r[0]==="비고"?["작성자",r[1]]:r});P.splice(5,0,["발주 프로젝트",'<span class="chip">'+esc(x.pn)+'</span>'],["위치",esc(x.part)]);P.push(["검사구분",esc(x.gubun)],["업체 담당자",esc(x.owner)],["제조 담당자",esc(x.finder)])}
+  if(SRC==="f1"){P=P.filter(function(r){return r[0]!=="품번"&&r[0]!=="품명 · 위치"&&r[0]!=="발견자"}).map(function(r){return r[0]==="비고"?["작성자",r[1]]:r});P.splice(5,0,["발주 프로젝트",'<span class="chip">'+esc(x.pn)+'</span>'],["위치",esc(x.part)]);P.push(["검사구분",esc(x.gubun)],["업체 담당자",esc(x.owner)],["제조 검수자",x.insp?esc(x.insp):"-"],["제조 담당자",esc(x.finder)])}
   if(SRC==="in")P.push(["구분",esc(x.gubun)],["분류",esc(x.cls)],["담당자",esc(x.owner)],["조치사항",esc(x.act)],["손실비용",fmtCost(x.cost)]);
   $("drawer").innerHTML='<div class="dh"><span class="id">'+x.id+'</span><div class="nv"><button id="dp" aria-label="이전">↑</button><span class="cnt">'+(ix+1)+' / '+curList.length+'</span><button id="dn" aria-label="다음">↓</button><button id="dx">닫기</button></div></div>'
    +'<div class="dbody"><h2>'+esc(x.proj)+' · '+esc(x.part)+'</h2><p class="desc">'+esc(x.desc)+'.</p><dl class="props">'+P.map(function(r){return '<dt>'+r[0]+'</dt><dd class="tn">'+r[1]+'</dd>'}).join("")+'</dl><p class="note">'+cfg.name+(LIVE?"":" · 예시 데이터")+'</p></div>';
@@ -2223,8 +2222,10 @@ function xlsxOut(){
     if(!isQ||isF)C.push(["pn",isF?"발주 프로젝트":"품번",20,"l"]);
     C.push(["qty","불량 수량",9,"n"],["ven",isQ?"귀책":"귀책업체",13,"tag"],["c1","대분류",11,"c"],["c2","중분류",11,"c"],["c3","소분류",11,"c"],["gubun",isQ?"검사 구분":"구분",10,"c"]);
     if(!isQ)C.push(["cls","분류",9,"c"]);
-    C.push(["finder",isQ?"제조 담당자":"발견자",11,"c"],["owner",isF?"업체 담당자":"담당자",11,"c"]);if(isQ&&!isF)C.push(["chk","확인 여부",10,"chk"],["chkBy","확인자",10,"c"]);C.push(["desc","불량내용",46,"w"],["act","조치사항",34,"w"],["note",isQ?"세부 조치내용":"비고 / 세부 조치내용",30,"w"]);
+    if(isF)C.push(["owner","업체 담당자",11,"c"],["insp","제조 검수자",11,"c"],["finder","제조 담당자",11,"c"]);else C.push(["finder",isQ?"제조 담당자":"발견자",11,"c"],["owner","담당자",11,"c"]);if(isQ&&!isF)C.push(["chk","확인 여부",10,"chk"],["chkBy","확인자",10,"c"]);C.push(["desc","불량내용",46,"w"],["act","조치사항",34,"w"],["note",isQ?"세부 조치내용":"비고 / 세부 조치내용",30,"w"]);
     if(!isQ)C.push(["cost","손실비용(만원)",13,"n"]);
+    /* 1차 검수: 동탄 관리대장과 같은 칸·순서 */
+    if(isF)C=[["id","NO.",7,"c"],["site","사업장",9,"site"],["ship","출하월",8,"c"],["d","발생일(검수일)",13,"d"],["proj","출하 프로젝트 명",22,"l"],["pn","발주 프로젝트 명",20,"l"],["ptype","TYPE",16,"l"],["part","위치",12,"c"],["qty","불량 수량",9,"n"],["c1","불량(대분류)",12,"c"],["c2","불량(중분류)",13,"c"],["c3","불량(소분류)",12,"c"],["ven","귀책",12,"tag"],["gubun","검사구분",10,"c"],["owner","업체 담당자",11,"c"],["insp","제조 검수자",11,"c"],["finder","제조 담당자",11,"c"],["desc","불량내용",46,"w"]];
     var nc=C.length,HR=4,r0=HR+1,out=[],merges=[];
     var band=X({bg:NAVY});
     out.push(row(1,[cell(1,0,cfg.name,X({f:{b:1,sz:18,c:"FFFFFF"},bg:NAVY,ind:1}))].concat(C.slice(1).map(function(c,i){return cell(1,i+1,null,band)})),38));
@@ -2237,7 +2238,7 @@ function xlsxOut(){
       C.forEach(function(c,j){var t=c[3],v=x[c[0]],st;
         var base=function(o){if(!o.bg&&zb)o.bg=zb;o.b={b:["thin",LINE]};return o};
         if(c[0]==="d"){cells.push(cell(r,j,XL.ser(x.d),X(base({f:{},n:"yyyy-mm-dd",h:"center"}))));return}
-        if(c[0]==="id"){cells.push(cell(r,j,String(v),X(base({f:{c:MUT,sz:9},h:"center"}))));return}
+        if(c[0]==="id"){cells.push(cell(r,j,String(isF?x.n:v),X(base({f:{c:MUT,sz:9},h:"center"}))));return}
         if(t==="site"){var ts=tintSite[v]||tintSite["미분류"];cells.push(cell(r,j,v,X(base({f:{b:1,c:ts[1]},bg:ts[0],h:"center"}))));return}
         if(t==="tag"&&tintVen[v]){var tv=tintVen[v];cells.push(cell(r,j,v,X(base({f:{b:1,c:tv[1]},bg:tv[0],h:"center"}))));return}
         if(t==="chk"){var ok=v==="확인";cells.push(cell(r,j,v||"",X(base({f:{b:1,c:ok?"14864F":"B8690B"},bg:ok?"E3F6EA":"FDF0DC",h:"center"}))));return}
@@ -2413,7 +2414,7 @@ function loadLive(token,keep){GTK=token;
       var p=String(r.occurred).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);if(d.getFullYear()!==2026)return;
       if(!L[r.src])return;if(r.src==="f1"&&(/홍길동/.test((r.owner||"")+(r.finder||"")+(r.note||""))||/^(예시|샘플|sample|example)/i.test(r.note||"")))return;var q=r.src==="qc"||r.src==="f1",ck=(r.sheet_no||r.id)+"|"+String(r.occurred).slice(0,10)+"|"+(r.project||""),bk=(r.src==="f1"?"F-":q?"Q-":"I-")+(r.sheet_no||r.id),uk=bk;if(SEEN[bk])uk=bk+"-"+(++SEEN[bk]);else SEEN[bk]=1;var o={id:uk,ck:ck,sid:+r.sheet_no||0,n:+r.sheet_no||0,site:r.site,d:d,m:d.getMonth(),ship:r.ship_month||"-",proj:r.project||"-",part:r.part||"-",pn:r.pn||"-",ptype:r.ptype||"-",note:r.note||"",qty:+r.qty||0,
         finder:r.finder||"-",desc:r.content||"-",ven:r.vendor||(q?"N/A":"미지정"),c1:r.c1||"-",c2:r.c2||"-",c3:r.c3||"-",cost:+r.cost||0,
-        gubun:r.gubun||"-",cls:r.cls||"-",owner:r.owner||"-",act:r.action||"-"};
+        gubun:r.gubun||"-",cls:r.cls||"-",owner:r.owner||"-",insp:r.inspector||"",act:r.action||"-"};
       L[r.src].push(o)});
     ["qc","in","f1"].forEach(function(k){L[k].sort(function(a,b){return a.d-b.d||(k==="f1"?a.sid-b.sid:0)}).forEach(function(o,i){if(!o.n||k==="f1")o.n=i+1});LED[k]=L[k]});
     applyChk();
@@ -3049,7 +3050,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-1030",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-1040",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
