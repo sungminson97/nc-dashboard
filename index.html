@@ -384,7 +384,7 @@ button.b:hover .n{color:var(--fg)}
   .row .d1::before{content:"발생 "}
   .row .d2:not(.late)::before{content:"재납 ";color:var(--fg4)}
   .row.on::before{display:none}
-  .bnav{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:12;background:var(--side);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:6px}
+  .bnav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:12;background:var(--side);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));gap:6px}
   .bnav button{height:42px;border-radius:9px;color:var(--fg3);font-size:12.5px;padding:0 2px}
   .p2{display:none}
   .fsel select{min-width:0;width:100%;max-width:none}.fsel{flex:1 1 calc(50% - 5px)}
@@ -758,8 +758,8 @@ html.boot body{background:var(--bg)}
 @container (min-width:1200px){#lgTbl .tbl th[data-k="c2"],#lgTbl .tbl td[data-k="c2"]{display:table-cell}}
 @container (min-width:1330px){#lgTbl .tbl th[data-k="c1"],#lgTbl .tbl td[data-k="c1"]{display:table-cell}}
 @container (min-width:1420px){#lgTbl .tbl th[data-k="ptype"],#lgTbl .tbl td[data-k="ptype"]{display:table-cell}}
-@container (max-width:1159px){#lgTbl .tbl:has(th[data-k="pn"]) th[data-k="part"],#lgTbl .tbl:has(th[data-k="pn"]) td[data-k="part"],#lgTbl .tbl:has(th[data-k="pn"]) th[data-k="cost"],#lgTbl .tbl:has(th[data-k="pn"]) td[data-k="cost"],#lgTbl .tbl:has(th[data-k="pn"]) th[data-k="id"],#lgTbl .tbl:has(th[data-k="pn"]) td[data-k="id"],#lgTbl .tbl:has(th[data-k="pn"]) th[data-k="ship"],#lgTbl .tbl:has(th[data-k="pn"]) td[data-k="ship"]{display:none}}
-@container (max-width:1299px){#lgTbl .tbl:has(th[data-k="pn"]) th[data-k="c1"],#lgTbl .tbl:has(th[data-k="pn"]) td[data-k="c1"]{display:none}}
+@container (max-width:1159px){#lgTbl .tbl:has(th[data-k="cost"]) th[data-k="part"],#lgTbl .tbl:has(th[data-k="cost"]) td[data-k="part"],#lgTbl .tbl:has(th[data-k="cost"]) th[data-k="cost"],#lgTbl .tbl:has(th[data-k="cost"]) td[data-k="cost"],#lgTbl .tbl:has(th[data-k="cost"]) th[data-k="id"],#lgTbl .tbl:has(th[data-k="cost"]) td[data-k="id"],#lgTbl .tbl:has(th[data-k="cost"]) th[data-k="ship"],#lgTbl .tbl:has(th[data-k="cost"]) td[data-k="ship"]{display:none}}
+@container (max-width:1299px){#lgTbl .tbl:has(th[data-k="cost"]) th[data-k="c1"],#lgTbl .tbl:has(th[data-k="cost"]) td[data-k="c1"]{display:none}}
 
 .an-warn{margin:0 0 14px;padding:12px 16px;border-radius:12px;border:1px solid rgba(232,163,60,.45);background:rgba(232,163,60,.09);color:var(--fg2);font-size:13px;line-height:1.6}.an-warn b{color:#f0b95a;font-weight:600;margin-right:6px}
 
@@ -1118,6 +1118,17 @@ body.islive #headline{display:none}
 @media (max-width:760px){.sp-orb{width:176px;height:176px}.sp-core{padding-top:62px}.sp-core b{font-size:40px}.sp-who{font-size:19px}.sp-bar{width:200px}}
 
 .lbtn.okd,.lbtn.okd:disabled{background:var(--done)!important;color:#fff!important;opacity:1!important;box-shadow:0 8px 22px -10px var(--done)!important}
+
+/* 1차 검수 탭: 좁을 때 숨기는 열 */
+#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="gubun"],#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="pn"]{display:none}
+@container (min-width:1240px){#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="pn"]{display:table-cell}}
+@container (min-width:1500px){#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="gubun"]{display:table-cell}}
+/* 1차 검수는 대분류(업체·제조·기타불량)가 핵심이라 먼저 보이고, 중분류는 넓을 때만 */
+@container (min-width:880px){#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="c1"]{display:table-cell}}
+#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="c2"]{display:none}
+@container (min-width:1420px){#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="c2"]{display:table-cell}}
+.empty-f1{padding:56px 24px;text-align:center;color:var(--fg3);line-height:1.7}
+.empty-f1 b{display:block;color:var(--fg);font-size:15px;font-weight:600;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -1227,7 +1238,7 @@ body.islive #headline{display:none}
   <div class="gc">
     <button data-g="nc" aria-current="true">처리 현황</button>
     <button data-g="qc">품질검수(제조)</button>
-    <button data-g="in">수입/공정</button>
+    <button data-g="in">수입/공정</button><button data-g="f1">1차 검수</button>
   </div>
   <div class="gr"><span class="who"><span class="nm" id="meN"></span><span class="role" id="meR"></span></span><span class="gdiv"></span><button class="gout" id="out">로그아웃</button></div>
 </div></nav>
@@ -1384,6 +1395,7 @@ body.islive #headline{display:none}
   <button data-s="nc" aria-current="true">처리 현황</button>
   <button data-s="qc">품질검수</button>
   <button data-s="in">수입/공정</button>
+  <button data-s="f1">1차 검수</button>
   <button data-s="search">검색</button>
 </nav>
 <div class="scrim" id="scrim"></div>
@@ -1575,11 +1587,11 @@ function drawRows(){
 
 /* ================= 상세 패널 ================= */
 function openDrawer(id){
-  if(/^[QI]-/.test(id))return openLed(id);
+  if(/^[QIF]-/.test(id))return openLed(id);
   var x=data.filter(function(y){return y.id===id})[0];if(!x)return;curId=id;
   var t=[x.d,new Date(+x.d+2*DAY),new Date(+x.d+4*DAY),x.rd],msg=["등록","업체 반출","재납 대기","처리 완료"],tl="",ix=curList.indexOf(id);
   for(var s=x.st;s>=0;s--)tl+='<div class="ev"><span class="ring">'+ring(s,13)+'</span><span class="tx">'+msg[s]+'</span><time>'+fd(t[s])+'</time></div>';
-  $("drawer").innerHTML='<div class="dh"><span class="id">'+x.id+'</span><div class="nv"><button id="dp" aria-label="이전">↑</button><span class="cnt">'+(ix+1)+' / '+curList.length+'</span><button id="dn" aria-label="다음">↓</button><button id="dx">닫기</button></div></div>'
+  $("drawer").innerHTML='<div class="dh"><span class="id">'+(SRC==="f1"?"NO. "+x.n:x.id)+'</span><div class="nv"><button id="dp" aria-label="이전">↑</button><span class="cnt">'+(ix+1)+' / '+curList.length+'</span><button id="dn" aria-label="다음">↓</button><button id="dx">닫기</button></div></div>'
    +'<div class="dbody"><h2>'+x.eq+' · '+x.def+'</h2><p class="desc">'+DESC[x.def]+'. 품번 '+x.pn+' '+x.qty+'개, 귀책 '+x.ven+'.</p>'
    +'<div class="flowbar">'+[0,1,2,3].map(function(i){return '<i style="'+(i<=x.st?'background:'+COL[x.st]:'')+'"></i>'}).join("")+'</div>'
    +'<div class="flowlab">'+STAT.map(function(s,i){return '<span class="'+(i===x.st?"on":"")+'">'+s+'</span>'}).join("")+'</div>'
@@ -1663,7 +1675,11 @@ var LCFG={
     dims:[["ven","귀책업체"],["c1","대분류"],["gubun","구분"],["cls","분류"]],
     cols:[["id","번호","mono p2"],["d","발생일",""],["site","사업장",""],["ship","출하월","p2"],["proj","발주 프로젝트","m"],["part","품명 · 위치","p2"],["desc","불량내용",""],["pn","품번","mono p2"],["qty","수량","r"],["ven","귀책업체",""],["c1","대분류","p2"],["gubun","구분","p2"],["cost","손실비용","r p2"]]}
 };
-var LS={qc:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},in:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50}};
+LCFG.f1={name:"1차 검수 부적합 (동탄)",
+    flt:[["proj","프로젝트"],["c1","대분류"],["ven","귀책"],["c2","중분류"],["c3","소분류"],["ship","출하월"],["finder","제조 담당자"]],
+    dims:[["ven","귀책"],["c1","대분류"],["c3","소분류"],["finder","제조 담당자"]],
+    cols:[["id","NO.","mono p2"],["site","사업장",""],["ship","출하월","p2"],["d","발생일",""],["proj","출하 프로젝트","m"],["pn","발주 프로젝트","p2"],["ptype","TYPE","p2"],["part","위치","p2"],["qty","수량","r"],["c1","대분류","p2"],["c2","중분류","p2"],["c3","소분류","p2"],["ven","귀책",""],["gubun","검사구분","p2"],["owner","업체 담당자","p2"],["finder","제조 담당자",""],["desc","불량내용",""]]};
+var LS={qc:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},in:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50},f1:{f:{},dim:"ven",sort:{k:"d",dir:-1},lim:50}};
 var SC={"성남":"var(--st1)","동탄":"var(--st2)","미분류":"var(--st3)"};
 function ledAll(){return LED[SRC].filter(sOK)}
 function inRg(x){return range==="m"?x.m===CM:range==="q"?x.m>=CM-2:true}
@@ -1671,6 +1687,7 @@ function ledF(rows){var S=LS[SRC];return rows.filter(function(x){for(var k in S.
   if(qs){var t=(x.id+" "+x.proj+" "+x.part+" "+x.pn+" "+x.ven+" "+x.c1+" "+x.c3+" "+x.finder+" "+x.desc).toLowerCase();if(!qs.toLowerCase().split(/\s+/).every(function(w){return t.indexOf(w)>=0}))return false}return true})}
 function fmtCost(v){return v?v.toLocaleString()+"만":"-"}
 function cell(k,x){
+  if(k==="id"&&SRC==="f1")return String(x.n);
   if(k==="d")return fd(x.d);
   if(k==="site")return '<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>';
   if(k==="cost")return fmtCost(x.cost);
@@ -1702,14 +1719,14 @@ function renderLedger(){
   var FA=ledF(all),mser=function(fn){var a=[];for(var i=0;i<=CM;i++)a.push(0);FA.forEach(function(x){if(x.m<=CM)a[x.m]+=fn(x)});return a};
   var shareV=function(p,c){p=Math.max(0,Math.min(100,Math.round(p)));return '<div class="sviz"><div class="sbar"><i style="width:'+p+'%;background:'+(c||"var(--accent)")+'"></i></div><em>'+p+'%</em></div>'};
   var st=[["불량 수량",qty,"개","월별 수량 추이",bdSpark(mser(function(x){return +x.qty||0}),"var(--accent2)")]];
-  if(SRC==="qc"){var mf=rows.filter(function(x){return x.c1==="제조불량"});st.push(["제조불량",mf.length,"건","전체 대비 · 수량 "+mf.reduce(function(a,x){return a+x.qty},0)+"개",shareV(rows.length?mf.length/rows.length*100:0,"var(--bad)")])}
+  if(SRC==="qc"||SRC==="f1"){var mf=rows.filter(function(x){return x.c1==="제조불량"});st.push(["제조불량",mf.length,"건","전체 대비 · 수량 "+mf.reduce(function(a,x){return a+x.qty},0)+"개",shareV(rows.length?mf.length/rows.length*100:0,"var(--bad)")])}
   else{var cs=rows.reduce(function(a,x){return a+x.cost},0);st.push(["손실비용",cs.toLocaleString(),"만원","발생 "+rows.filter(function(x){return x.cost}).length+"건 · 월별 추이",bdSpark(mser(function(x){return +x.cost||0}),"var(--wait)")])}
   var un=rows.filter(function(x){return x.site==="미분류"}).length;var dt=rows.length-sn-un,tt3=Math.max(1,rows.length);st.push(["성남 / 동탄",sn+" / "+dt,"",un?"미기재 "+un+"건 별도":"사업장별 건수",'<div class="sviz"><div class="sbar split"><i style="width:'+(sn/tt3*100)+'%;background:var(--st1)"></i><i style="width:'+(dt/tt3*100)+'%;background:var(--st2)"></i><i style="width:'+(un/tt3*100)+'%;background:var(--st3)"></i></div></div>']);
   st.push(["귀책 1위",tv||"-","",tv?vc[tv]+"건 · 전체의 비중":"",tv?shareV(vc[tv]/Math.max(1,rows.length)*100):""]);
   $("lgStats").innerHTML=st.map(function(a){return '<div class="stat"><div class="l">'+a[0]+'</div><div class="v'+(a[0]==="귀책 1위"||String(a[1]).length>4?" lg":"")+'">'+a[1]+'<small>'+a[2]+'</small></div>'+(a[4]||"")+'<div class="s">'+a[3]+'</div></div>'}).join("");
   $("hlB").textContent=lab+" "+rows.length+"건";
   var vs=Object.keys(vc).sort(function(a,b){return vc[b]-vc[a]}).slice(0,6);
-  var mfAll=SRC==="qc"?rows.filter(function(x){return x.c1==="제조불량"}).length:0,mfBtn=SRC==="qc"?'<button data-c1="제조불량" style="--p:100%" '+(S.f.c1==="제조불량"?'aria-current="true"':'')+' title="대분류가 제조불량인 건 전체 (기구 + 전장 + 그 외 제조 귀책)"><span class="l">제조불량 (전체)</span><span class="n">'+mfAll+'</span></button>':"";
+  var mfAll=SRC==="qc"||SRC==="f1"?rows.filter(function(x){return x.c1==="제조불량"}).length:0,mfBtn=SRC==="qc"||SRC==="f1"?'<button data-c1="제조불량" style="--p:100%" '+(S.f.c1==="제조불량"?'aria-current="true"':'')+' title="대분류가 제조불량인 건 전체 (기구 + 전장 + 그 외 제조 귀책)"><span class="l">제조불량 (전체)</span><span class="n">'+mfAll+'</span></button>':"";
   $("nav3").innerHTML='<h4>귀책 상위</h4>'+mfBtn+vs.map(function(v){return '<button data-v="'+esc(v)+'" style="--p:'+Math.round(vc[v]/vc[vs[0]]*100)+'%" '+(S.f.ven===v?'aria-current="true"':'')+'><span class="l">'+esc(v)+'</span><span class="n">'+vc[v]+'</span></button>'}).join("");
   syncSel();
   drawLedTrend(ledF(all),all);drawLedBars(rows);drawLedTable(rows);drawChkBar();
@@ -1771,7 +1788,7 @@ function drawLedTable(rows){
   curList=arr.map(function(x){return x.id});
   var h='<table class="tbl"><thead><tr>'+cfg.cols.map(function(c){var cl=c[2].split(" ");return '<th class="'+(cl.indexOf("r")>=0?"r ":"")+(k===c[0]?"s ":"")+(cl.indexOf("p2")>=0?"p2":"")+'" data-k="'+c[0]+'">'+c[1]+(k===c[0]?(dir>0?" ↑":" ↓"):"")+'</th>'}).join("")+'</tr></thead><tbody>';
   arr.slice(0,S.lim).forEach(function(x){
-    h+='<tr class="lr'+(x.id===curId?" on":"")+(SRC==="qc"&&x.c1==="제조불량"?" mf":"")+'" data-id="'+x.id+'">'+cfg.cols.map(function(c){var cl=c[2].split(" "),cls=[];
+    h+='<tr class="lr'+(x.id===curId?" on":"")+((SRC==="qc"||SRC==="f1")&&x.c1==="제조불량"?" mf":"")+'" data-id="'+x.id+'">'+cfg.cols.map(function(c){var cl=c[2].split(" "),cls=[];
       if(cl.indexOf("r")>=0)cls.push("r");if(cl.indexOf("m")>=0)cls.push("m");if(cl.indexOf("mono")>=0)cls.push("mono");if(cl.indexOf("p2")>=0)cls.push("p2");if(c[0]==="ven"&&x.ven==="N/A")cls.push("na");
       return '<td class="'+cls.join(" ")+'" data-k="'+c[0]+'">'+cell(c[0],x)+'</td>'}).join("")+'</tr>'});
   h+='</tbody></table>';
@@ -1897,9 +1914,10 @@ function drawAnalysis(){
 
 function openLed(id){
   var x=LED[SRC].filter(function(y){return y.id===id})[0];if(!x)return;curId=id;var ix=curList.indexOf(id),cfg=LCFG[SRC];
-  var P=[["번호",x.n],["사업장",'<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>'],["발생일",fd(x.d)],["출하월",x.ship],[SRC==="qc"?"출하 프로젝트":"발주 프로젝트",'<span class="chip">'+esc(x.proj)+'</span>'],["품명 · 위치",esc(x.part)],["TYPE",esc(x.ptype||"-")],["품번",'<span style="font-family:var(--mono);font-size:12px">'+esc(x.pn)+'</span>'],["불량 수량",x.qty+"개"],["귀책"+(SRC==="in"?"업체":""),'<span class="chip">'+esc(x.ven)+'</span>'],["대분류",esc(x.c1)],["중분류",esc(x.c2)],["소분류",esc(x.c3)],["발견자",esc(x.finder)]];
+  var P=[["번호",x.n],["사업장",'<span class="sd"><i style="background:'+SC[x.site]+'"></i>'+x.site+'</span>'],["발생일",fd(x.d)],["출하월",x.ship],[SRC==="in"?"발주 프로젝트":"출하 프로젝트",'<span class="chip">'+esc(x.proj)+'</span>'],["품명 · 위치",esc(x.part)],["TYPE",esc(x.ptype||"-")],["품번",'<span style="font-family:var(--mono);font-size:12px">'+esc(x.pn)+'</span>'],["불량 수량",x.qty+"개"],["귀책"+(SRC==="in"?"업체":""),'<span class="chip">'+esc(x.ven)+'</span>'],["대분류",esc(x.c1)],["중분류",esc(x.c2)],["소분류",esc(x.c3)],["발견자",esc(x.finder)]];
   if(x.note)P.push(["비고",esc(x.note)]);
   if(SRC==="qc"&&x.chk==="대상 아님"){P.push(["확인",'<span class="ckna">대상 아님</span> <span class="mut">'+(CHK_FROM.getMonth()+1)+'/'+CHK_FROM.getDate()+' 이전 발생분이에요</span>'])}else if(SRC==="qc"){var ok=x.chk==="확인";var mm=canChk(x);P.push(["확인",'<button class="ck'+(ok?' on':'')+(mm?'':' lock')+'" data-ck="'+esc(x.id)+'" data-dr="1"'+(mm?'':' disabled')+'>'+(ok?"확인 완료":"미확인")+'</button>'+(ok?' <span class="mut">'+esc(x.chkBy)+'</span>':(mm?'':' <span class="mut">담당자 본인만 확인할 수 있어요</span>'))])}
+  if(SRC==="f1"){P=P.filter(function(r){return r[0]!=="품번"&&r[0]!=="품명 · 위치"&&r[0]!=="발견자"}).map(function(r){return r[0]==="비고"?["작성자",r[1]]:r});P.splice(5,0,["발주 프로젝트",'<span class="chip">'+esc(x.pn)+'</span>'],["위치",esc(x.part)]);P.push(["검사구분",esc(x.gubun)],["업체 담당자",esc(x.owner)],["제조 담당자",esc(x.finder)])}
   if(SRC==="in")P.push(["구분",esc(x.gubun)],["분류",esc(x.cls)],["담당자",esc(x.owner)],["조치사항",esc(x.act)],["손실비용",fmtCost(x.cost)]);
   $("drawer").innerHTML='<div class="dh"><span class="id">'+x.id+'</span><div class="nv"><button id="dp" aria-label="이전">↑</button><span class="cnt">'+(ix+1)+' / '+curList.length+'</span><button id="dn" aria-label="다음">↓</button><button id="dx">닫기</button></div></div>'
    +'<div class="dbody"><h2>'+esc(x.proj)+' · '+esc(x.part)+'</h2><p class="desc">'+esc(x.desc)+'.</p><dl class="props">'+P.map(function(r){return '<dt>'+r[0]+'</dt><dd class="tn">'+r[1]+'</dd>'}).join("")+'</dl><p class="note">'+cfg.name+(LIVE?"":" · 예시 데이터")+'</p></div>';
@@ -2000,7 +2018,7 @@ var XL=(function(){
 function xlLines(t,w){var n=0;t.split(/\r?\n/).forEach(function(l){var u=0;for(var i=0;i<l.length;i++)u+=l.charCodeAt(i)>0x2E7F?2:1;n+=Math.max(1,Math.ceil(u/Math.max(4,w-1)))});return n}
 
 function xlsxOut(){
-  var btn=$("lgXls"),cfg=LCFG[SRC],rows=(window.__ledRows||[]).slice(),isQ=SRC==="qc";
+  var btn=$("lgXls"),cfg=LCFG[SRC],rows=(window.__ledRows||[]).slice(),isF=SRC==="f1",isQ=SRC==="qc"||isF;
   if(!rows.length){btn.textContent="내려받을 데이터가 없어요";setTimeout(function(){btn.textContent="엑셀 내려받기"},1800);return}
   btn.disabled=true;btn.textContent="엑셀 만드는 중";
   setTimeout(async function(){try{
@@ -2013,10 +2031,10 @@ function xlsxOut(){
     var sub=lab+" · "+siteL+(fl.length?" · "+fl.join(", "):"")+" · 총 "+rows.length.toLocaleString()+"건 · 출력 "+stamp;
     /* ---------- 시트 1: 부적합 목록 ---------- */
     var C=[["id","번호",10,"c"],["d","발생일",12,"d"],["site","사업장",9,"site"],["ship","출하월",8,"c"],["proj",isQ?"출하 프로젝트":"발주 프로젝트",24,"l"],["part",isQ?"위치 · 품명":"품명 · 위치",24,"l"],["ptype","TYPE",16,"l"]];
-    if(!isQ)C.push(["pn","품번",20,"l"]);
+    if(!isQ||isF)C.push(["pn",isF?"발주 프로젝트":"품번",20,"l"]);
     C.push(["qty","불량 수량",9,"n"],["ven",isQ?"귀책":"귀책업체",13,"tag"],["c1","대분류",11,"c"],["c2","중분류",11,"c"],["c3","소분류",11,"c"],["gubun",isQ?"검사 구분":"구분",10,"c"]);
     if(!isQ)C.push(["cls","분류",9,"c"]);
-    C.push(["finder",isQ?"제조 담당자":"발견자",11,"c"],["owner","담당자",11,"c"]);if(isQ)C.push(["chk","확인 여부",10,"chk"],["chkBy","확인자",10,"c"]);C.push(["desc","불량내용",46,"w"],["act","조치사항",34,"w"],["note",isQ?"세부 조치내용":"비고 / 세부 조치내용",30,"w"]);
+    C.push(["finder",isQ?"제조 담당자":"발견자",11,"c"],["owner",isF?"업체 담당자":"담당자",11,"c"]);if(isQ&&!isF)C.push(["chk","확인 여부",10,"chk"],["chkBy","확인자",10,"c"]);C.push(["desc","불량내용",46,"w"],["act","조치사항",34,"w"],["note",isQ?"세부 조치내용":"비고 / 세부 조치내용",30,"w"]);
     if(!isQ)C.push(["cost","손실비용(만원)",13,"n"]);
     var nc=C.length,HR=4,r0=HR+1,out=[],merges=[];
     var band=X({bg:NAVY});
@@ -2143,7 +2161,7 @@ function xlsxOut(){
       var h1=h0+A.he.length-1,tr=h1+1,ct=[cell(tr,1,"합계",tLb),cell(tr,2,A.heTot,tB,"SUM(C"+h0+":C"+h1+")")];A.heM.slice(0,CM+1).forEach(function(v,j){ct.push(cell(tr,3+j,v,tB,"SUM("+cl(3+j)+h0+":"+cl(3+j)+h1+")"))});put(tr,ct,24);
       var rowsX=Object.keys(R).map(Number).sort(function(a,b){return a-b}).map(function(k){return R[k]});
       return{name:"분석",nc:15,nr:last,cols:[2.5,24,11,10.5,10.5,10.5,10.5,10.5,9,9,9,9,9,9,9],rows:rowsX,merges:[],cf:cf,land:1,tab:"2F5FC8",foot:"품질검수 분석 · "+stamp}}
-    var s3=isQ?xlAn():null;
+    var s3=isQ&&!isF?xlAn():null;
     return await finish(s1,s2,charts,chartRows,cf,s3)
   }catch(e){console.error(e);btn.textContent="엑셀 생성에 실패했어요";setTimeout(function(){btn.textContent="엑셀 내려받기";btn.disabled=false},2200);return}
     btn.disabled=false;btn.textContent="엑셀 내려받기"},30);
@@ -2201,23 +2219,24 @@ function loadLive(token,keep){GTK=token;
     var eod=new Date();eod.setHours(23,59,59,999);
     EQS=eqr===null?"받기 실패: 서버에 장비 목록 함수가 없거나 오류예요(supabase_장비연동.sql 실행 여부 확인)":(eqr.length===0?"서버 장비 표가 비어 있어요: Apps Script 동기화가 아직 값을 보내지 못한 상태예요(Apps Script 실행 기록 확인)":"서버에서 "+eqr.length+"건을 받았어요");
     EQD=(eqr||[]).map(function(r){var p=String(r.qc_date).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);return{d:d,m:d.getMonth(),owner:r.owner||"",proj:r.project||"",type:r.etype||"",site:r.site||""}}).filter(function(x){return x.d.getFullYear()===2026&&x.d<=eod});
-    var L={qc:[],in:[]},SEEN={};
+    var L={qc:[],in:[],f1:[]},SEEN={};
     rows.forEach(function(r){
       var p=String(r.occurred).split("-"),d=new Date(+p[0],+p[1]-1,+p[2]);if(d.getFullYear()!==2026)return;
-      var q=r.src==="qc",ck=(r.sheet_no||r.id)+"|"+String(r.occurred).slice(0,10)+"|"+(r.project||""),bk=(q?"Q-":"I-")+(r.sheet_no||r.id),uk=bk;if(SEEN[bk])uk=bk+"-"+(++SEEN[bk]);else SEEN[bk]=1;var o={id:uk,ck:ck,n:+r.sheet_no||0,site:r.site,d:d,m:d.getMonth(),ship:r.ship_month||"-",proj:r.project||"-",part:r.part||"-",pn:r.pn||"-",ptype:r.ptype||"-",note:r.note||"",qty:+r.qty||0,
+      if(!L[r.src])return;var q=r.src==="qc"||r.src==="f1",ck=(r.sheet_no||r.id)+"|"+String(r.occurred).slice(0,10)+"|"+(r.project||""),bk=(r.src==="f1"?"F-":q?"Q-":"I-")+(r.sheet_no||r.id),uk=bk;if(SEEN[bk])uk=bk+"-"+(++SEEN[bk]);else SEEN[bk]=1;var o={id:uk,ck:ck,n:+r.sheet_no||0,site:r.site,d:d,m:d.getMonth(),ship:r.ship_month||"-",proj:r.project||"-",part:r.part||"-",pn:r.pn||"-",ptype:r.ptype||"-",note:r.note||"",qty:+r.qty||0,
         finder:r.finder||"-",desc:r.content||"-",ven:r.vendor||(q?"N/A":"미지정"),c1:r.c1||"-",c2:r.c2||"-",c3:r.c3||"-",cost:+r.cost||0,
         gubun:r.gubun||"-",cls:r.cls||"-",owner:r.owner||"-",act:r.action||"-"};
       L[r.src].push(o)});
-    ["qc","in"].forEach(function(k){L[k].sort(function(a,b){return a.d-b.d}).forEach(function(o,i){if(!o.n)o.n=i+1});LED[k]=L[k]});
+    ["qc","in","f1"].forEach(function(k){L[k].sort(function(a,b){return a.d-b.d}).forEach(function(o,i){if(!o.n)o.n=i+1});LED[k]=L[k]});
     applyChk();
-    if(!keep){LS.qc.f={};LS.in.f={};LS.qc.sort={k:"d",dir:-1};LS.in.sort={k:"d",dir:-1}}
+    if(!keep){["qc","in","f1"].forEach(function(k){LS[k].f={};LS[k].sort={k:"d",dir:-1}})}
     var t=new Date(),z=function(n){return n<10?"0"+n:n};
     document.querySelector(".side-foot").innerHTML='<span class="live"></span>'+t.getFullYear()+"-"+z(t.getMonth()+1)+"-"+z(t.getDate())+" "+z(t.getHours())+":"+z(t.getMinutes())+" 기준<br>DB 연동"})}
 if(LIVE){
   document.body.classList.add("islive");var gb=document.querySelector('.gc [data-g="nc"]');gb.dataset.g="bd";gb.textContent="현황판";var bb=document.querySelector('#bnav [data-s="nc"]');bb.dataset.s="bd";bb.textContent="현황판";
   TODAY=new Date();CM=TODAY.getMonth();
-  LED={qc:[],in:[]};
+  LED={qc:[],in:[],f1:[]};
 }
+if(!LED.f1)LED.f1=[];
 
 /* ================= 현황판 (종합) ================= */
 var BD={anim:true,tipOn:false,per:"c"};
@@ -2476,7 +2495,7 @@ var SLD=(function(){
   return{init:init,all:all}})();
 function bdSide(D){
   var el=$("navB");if(!el)return;var mine=D.unchk.filter(function(x){return x.finder===ME.name}).length,cmQ=(LED.qc||[]).filter(function(x){return x.m===D.cm}).length,cmI=(LED.in||[]).filter(function(x){return x.m===D.cm}).length;
-  el.innerHTML='<h4>바로가기</h4><button data-go="qc"><span class="l">품질검수(제조)</span><span class="n">'+cmQ+'</span></button><button data-go="in"><span class="l">수입/공정</span><span class="n">'+cmI+'</span></button>'
+  el.innerHTML='<h4>바로가기</h4><button data-go="qc"><span class="l">품질검수(제조)</span><span class="n">'+cmQ+'</span></button><button data-go="in"><span class="l">수입/공정</span><span class="n">'+cmI+'</span></button><button data-go="f1"><span class="l">1차 검수 (동탄)</span><span class="n">'+(LED.f1||[]).filter(function(x){return x.m===D.cm}).length+'</span></button>'
     +(ME.name?'<button data-go="mine"><span class="l">내 미확인 불량</span><span class="n'+(mine?" hot":"")+'">'+mine+'</span></button>':'')+'<button data-go="an"><span class="l">분석 (20% 감소 목표)</span></button>'}
 
 function bdMe(D,mine){
@@ -2515,16 +2534,17 @@ $("an").addEventListener("mousemove",function(e){var t=e.target.closest("[data-t
 SLD.init();
 $("navB").addEventListener("click",function(e){var b=e.target.closest("button[data-go]");if(!b)return;var g=b.dataset.go;
   if(g==="in"){setSrc("in");return}
+  if(g==="f1"){setSrc("f1");return}
   if(g==="mine"){LS.qc.f={chk:"미확인",finder:ME.name};KEEP={};LV="ov";setSrc("qc");return}
   if(g==="an"){LV="an";setSrc("qc");return}
   LV="ov";setSrc("qc")});
 
 var LV="ov";
 function applyLV(){var q=SRC==="qc";if(!q)LV="ov";$("lgView").style.display=q?"flex":"none";$("lg").classList.toggle("an",LV==="an");[].forEach.call($("lgView").querySelectorAll("button"),function(x){x.setAttribute("aria-pressed",x.dataset.v===LV)})}
-function LEDS(){return SRC==="qc"||SRC==="in"}
+function LEDS(){return SRC==="qc"||SRC==="in"||SRC==="f1"}
 function render(){if(SRC==="bd"){drawBoard();return}if(SRC==="nc")renderNC();else{renderLedger();applyLV();if(LV==="an"&&SRC==="qc")drawAnalysis()}}
 function setSrc(v){
-  SRC=v;var led=v==="qc"||v==="in",bd=v==="bd",oth=led||bd;closeDrawer();curList=[];BD.anim=true;document.body.classList.toggle("isbd",bd);
+  SRC=v;var led=v==="qc"||v==="in"||v==="f1",bd=v==="bd",oth=led||bd;closeDrawer();curList=[];BD.anim=true;document.body.classList.toggle("isbd",bd);
   $("ov").style.display=oth||view==="list"?"none":"grid";$("listSec").style.display=oth?"none":"";$("lg").style.display=led?"grid":"none";$("bd").style.display=bd?"flex":"none";
   $("nav1").style.display=oth?"none":"";$("nav2").style.display=oth?"none":"";
   [].forEach.call(document.querySelectorAll(".gc button"),function(x){x.setAttribute("aria-current",x.dataset.g===v)});
@@ -2725,7 +2745,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-0930",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-1030",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
