@@ -1413,6 +1413,22 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 .xmas .sig-n{background-image:linear-gradient(100deg,#ff6b6b 0%,#ffd36b 35%,#fff6d8 50%,#4ade80 70%,#ff6b6b 100%)}
 :root[data-theme="light"] .sig-n{background-image:linear-gradient(100deg,#1d4ed8 0%,#3d7bff 45%,#93b4ff 60%,#1d4ed8 100%)}
 @media (max-width:760px){.sig-m{flex-direction:column;gap:4px}.sig-m .dot{display:none}.sig{margin-top:36px;padding-bottom:110px}.sig-n{font-size:21px;letter-spacing:.26em;padding-left:.26em}}
+
+/* 본인 확인 질문 */
+.rq-q{padding:11px 13px;border-radius:9px;background:var(--track);border:1px solid var(--line2);color:var(--fg);font-size:14px;font-weight:600;margin-bottom:8px}
+#qP[hidden],#qBg[hidden]{display:none!important}
+.qp{width:460px}
+.qb{display:grid;gap:6px;padding:18px 24px 6px}
+.qb label{font-size:12.5px;color:var(--fg3);margin-top:8px}
+.qb select,.qb input{width:100%;height:42px;border:1px solid var(--line2);border-radius:10px;background:var(--panel);color:var(--fg);padding:0 12px;font-size:14px}
+.qb select:focus,.qb input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.qn{margin:6px 0 0;font-size:12px;color:var(--fg4);line-height:1.55}.qe{margin:0;color:var(--bad);font-size:12.5px;min-height:1em}
+.qf{display:grid;grid-template-columns:1fr 1.6fr;gap:8px;padding:12px 24px 22px}
+.qf button{height:42px;border-radius:10px;font-weight:600;font-size:14px}
+.q-l{border:1px solid var(--line2);color:var(--fg2)}.q-l:hover{background:var(--hover)}
+.q-s{background:var(--accent);color:#fff}.q-s:disabled{opacity:.45}
+.rqt .dot.ok{background:var(--done);box-shadow:0 0 0 4px rgba(76,183,130,.18)}
+.pinrule{margin-top:10px;font-size:12px;line-height:1.55;color:var(--fg4)}
 </style>
 </head>
 <body>
@@ -1452,7 +1468,7 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
       <div class="lwho" id="lwho" hidden><span class="dot"></span><b id="lwhoN"></b><span id="lwhoT">님 로그인 중</span></div>
       <label class="keep"><input type="checkbox" id="keep">이 기기에서 로그인 유지</label>
       <button class="lbtn" id="lgo" disabled>로그인</button>
-      <div class="llinks"><span class="lhint">처음이면 제조1팀 PIN을 입력해 주세요<small>제조1팀 PIN은 팀장님께 물어보세요</small></span><button class="llink" id="toReset">PIN을 잊으셨나요?</button></div>
+      <div class="llinks"><span class="lhint">처음이면 가입부터 해 주세요<small>메일로 받은 제조1팀 PIN을 넣으면 가입 화면으로 넘어가요</small></span><button class="llink" id="toReset">PIN을 잊으셨나요?</button></div>
     </div>
 
     <div class="lv" id="vJoin" hidden>
@@ -1467,6 +1483,7 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
       <div class="pins" id="mp1"></div>
       <label class="lab">한 번 더 입력</label>
       <div class="pins" id="mp2"></div>
+      <p class="lnote pinrule">같은 숫자 4번(1111) · 순서대로 된 숫자(1234, 4321) · 제조1팀 PIN · 다른 사람이 이미 쓰는 PIN은 쓸 수 없어요.</p>
       <button class="lbtn" id="mk1" disabled>다음</button>
       <div class="llinks"><button class="llink" data-back="vLogin">로그인으로 돌아가기</button></div>
     </div>
@@ -1490,8 +1507,8 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
       <select id="mq"></select>
       <label class="lab" for="ma">답</label>
       <input class="lin" id="ma" type="text" autocomplete="off" placeholder="답을 적어 주세요" maxlength="30">
-      <p class="lnote">PIN을 잊었을 때 이 답으로 본인 확인을 해요. 꼭 기억해 두세요.</p>
-      <button class="lbtn" id="mk4" disabled>저장하고 시작</button>
+      <p class="lnote">띄어쓰기와 대소문자는 구분하지 않아요. 다른 사람이 쉽게 알 수 없는 답으로 정해 주세요.</p>
+      <button class="lbtn" id="mk4" disabled>가입 완료</button>
     </div>
 
     <div class="lv" id="vAsk" hidden>
@@ -1513,16 +1530,23 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
       <input class="lin" id="rname" type="text" autocomplete="off" placeholder="본인 이름" maxlength="20">
       <label class="lab">제조1팀 PIN</label>
       <div class="pins" id="rc"></div>
-      <p class="lnote">새 PIN을 정해서 요청하면, 확인 뒤 바로 바뀌어요.</p>
+      <p class="lnote">가입할 때 정한 질문에 답하면 바로 새 PIN으로 바꿀 수 있어요.</p>
       <button class="lbtn" id="rs1" disabled>다음</button>
       <div class="llinks"><button class="llink" data-back="vLogin">로그인으로 돌아가기</button></div>
     </div>
 
     <div class="lv" id="vReset2" hidden>
+      <div id="rqA" hidden>
+        <label class="lab" for="rans">본인 확인 질문</label>
+        <div class="rq-q" id="rqQ"></div>
+        <input class="lin" id="rans" type="text" autocomplete="off" placeholder="가입할 때 적은 답" maxlength="30">
+      </div>
+      <p class="lnote" id="rqNo" hidden>본인 확인 질문을 정하지 않은 계정이라, 담당자 확인 뒤 바뀌어요.</p>
       <label class="lab">새 PIN 4자리</label>
       <div class="pins" id="rp"></div>
       <label class="lab">한 번 더 입력</label>
       <div class="pins" id="rp2"></div>
+      <p class="lnote pinrule">같은 숫자 4번(1111) · 순서대로 된 숫자(1234, 4321) · 제조1팀 PIN · 다른 사람이 이미 쓰는 PIN은 쓸 수 없어요.</p>
       <button class="lbtn" id="rs2" disabled>재설정 요청 보내기</button>
       <div class="llinks"><button class="llink" data-back="vReset1">이전</button></div>
     </div>
@@ -1711,6 +1735,10 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 <div class="tip" id="tip"></div>
 
 <button id="toTop" type="button">맨 위로</button>
+<div class="revbg" id="qBg" hidden></div>
+<div class="revp qp" id="qP" role="dialog" aria-modal="true" aria-labelledby="qH" hidden><div class="rv-hd"><div><h3 id="qH">본인 확인 질문을 정해 주세요</h3><p>PIN을 잊었을 때 이 질문에 답하면 바로 새 PIN으로 바꿀 수 있어요.</p></div></div>
+<div class="qb"><label for="qSel">질문</label><select id="qSel"></select><label for="qAns">답</label><input id="qAns" type="text" autocomplete="off" maxlength="30" placeholder="답을 적어 주세요"><p class="qn">띄어쓰기와 대소문자는 구분하지 않아요. 다른 사람이 쉽게 알 수 없는 답으로 정해 주세요.</p><p class="qe" id="qErr"></p></div>
+<div class="qf"><button type="button" class="q-l" id="qLater">나중에</button><button type="button" class="q-s" id="qSave" disabled>저장</button></div></div>
 <div class="revbg" id="revBg" hidden></div>
 <div class="revp" id="revP" role="dialog" aria-modal="true" aria-labelledby="revH" hidden><div class="rv-hd"><div><h3 id="revH">업데이트 기록</h3><p>제조 부적합 대시보드가 바뀌어 온 기록이에요.</p></div><button class="rq-x" id="revX" type="button" aria-label="닫기">×</button></div><div id="revBody"></div></div>
 <div class="revt" id="revT" role="status" aria-live="polite"></div>
@@ -2950,6 +2978,7 @@ function drawF1(){
     var r=e.target.closest(".fd-r");if(r){openLed(r.dataset.id);return}})})();
 /* ===== 업데이트 기록 (Rev) — 새 버전을 올릴 때 맨 위에 한 줄씩 추가 ===== */
 var REV=[
+ {n:8,d:"2026-11-14",t:"PIN 찾기 개선",i:["가입할 때 본인 확인 질문을 정해요","PIN을 잊으면 질문에 답하고 바로 새 PIN으로 바꿀 수 있어요","이미 가입한 분은 로그인하면 질문을 정하는 창이 한 번 떠요"]},
  {n:7,d:"2026-11-14",t:"업데이트 기록 · 만든 사람 표시",i:["왼쪽 메뉴 아래와 화면 맨 아래에서 지금까지 바뀐 점을 볼 수 있어요","새 버전이 올라오면 로그인할 때 바뀐 점을 한 번 알려 줘요"]},
  {n:6,d:"2026-11-14",t:"탭 순서 변경 · 스크롤 개선",i:["탭 순서가 현황판 → 1차 검수 → 품질검수(제조) → 수입/공정으로 바뀌었어요","스크롤할 때 버벅이던 문제를 고쳤어요"]},
  {n:5,d:"2026-11-14",t:"크리스마스",i:[]},
@@ -3027,13 +3056,13 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
 /* ================= 로그인 · PIN 만들기 · PIN 재설정 ================= */
 (function(){
   var MAXF=3,IDLE=30*60e3,SK="nc_sess",LAST="nc_last";
-  var QS=["제일 사랑하는 사람은?","가장 맛있게 먹은 음식은?","어릴 때 별명은?","가장 기억에 남는 여행지는?","제일 좋아하는 영화는?","처음 다닌 초등학교 이름은?"];
+  var QS=["처음 다닌 초등학교 이름은?","어릴 때 살던 동네 이름은?","어릴 때 별명은?","처음 키운 반려동물 이름은?","가장 기억에 남는 여행지는?","가장 좋아하는 음식은?","처음 산 휴대폰 모델은?"];
   var JOINC="";
-  var T={vLogin:["로그인","본인 PIN 4자리를 입력해 주세요."],vJoin:["가입이 필요해요",""],vMake1:["내 PIN 정하기","제조1팀 PIN 말고, 본인만 아는 숫자 4자리를 정해 주세요."],vMake2:["이름 입력","본인 이름을 입력해 주세요."],vMake3:["본인 확인",""],vMake4:["질문 선택","PIN을 잊었을 때 본인 확인에 써요."],vReset1:["PIN을 잊으셨나요?","이름과 제조1팀 PIN을 입력해 주세요."],vReset2:["새 PIN 정하기","본인만 아는 숫자 4자리를 정해 주세요."],vAsk:["가입 승인 요청",""],vSent:["요청을 보냈어요",""]};
+  var T={vLogin:["로그인","본인 PIN 4자리를 입력해 주세요."],vJoin:["가입이 필요해요",""],vMake1:["내 PIN 정하기","제조1팀 PIN 말고, 본인만 아는 숫자 4자리를 정해 주세요."],vMake2:["이름 입력","본인 이름을 입력해 주세요."],vMake3:["본인 확인",""],vMake4:["본인 확인 질문","PIN을 잊었을 때 이 질문에 답하면 바로 새 PIN으로 바꿀 수 있어요."],vReset1:["PIN을 잊으셨나요?","이름과 제조1팀 PIN을 입력해 주세요."],vReset2:["새 PIN 정하기","본인만 아는 숫자 4자리를 정해 주세요."],vAsk:["가입 승인 요청",""],vSent:["요청을 보냈어요",""]};
   var err=$("lerr"),TK="",busy=false;
   function st(k,v,keep){try{var a=keep?localStorage:sessionStorage;if(v===null){localStorage.removeItem(k);sessionStorage.removeItem(k)}else a.setItem(k,v)}catch(e){}}
   function ld(k){try{return sessionStorage.getItem(k)||localStorage.getItem(k)}catch(e){return null}}
-  function msg(t,ok){err.textContent=t||"";err.className="lerr"+(ok===2?" info":ok?" ok":"")}
+  function msg(t,ok){if(t==="쓸 수 없는 PIN이에요. 다른 숫자로 정해 주세요.")t="이미 다른 사람이 쓰고 있는 PIN이에요. 다른 숫자로 정해 주세요.";err.textContent=t||"";err.className="lerr"+(ok===2?" info":ok?" ok":"")}
   function nm(v){return String(v||"").replace(/\s/g,"")}
   function dn(u){return u[0]+(u[1]==="팀장"||u[1]==="총괄팀장"?" "+u[1]:"")}
   $("llogo").src=document.querySelector(".gnav .logo").src;
@@ -3058,7 +3087,8 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   M1=PB($("mp1"),"",function(){chkMk1()});M2=PB($("mp2"),"",function(){chkMk1()});
   R1=PB($("rp"),"",function(){chkRs2()});R2=PB($("rp2"),"",function(){chkRs2()});RC=PB($("rc"),"",function(){chkRs1()});
   function chkMk1(){$("mk1").disabled=!(M1.val().length===4&&M2.val().length===4)}
-  function chkRs2(){$("rs2").disabled=!(R1.val().length===4&&R2.val().length===4)}
+  var RQM=null;
+  function chkRs2(){$("rs2").disabled=!(R1.val().length===4&&R2.val().length===4&&(RQM!=="q"||nm($("rans").value)))}
   function chkRs1(){$("rs1").disabled=!(nm($("rname").value)&&RC.val().length===4)}
 
   /* ---- 화면 전환 ---- */
@@ -3183,10 +3213,12 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("lname").addEventListener("keydown",function(e){if(e.key==="Enter"&&nm(this.value))P1.focus()});
 
   /* ---- PIN 만들기 ---- */
-  function weak(p){return /^(\d)\1{3}$/.test(p)||p==="1234"||p==="4321"||p==="0123"}
+  function weak(p){return /^(\d)\1{3}$/.test(p)||["1234","4321","0123","9876"].indexOf(p)>=0}
+  function weakMsg(p){return /^(\d)\1{3}$/.test(p)?"같은 숫자를 4번 쓴 PIN은 쓸 수 없어요. 다른 숫자로 정해 주세요.":"1234처럼 순서대로 된 숫자는 쓸 수 없어요. 다른 숫자로 정해 주세요."}
   $("mk1").onclick=function(){var a=M1.val(),b=M2.val();
     if(a!==b){msg("두 PIN이 달라요. 똑같이 입력해 주세요.");M2.shake();M2.clear();return}
-    if(weak(a)||a===JOINC){msg("쓸 수 없는 PIN이에요. 다른 숫자로 정해 주세요.");M1.shake();M1.clear();M2.clear();return}
+    if(a===JOINC){msg("제조1팀 PIN과 같은 숫자는 쓸 수 없어요. 본인만 아는 숫자로 정해 주세요.");M1.shake();M1.clear();M2.clear();chkMk1();return}
+    if(weak(a)){msg(weakMsg(a));M1.shake();M1.clear();M2.clear();chkMk1();return}
     show("vMake2")};
   $("mname").addEventListener("input",function(){$("mk2").disabled=!nm(this.value)});
   $("mname").addEventListener("keydown",function(e){if(e.key==="Enter"&&!$("mk2").disabled)$("mk2").click()});
@@ -3205,33 +3237,46 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
   $("askY").onclick=function(){if(busy)return;busy=true;$("askY").disabled=true;$("askY").textContent="보내는 중";
     call("nc_req_join",{p_name:nm($("mname").value),p_pin:M1.val(),p_code:JOINC}).then(function(r){busy=false;$("askY").disabled=false;$("askY").textContent="승인 요청하기";
       if(r&&r.ok){sent("join",r);$("mname").value=""}
-      else if(r&&r.pin){show("vMake1");M1.clear();M2.clear();msg(r.msg)}
+      else if(r&&r.pin){show("vMake1");M1.clear();M2.clear();chkMk1();msg(r.msg)}
       else if(r&&r.restart){JOINC="";show("vLogin");msg(r.msg)}
       else msg(r&&r.msg||"요청을 보내지 못했어요.")})};
   $("sentOk").onclick=function(){show("vLogin")};
   $("mk3n").onclick=function(){show("vMake2")};
-  $("mk3y").onclick=function(){if(busy)return;busy=true;$("mk3y").disabled=true;
-    call("nc_register",{p_name:nm($("mname").value),p_pin:M1.val(),p_q:"",p_a:"",p_code:JOINC}).then(function(r){busy=false;$("mk3y").disabled=false;
-      if(r&&r.ok){JOINC="";M1.clear();M2.clear();$("mname").value="";show("vLogin");msg("가입됐어요. 방금 정한 PIN으로 로그인해 주세요.",2);P1.focus()}
-      else if(r&&r.restart){JOINC="";show("vLogin");msg(r.msg)}
-      else if(r&&r.pin){show("vMake1");M1.clear();M2.clear();msg(r.msg)}
-      else msg(r&&r.msg||"가입에 실패했어요.")})};
+  $("mk3y").onclick=function(){$("ma").value="";$("mk4").disabled=true;show("vMake4")};
   $("ma").addEventListener("input",function(){$("mk4").disabled=!nm(this.value)});
   $("ma").addEventListener("keydown",function(e){if(e.key==="Enter"&&!$("mk4").disabled)$("mk4").click()});
   $("mk4").onclick=function(){if(busy)return;busy=true;$("mk4").disabled=true;
-    call("nc_register",{p_name:nm($("mname").value),p_pin:M1.val(),p_q:$("mq").value,p_a:$("ma").value.trim(),p_code:JOINC}).then(function(r){busy=false;
-      if(r&&r.ok){msg("저장되었습니다. 로그인합니다.",true);st(LAST,r.name,true);setTimeout(function(){enterWith(r,false)},700)}
-      else{$("mk4").disabled=false;msg(r&&r.msg||"저장에 실패했어요.")}})};
+    call("nc_register",{p_name:nm($("mname").value),p_pin:M1.val(),p_q:$("mq").value,p_a:$("ma").value,p_code:JOINC}).then(function(r){busy=false;$("mk4").disabled=false;
+      if(r&&r.ok){JOINC="";M1.clear();M2.clear();$("mname").value="";$("ma").value="";show("vLogin");msg("가입됐어요. 방금 정한 PIN으로 로그인해 주세요.",2);P1.focus()}
+      else if(r&&r.restart){JOINC="";show("vLogin");msg(r.msg)}
+      else if(r&&r.pin){show("vMake1");M1.clear();M2.clear();chkMk1();msg(r.msg)}
+      else msg(r&&r.msg||"가입에 실패했어요.")})};
 
   /* ---- PIN 재설정 ---- */
   $("rname").addEventListener("input",chkRs1);
   $("rname").addEventListener("keydown",function(e){if(e.key==="Enter"&&nm(this.value))RC.focus()});
-  $("rs1").onclick=function(){R1.clear();R2.clear();show("vReset2");chkRs2()};
-  $("rs2").onclick=function(){if(busy)return;var p=R1.val();
+  $("rans").addEventListener("input",chkRs2);
+  $("rans").addEventListener("keydown",function(e){if(e.key==="Enter")R1.focus()});
+  $("rs1").onclick=function(){if(busy)return;busy=true;$("rs1").disabled=true;
+    call("nc_reset_q",{p_name:nm($("rname").value),p_code:RC.val()}).then(function(r){busy=false;chkRs1();
+      if(!r||!r.ok){if(r&&r.code)RC.clear();chkRs1();msg(r&&r.msg||"확인하지 못했어요.");return}
+      RQM=r.noq?"req":"q";R1.clear();R2.clear();$("rans").value="";
+      $("rqA").hidden=RQM!=="q";$("rqNo").hidden=RQM==="q";if(r.q)$("rqQ").textContent=r.q;
+      T.vReset2=RQM==="q"?["새 PIN 정하기","질문에 답하고 새 PIN을 정해 주세요."]:["새 PIN 정하기","본인만 아는 숫자 4자리를 정해 주세요."];
+      $("rs2").textContent=RQM==="q"?"새 PIN으로 바꾸기":"재설정 요청 보내기";
+      show("vReset2");chkRs2();if(RQM==="q")setTimeout(function(){$("rans").focus()},60)})};
+  $("rs2").onclick=function(){if(busy)return;var p=R1.val(),lab=$("rs2").textContent;
     if(p!==R2.val()){msg("두 PIN이 달라요. 똑같이 입력해 주세요.");R2.shake();R2.clear();return}
-    if(weak(p)){msg("너무 쉬운 PIN이에요. 다른 숫자로 정해 주세요.");R1.shake();R1.clear();R2.clear();return}
-    busy=true;$("rs2").disabled=true;$("rs2").textContent="보내는 중";
-    call("nc_req_reset",{p_name:nm($("rname").value),p_pin:p,p_code:RC.val()}).then(function(r){busy=false;$("rs2").textContent="재설정 요청 보내기";
+    if(weak(p)){msg(weakMsg(p));R1.shake();R1.clear();R2.clear();return}
+    busy=true;$("rs2").disabled=true;$("rs2").textContent=RQM==="q"?"바꾸는 중":"보내는 중";
+    var fin=function(){busy=false;$("rs2").textContent=lab};
+    if(RQM==="q")call("nc_reset_by_answer",{p_name:nm($("rname").value),p_code:RC.val(),p_answer:$("rans").value,p_pin:p}).then(function(r){fin();
+      if(r&&r.ok){R1.clear();R2.clear();RC.clear();$("rans").value="";$("rname").value="";show("vLogin");msg("PIN이 바뀌었어요. 새 PIN으로 로그인해 주세요.",2);P1.focus()}
+      else if(r&&r.code){RC.clear();show("vReset1");chkRs1();msg(r.msg)}
+      else if(r&&r.ans){$("rans").value="";chkRs2();$("rans").focus();msg(r.msg)}
+      else if(r&&r.pin){R1.clear();R2.clear();chkRs2();msg(r.msg)}
+      else{chkRs2();msg(r&&r.msg||"바꾸지 못했어요.")}});
+    else call("nc_req_reset",{p_name:nm($("rname").value),p_pin:p,p_code:RC.val()}).then(function(r){fin();
       if(r&&r.ok){sent("reset",r)}
       else if(r&&r.code){RC.clear();show("vReset1");chkRs1();msg(r.msg)}
       else if(r&&r.pin){R1.clear();R2.clear();chkRs2();msg(r.msg)}
@@ -3247,7 +3292,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     last=Date.now();if(LIVE){try{setSrc("bd")}catch(e){console.error("화면 그리기 오류",e)}setTimeout(poll,1200)}else drawTrend();setTimeout(revToast,1800);
   }
   function logout(m){
-    if(LIVE&&TK){rpc("nc_logout",{p_token:TK}).catch(function(){});LED={qc:[],in:[],f1:[]}}TK="";BASE=null;PEND=null;hideBar();RQ.adm=false;RQ.n=null;RQ.data=null;rqClose();rqBadge(0);$("rqT").classList.remove("on");
+    if(LIVE&&TK){rpc("nc_logout",{p_token:TK}).catch(function(){});LED={qc:[],in:[],f1:[]}}TK="";BASE=null;PEND=null;hideBar();QA.shown=false;RQ.adm=false;RQ.n=null;RQ.data=null;rqClose();rqBadge(0);$("rqT").classList.remove("on");
     st(SK,null);closeDrawer();document.body.classList.add("locked");document.body.classList.remove("entered");
     $("login").classList.remove("off");$("login").removeAttribute("aria-hidden");
     P1.clear();$("lname").value="";$("lgo").textContent="로그인";show("vLogin");chkLogin();msg(m||"로그아웃되었습니다.",true);scrollTo(0,0);
@@ -3268,7 +3313,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-1635",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-1730",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
@@ -3297,6 +3342,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     rqToast(t);
     try{if(document.hidden&&"Notification" in window&&Notification.permission==="granted"){var no=new Notification("제조 부적합 대시보드",{body:t,tag:"nc-req"});no.onclick=function(){try{focus()}catch(e){}rqOpen();no.close()}}}catch(e){}
     ["bell","mbell"].forEach(function(id){var b=$(id);b.classList.remove("ring");void b.offsetWidth;b.classList.add("ring")})}
+  window.rqToastMsg=function(t){var e=$("rqT");e.innerHTML='<span class="dot ok"></span><span class="tx">'+esc(t)+'</span>';e.classList.add("on");clearTimeout(rqTT);rqTT=setTimeout(function(){e.classList.remove("on")},3500)};
   function rqToast(t){var e=$("rqT");e.innerHTML='<span class="dot"></span><span class="tx">'+esc(t)+'</span><button type="button" class="go">확인하기</button><button type="button" class="x" aria-label="닫기">×</button>';
     e.classList.add("on");clearTimeout(rqTT);rqTT=setTimeout(function(){e.classList.remove("on")},10000)}
   $("rqT").addEventListener("click",function(e){if(e.target.closest(".go"))rqOpen();if(e.target.closest("button"))this.classList.remove("on")});
@@ -3344,13 +3390,26 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
       else{it.classList.remove("busy");var m=document.createElement("p");m.className="rq-err";m.textContent=r&&r.msg||"처리하지 못했어요. 다시 시도해 주세요.";it.appendChild(m);setTimeout(rqLoad,1600)}
     }).catch(function(){it.classList.remove("busy");var m=document.createElement("p");m.className="rq-err";m.textContent="서버에 연결할 수 없어요. 다시 시도해 주세요.";it.appendChild(m)})});
 
+  /* ---- 본인 확인 질문이 없으면 한 번 묻기 ---- */
+  var QA={shown:false};
+  function qSync(r){if(!r||!r.noq||QA.shown)return;var k="nc_q_later_"+(ME&&ME.name||"");try{if(sessionStorage.getItem(k))return}catch(e){}QA.shown=true;setTimeout(qOpen,2600)}
+  function qOpen(){$("qSel").innerHTML=QS.map(function(q){return '<option>'+q+'</option>'}).join("");$("qAns").value="";$("qErr").textContent="";$("qSave").disabled=true;
+    $("qBg").hidden=false;$("qP").hidden=false;requestAnimationFrame(function(){$("qBg").classList.add("on");$("qP").classList.add("on")});setTimeout(function(){$("qSel").focus()},80)}
+  function qClose(){$("qBg").classList.remove("on");$("qP").classList.remove("on");setTimeout(function(){$("qBg").hidden=true;$("qP").hidden=true},220)}
+  $("qAns").addEventListener("input",function(){$("qSave").disabled=!nm(this.value)});
+  $("qAns").addEventListener("keydown",function(e){if(e.key==="Enter"&&!$("qSave").disabled)$("qSave").click()});
+  $("qLater").onclick=function(){try{sessionStorage.setItem("nc_q_later_"+(ME&&ME.name||""),"1")}catch(e){}qClose()};
+  $("qSave").onclick=function(){var b=$("qSave");b.disabled=true;b.textContent="저장 중";
+    rpc("nc_set_question",{p_token:TK,p_q:$("qSel").value,p_a:$("qAns").value}).then(function(r){b.textContent="저장";
+      if(r&&r.ok){qClose();if(window.rqToastMsg)rqToastMsg("본인 확인 질문을 저장했어요")}else{b.disabled=false;$("qErr").textContent=r&&r.msg||"저장하지 못했어요."}})
+      .catch(function(){b.textContent="저장";b.disabled=false;$("qErr").textContent="서버에 연결할 수 없어요. 다시 시도해 주세요."})};
   function poll(){
     if(!LIVE||!TK||polling||document.body.classList.contains("locked")||(document.hidden&&!(RQ.adm&&"Notification" in window&&Notification.permission==="granted")))return;
     polling=true;
     rpc("nc_changes",{p_token:TK}).then(function(r){
       polling=false;
       if(!r){logout("로그인 시간이 지나 다시 로그인해 주세요.");return}
-      rqSync(r);
+      rqSync(r);qSync(r);
       refreshChecks();
       try{var ss=[localStorage,sessionStorage];ss.forEach(function(a){var v=a.getItem(SK);if(v){var o=JSON.parse(v);if(o.k===TK){o.t=Date.now();a.setItem(SK,JSON.stringify(o))}}})}catch(e){}
       if(BASE===null){BASE=r.v;return}
