@@ -1129,6 +1129,23 @@ body.islive #headline{display:none}
 @container (min-width:1420px){#lgTbl .tbl:has(th[data-k="gubun"]) [data-k="c2"]{display:table-cell}}
 .empty-f1{padding:56px 24px;text-align:center;color:var(--fg3);line-height:1.7}
 .empty-f1 b{display:block;color:var(--fg);font-size:15px;font-weight:600;margin-bottom:4px}
+
+/* 인원별 현황: 순위 가운데 · 정렬 버튼 */
+.at th.c,.at td.c{text-align:center}
+.at.ppl td.prk{font-variant-numeric:tabular-nums;color:var(--fg3);width:64px}
+.at.ppl td.prk.p3{color:var(--fg);font-weight:600}
+.at.ppl th.on{color:var(--fg)}
+#anPpl .ah{flex-wrap:wrap;row-gap:10px}
+.ppl-seg{margin-left:auto;display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:9px;background:var(--panel)}
+.ppl-seg button{height:28px;padding:0 12px;border-radius:6px;font-size:12.5px;color:var(--fg3);transition:background .15s,color .15s}
+.ppl-seg button:hover{color:var(--fg)}
+.ppl-seg button[aria-pressed="true"]{background:var(--sel);color:var(--fg);font-weight:600}
+.bc i.m-eq{background:var(--st2)!important}.bc i.m-avg{background:var(--accent2)!important}
+@media (prefers-reduced-motion:no-preference){
+ #anPpl.resort tbody tr{animation:bdUp .4s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--n,0)*28ms)}
+ #anPpl.resort .bc i{transform-origin:left;animation:bdBarX .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(120ms + var(--n,0)*28ms)}
+}
+@media (max-width:760px){.ppl-seg{margin-left:0;width:100%;overflow-x:auto}.ppl-seg button{flex:1 0 auto}}
 </style>
 </head>
 <body>
@@ -1675,7 +1692,7 @@ var LCFG={
     dims:[["ven","귀책업체"],["c1","대분류"],["gubun","구분"],["cls","분류"]],
     cols:[["id","번호","mono p2"],["d","발생일",""],["site","사업장",""],["ship","출하월","p2"],["proj","발주 프로젝트","m"],["part","품명 · 위치","p2"],["desc","불량내용",""],["pn","품번","mono p2"],["qty","수량","r"],["ven","귀책업체",""],["c1","대분류","p2"],["gubun","구분","p2"],["cost","손실비용","r p2"]]}
 };
-LCFG.f1={name:"1차 검수 부적합 (동탄)",
+LCFG.f1={name:"1차 검수 부적합",
     flt:[["proj","프로젝트"],["c1","대분류"],["ven","귀책"],["c2","중분류"],["c3","소분류"],["ship","출하월"],["finder","제조 담당자"]],
     dims:[["ven","귀책"],["c1","대분류"],["c3","소분류"],["finder","제조 담당자"]],
     cols:[["id","NO.","mono p2"],["site","사업장",""],["ship","출하월","p2"],["d","발생일",""],["proj","출하 프로젝트","m"],["pn","발주 프로젝트","p2"],["ptype","TYPE","p2"],["part","위치","p2"],["qty","수량","r"],["c1","대분류","p2"],["c2","중분류","p2"],["c3","소분류","p2"],["ven","귀책",""],["gubun","검사구분","p2"],["owner","업체 담당자","p2"],["finder","제조 담당자",""],["desc","불량내용",""]]};
@@ -1891,10 +1908,7 @@ function drawAnalysis(){
     h+='<tr class="'+(t.p===GOAL.pct?"goal":"")+'"><td>'+(t.p?t.p+"% 감소":"기준(0%)")+(t.p===GOAL.pct?' <em class="tg">공식 목표</em>':'')+'</td><td class="r bb">'+f2(t.v)+'</td><td class="r">'+al+'</td><td class="r">'+A.cum.tot+'</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>0?"+":"")+gap+'</td><td class="r">'+okm+' / '+tm+'개월</td><td class="r '+(gap>=0?"ok":"bad")+'">'+(gap>=0?"달성":"미달")+'</td></tr>'});
   h+='</tbody></table></div></div>';
   /* 2. 인원별 */
-  var mxq=Math.max.apply(null,A.P.map(function(q){return q.qty}).concat([1]));
-  h+='<div class="ac"><div class="ah"><h3>인원별 현황</h3><span class="am">제조 담당자 기준 · 올해 · 불량수량은 제조불량</span></div><div class="tw"><table class="at"><thead>'+th(["순위","이름","장비대수","불량수량","평균(불량/장비)",""]).replace('<th class="r">이름','<th>이름')+'</thead><tbody>';
-  A.P.forEach(function(q,k){h+='<tr><td class="r mut">'+(k+1)+'</td><td><b>'+esc(q.n)+'</b>'+(q.ok?'':' <em class="tg g">표본 적음</em>')+'</td><td class="r">'+q.eq+'</td><td class="r bb">'+q.qty+'</td><td class="r">'+f2(q.avg)+'</td><td class="bc"><i style="width:'+Math.round(q.qty/mxq*100)+'%"></i></td></tr>'});
-  h+='</tbody></table></div></div>';
+  h+=anPeople(A);
   /* 3. TOP3 / BEST3 */
   var card=function(q,k,hi){return '<div class="ar"><span class="rk">'+(k+1)+'</span><b>'+esc(q.n)+'</b><span class="x"><em>불량</em>'+q.qty+'</span><span class="x"><em>장비</em>'+q.eq+'대</span><span class="x"><em>평균</em>'+f2(q.avg)+'</span></div>'};
   h+='<div class="ag"><div class="ac"><div class="ah"><h3>올해 불량 많은 TOP3</h3></div>'+(A.top3.map(card).join("")||'<div class="empty">데이터가 없어요.</div>')+'</div>'
@@ -2495,7 +2509,7 @@ var SLD=(function(){
   return{init:init,all:all}})();
 function bdSide(D){
   var el=$("navB");if(!el)return;var mine=D.unchk.filter(function(x){return x.finder===ME.name}).length,cmQ=(LED.qc||[]).filter(function(x){return x.m===D.cm}).length,cmI=(LED.in||[]).filter(function(x){return x.m===D.cm}).length;
-  el.innerHTML='<h4>바로가기</h4><button data-go="qc"><span class="l">품질검수(제조)</span><span class="n">'+cmQ+'</span></button><button data-go="in"><span class="l">수입/공정</span><span class="n">'+cmI+'</span></button><button data-go="f1"><span class="l">1차 검수 (동탄)</span><span class="n">'+(LED.f1||[]).filter(function(x){return x.m===D.cm}).length+'</span></button>'
+  el.innerHTML='<h4>바로가기</h4><button data-go="qc"><span class="l">품질검수(제조)</span><span class="n">'+cmQ+'</span></button><button data-go="in"><span class="l">수입/공정</span><span class="n">'+cmI+'</span></button><button data-go="f1"><span class="l">1차 검수</span><span class="n">'+(LED.f1||[]).filter(function(x){return x.m===D.cm}).length+'</span></button>'
     +(ME.name?'<button data-go="mine"><span class="l">내 미확인 불량</span><span class="n'+(mine?" hot":"")+'">'+mine+'</span></button>':'')+'<button data-go="an"><span class="l">분석 (20% 감소 목표)</span></button>'}
 
 function bdMe(D,mine){
@@ -2530,7 +2544,29 @@ var RV=(function(){
     [].forEach.call(el.querySelectorAll(".at td.bb,.aht b"),function(c,k){cuRun(c,900,150+Math.min(k,16)*25)})})},{threshold:.08,rootMargin:"0px 0px -40px 0px"}):null;
   return function(root,sel){if(!io||!root)return;[].forEach.call(root.querySelectorAll(sel),function(el,i){el.classList.remove("in");el.classList.add("rv");io.observe(el)})}})();
 
+$("an").addEventListener("click",function(e){var b=e.target.closest("[data-ps]");if(!b||b.dataset.ps===PSORT)return;PSORT=b.dataset.ps;var old=$("anPpl");if(!old)return;
+  var w=document.createElement("div");w.innerHTML=anPeople(anCompute());var nw=w.firstChild;nw.classList.add("in","resort");old.parentNode.replaceChild(nw,old)});
 $("an").addEventListener("mousemove",function(e){var t=e.target.closest("[data-tip]");if(t)tipShow(e,t.getAttribute("data-tip"));else tipHide()});$("an").addEventListener("mouseleave",tipHide);
+/* ===== 분석: 인원별 현황 (정렬 바꾸기) ===== */
+var PSORT="qty";
+var PS=[["qty","불량 많은 순"],["eq","장비 많은 순"],["avgH","평균 높은 순"],["avgL","평균 낮은 순"]];
+function anPeople(A){
+  var P=A.P.slice(),k=PSORT,met=k==="eq"?"eq":(k==="qty"?"qty":"avg");
+  var cmp={qty:function(a,b){return b.qty-a.qty||b.eq-a.eq},eq:function(a,b){return b.eq-a.eq||b.qty-a.qty},
+           avgH:function(a,b){return (b.ok-a.ok)||b.avg-a.avg||b.eq-a.eq},avgL:function(a,b){return (b.ok-a.ok)||a.avg-b.avg||b.eq-a.eq}}[k];
+  P.sort(function(a,b){return cmp(a,b)||(a.n<b.n?-1:1)});
+  var mx=Math.max.apply(null,P.map(function(q){return q[met]}).concat([0.0001]));
+  var sub={qty:"올해 제조불량 수량이 많은 순서예요",eq:"올해 검수한 장비가 많은 순서예요",avgH:"장비 1대당 불량이 많은 순서예요 · 표본 적음은 맨 아래",avgL:"장비 1대당 불량이 적은 순서예요 · 표본 적음은 맨 아래"}[k];
+  var hc=function(m){return met===m?" on":""};
+  var h='<div class="ac" id="anPpl"><div class="ah"><h3>인원별 현황</h3><span class="am">'+sub+'</span>'
+   +'<div class="seg ppl-seg" role="group" aria-label="정렬">'+PS.map(function(o){return '<button data-ps="'+o[0]+'" aria-pressed="'+(o[0]===k)+'">'+o[1]+'</button>'}).join("")+'</div></div>'
+   +'<div class="tw"><table class="at ppl"><thead><tr><th class="c">순위</th><th>이름</th><th class="r'+hc("eq")+'">장비대수</th><th class="r'+hc("qty")+'">불량수량</th><th class="r'+hc("avg")+'">평균(불량/장비)</th><th></th></tr></thead><tbody>';
+  P.forEach(function(q,i){
+    h+='<tr style="--n:'+Math.min(i,14)+'"><td class="c prk'+(i<3?" p3":"")+'">'+(i+1)+'</td><td><b>'+esc(q.n)+'</b>'+(q.ok?'':' <em class="tg g">표본 적음</em>')+'</td>'
+      +'<td class="r'+(met==="eq"?" bb":"")+'">'+q.eq+'</td><td class="r'+(met==="qty"?" bb":"")+'">'+q.qty+'</td><td class="r'+(met==="avg"?" bb":"")+'">'+f2(q.avg)+'</td>'
+      +'<td class="bc"><i class="m-'+met+'" style="width:'+Math.max(0,Math.round(q[met]/mx*100))+'%"></i></td></tr>'});
+  return h+'</tbody></table></div></div>'}
+
 SLD.init();
 $("navB").addEventListener("click",function(e){var b=e.target.closest("button[data-go]");if(!b)return;var g=b.dataset.go;
   if(g==="in"){setSrc("in");return}
@@ -2745,7 +2781,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261114-1030",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261114-1110",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
