@@ -482,6 +482,7 @@ aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 240px)
 .stat:hover{background:rgba(255,255,255,.022)}
 .stat .l{font-size:13px;font-weight:500}
 .stat .v{font-size:clamp(28px,2.5vw,36px);font-weight:600;letter-spacing:-.045em;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stat .v.lng{font-size:clamp(19px,1.7vw,24px);letter-spacing:-.03em;line-height:1.55}
 .stat .v.lg{font-size:clamp(22px,1.95vw,28px);padding-top:6px}
 .stat .v small{font-size:14px;font-weight:500;color:var(--fg3)}
 .stat .s{margin-top:auto;padding-top:12px;font-size:12.5px;color:var(--fg4);line-height:1.5}
@@ -507,7 +508,8 @@ aside{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 240px)
 #lgTrend .hh:hover .hb{opacity:1}
 #lgTrend .bar{transform-box:fill-box;transform-origin:50% 100%}
 #lgTrend.anim .bar{animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
-#lgTrend .cur{filter:drop-shadow(0 0 10px rgba(79,140,255,.45))}
+#lgTrend .cur{filter:none}
+#lgTrend text:not(.mv){font-size:11.5px}
 #lgTrend .mv{font-weight:600;font-variant-numeric:tabular-nums}
 #lgTrend .avl{font-size:11px;fill:var(--fg3)}
 
@@ -809,18 +811,18 @@ html.boot body{background:var(--bg)}
 .bd-ln{fill:none;stroke:var(--accent2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .bd-ar{fill:var(--accent);opacity:.08}
 .bd-pt{stroke:var(--surface);stroke-width:2}.bd-pt.ok{fill:var(--done)}.bd-pt.bad{fill:var(--bad)}
-.bd-gw{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px;align-items:center}
+.bd-gw{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .bd-gauge{position:relative;width:92px;height:92px}
 .bd-gauge svg{width:100%;height:100%}.bd-gauge .gb{fill:none;stroke:var(--track);stroke-width:9}
 .bd-gauge .gf{fill:none;stroke-width:9;stroke-linecap:round;stroke-dashoffset:var(--p)}.bd-gauge .gf.ok{stroke:var(--done)}.bd-gauge .gf.bad{stroke:var(--wait)}
 .bd-gauge .gt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
 .bd-gauge .gt b{font-size:19px;font-weight:600;font-variant-numeric:tabular-nums}.bd-gauge .gt b i{font-style:normal;font-size:11px;color:var(--fg3)}.bd-gauge .gt span{font-size:10px;color:var(--fg3);margin-top:2px}
 .bd-rows{display:flex;flex-direction:column}
-.bd-r{display:grid;grid-template-columns:18px minmax(0,1fr) minmax(40px,.9fr) 40px auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.bd-r{display:grid;grid-template-columns:14px minmax(0,1.2fr) minmax(24px,.8fr) 42px 66px;gap:8px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
 .bd-r:first-child{border-top:0}
 .bd-r .no{color:var(--fg4);font-size:11px;font-variant-numeric:tabular-nums}.bd-r .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bd-r .bar{height:6px;border-radius:3px;background:var(--track);overflow:hidden}.bd-r .bar i{display:block;height:100%;border-radius:3px;background:var(--accent)}
-.bd-r .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}.bd-r .v small{color:var(--fg3);font-weight:400;margin-left:1px}
+.bd-r>.bd-ch{justify-self:end;padding:0 7px}.bd-r .v{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}.bd-r .v small{color:var(--fg3);font-weight:400;margin-left:1px}
 .bd-empty{color:var(--fg3);padding:26px 0;text-align:center}
 .bd-note{color:var(--fg4);font-size:11.5px;margin:2px 0 0;line-height:1.6}
 body.isbd #headline,body.isbd #nav3,body.isbd #nav1,body.isbd #nav2,body.isbd .tools .search,body.isbd #range,body.isbd #site,body.isbd #sbtn{display:none!important}
@@ -1598,7 +1600,7 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 @media (prefers-reduced-motion:no-preference){#bdIn.anim .bu-track i{animation:buGrow 1s .2s cubic-bezier(.2,.7,.2,1) both}}
 @keyframes buGrow{from{transform:scaleX(0)}}
 .bu-rate em{font-style:normal;font-size:11.5px;color:var(--fg4)}
-.bu-ps{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;align-content:start;min-width:0}
+.bu-ps{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;align-content:start;min-width:0}
 .bu-p{position:relative;display:grid;gap:4px;text-align:left;padding:13px 14px 12px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);transition:border-color .15s,transform .15s,background .15s}
 .bu-p:hover{border-color:rgba(242,201,76,.55);transform:translateY(-1px)}
 .bu-p:active{transform:none}
@@ -1635,6 +1637,75 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 @keyframes lbLine{from{transform:scaleX(0)}}
 @media (prefers-reduced-motion:reduce){.lbye,.lbye::after,.lbye.out{animation:none}}
 .lbye[hidden]{display:none!important}
+
+/* 현황판 다듬기 */
+.bd-tly{font-weight:700;font-size:10.5px}
+.bd-red{display:grid;gap:7px;padding:12px 14px;border-radius:10px;background:var(--track)}
+.bd-red .t{display:flex;align-items:baseline;gap:10px;font-size:12px;color:var(--fg3)}
+.bd-red .t b{margin-left:auto;font-size:18px;font-weight:700;color:var(--fg);font-variant-numeric:tabular-nums}.bd-red .t b small{font-size:12px;font-weight:500;margin-left:1px}
+.bd-red .t b.ok{color:var(--done)}.bd-red .t b.bad{color:var(--wait)}
+.bd-red .t em{font-style:normal;font-size:11.5px;color:var(--fg4);white-space:nowrap}
+.bd-red .tr{position:relative;height:6px;border-radius:3px;background:var(--line)}
+.bd-red .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--done)}.bd-red .tr i.bad{background:var(--wait)}
+.bd-red .tr u{position:absolute;top:-3px;bottom:-3px;width:2px;margin-left:-1px;border-radius:1px;background:var(--fg2)}
+.bd-lgn{font-style:normal;color:var(--fg4)}@media (max-width:760px){.bd-lgn{display:none}}
+.bd-hl{fill:var(--accent);opacity:.07}
+.bd-tt{fill:var(--fg4);font-size:10px}
+.bd-room{display:flex;flex-direction:column}
+.rm-t{margin-top:auto;padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rm-t>div{padding:11px 13px;border-radius:10px;background:var(--track);display:grid;gap:3px}
+.rm-t span{font-size:11.5px;color:var(--fg3)}
+.rm-t b{font-size:18px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.rm-t b small{font-size:11.5px;font-weight:400;color:var(--fg3);margin-left:2px}
+.rm-t b.ok{color:var(--done)}.rm-t b.bad{color:var(--bad)}
+
+/* ===== 월별 부적합 (쌓은 막대) ===== */
+:root{--mc-qc:#5b8cff;--mc-in:#d9a441;--mc-qm:#4a5262;--mc-im:#2c323d}
+:root[data-theme="light"]{--mc-qc:#2f6bff;--mc-in:#c68a1c;--mc-qm:#aab3c2;--mc-im:#d5dae2}
+.mc-g{stroke:var(--line);stroke-width:1;stroke-dasharray:2 5;opacity:.8}
+.mc-base{stroke:var(--line2);stroke-width:1}
+.mc-ax{fill:var(--fg4);font-size:11px;font-variant-numeric:tabular-nums}
+.mc-m.cur{fill:var(--fg);font-weight:700}.mc-m.off{opacity:.45}
+.mc-ph{fill:var(--track)}
+.f1-db{fill:#a78bfa}
+.dy-b{fill:var(--mc-qc)}.bd-bg.dy{opacity:.55}.bd-bg.dy.cur{opacity:1}
+.mc-ghost{fill:none;stroke:var(--fg4);stroke-width:1.2;stroke-dasharray:3 3;opacity:.7}
+.mc-qc{fill:var(--mc-qc)}.mc-in{fill:var(--mc-in)}
+.mc-col{opacity:.5;transition:opacity .18s}
+.mc-col.cur{opacity:1}
+.mc-col:has(+text+text+.mc-hit:hover),.mc-col:has(+text+.mc-hit:hover){opacity:1}
+.mc-vl{fill:var(--fg4);font-size:10px;font-weight:500;font-variant-numeric:tabular-nums}
+.mc-vl.cur{fill:var(--fg);font-size:12px;font-weight:700}
+.mc-now{fill:var(--accent2);font-size:10.5px;font-weight:600}
+.mc-avg{stroke:var(--fg3);stroke-width:1;stroke-dasharray:4 4;opacity:.55}
+.mc-avgt{fill:var(--fg3);font-size:10.5px;font-weight:500}
+.mc-lg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--fg3)}
+.mc-lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin:0 0 0 8px}
+.mc-lg i.mq{background:var(--mc-qc)}.mc-lg i.mi{background:var(--mc-in)}
+.mc-lg .bd-lgn{margin-left:6px}
+.dy-lg{margin:-4px 0 6px}.dy-lg i:first-child{margin-left:0}
+@media (prefers-reduced-motion:no-preference){#bdIn.anim .mc-col,.rv .mc-col{transform-box:fill-box;transform-origin:50% 100%;animation:bdGrow .75s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(160ms + var(--i)*40ms)}}
+@media (max-width:760px){.bd-svg.mc .mc-ax{font-size:18px}.bd-svg.mc .mc-vl{display:none}.bd-svg.mc .mc-vl.cur{display:block;font-size:16px}.bd-svg.mc .mc-avgt{font-size:17px}.bd-svg.mc .mc-now{display:none}}
+
+/* ===== 연결 끊김 안내 ===== */
+.netbar{position:fixed;z-index:90;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translate(-50%,-14px);opacity:0;display:flex;align-items:center;gap:14px;width:min(720px,calc(100vw - 32px));padding:13px 14px 13px 18px;border-radius:14px;background:var(--surface);border:1px solid rgba(242,106,106,.5);box-shadow:0 18px 50px rgba(0,0,0,.45);transition:opacity .25s,transform .3s cubic-bezier(.2,.8,.2,1)}
+.netbar.on{opacity:1;transform:translate(-50%,0)}
+.netbar[hidden]{display:none!important}
+.netbar .dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--bad);box-shadow:0 0 0 5px var(--bad-bg)}
+@media (prefers-reduced-motion:no-preference){.netbar:not(.ok) .dot{animation:buPulse 1.6s ease-in-out infinite}}
+.netbar .tx{display:grid;gap:2px;min-width:0;flex:1}
+.netbar b{font-size:14.5px;font-weight:700;color:var(--fg)}
+.netbar .tx span{font-size:12.5px;line-height:1.55;color:var(--fg3);font-variant-numeric:tabular-nums}
+.netbar button{flex:none;height:36px;padding:0 14px;border-radius:10px;background:var(--bad);color:#fff;font-weight:600;font-size:13px;white-space:nowrap}
+.netbar button:disabled{opacity:.6}
+.netbar button[hidden]{display:none}
+.netbar.ok{border-color:rgba(76,183,130,.55)}
+.netbar.ok .dot{background:var(--done);box-shadow:0 0 0 5px rgba(76,183,130,.16)}
+body.netdown .side-foot .live{background:var(--bad)!important;box-shadow:0 0 0 4px var(--bad-bg)!important;animation:none!important}
+body.netdown .side-foot{color:var(--bad)}
+body.netdown .bd-head h2::after,body.netdown #crumb::after{content:"연결 끊김 · 마지막으로 받은 데이터";margin-left:10px;padding:3px 9px;border-radius:99px;background:var(--bad-bg);color:var(--bad);font-size:11.5px;font-weight:600;letter-spacing:0;vertical-align:middle}
+body.netdown .bd-head h2::after{display:none}
+@media (max-width:760px){.netbar{top:calc(62px + env(safe-area-inset-top,0px));flex-wrap:wrap;gap:10px 12px;padding:13px 14px}.netbar button{flex:1 1 100%}body.netdown #crumb::after{content:"연결 끊김"}}
 </style>
 </head>
 <body>
@@ -1907,7 +1978,7 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
         <div class="list" id="lgList">
           <div class="list-h">
             <div class="lt"><h3 id="lgTitle"></h3><span id="lgChips"></span></div>
-            <div class="dropt"><span class="note" id="lgSort"></span><button class="fbtn" id="lgChkAll" style="display:none"></button><button class="fbtn" id="lgXls">엑셀 내려받기</button></div>
+            <div class="dropt"><span class="note" id="lgSort"></span><button class="fbtn" id="lgXls">엑셀 내려받기</button></div>
           </div>
           <div class="tw" id="lgTbl"></div>
           <div id="lgMoreW"></div>
@@ -1971,6 +2042,7 @@ aside .rev-link{margin:0 16px 4px;align-self:flex-start}
 <p class="ms-hint">가입을 마친 사람에게만 보낼 수 있어요. 받는 사람 화면에는 1분 안에 알림이 떠요.<br>짧은 시간에 너무 많이 보내면 8시간 동안 쪽지를 보낼 수 없어요.</p></div></div></div>
 <div class="msabg" id="msABg" hidden></div><div class="msa" id="msA" role="alertdialog" aria-modal="true" aria-labelledby="msAH" hidden><h3 id="msAH">쪽지 보내기가 8시간 동안 막혔어요</h3><p id="msAT"></p><p class="u" id="msAU"></p><p class="s">받은 쪽지는 그대로 볼 수 있어요. 잘못 막혔다면 손성민님께 말해 주세요.</p><button type="button" id="msAOk">확인</button></div>
 <div class="rqt" id="rqT" role="status" aria-live="polite"></div>
+<div class="netbar" id="netBar" role="alert" hidden><span class="dot"></span><span class="tx"><b id="netT">서버와 연결이 끊겼어요</b><span id="netS"></span></span><button type="button" id="netGo">지금 다시 연결</button></div>
 <div id="syncBar" role="status" aria-live="polite"><span class="dot"></span><span id="syncMsg">새 기록이 반영되었어요</span><button class="go" id="syncGo" type="button">새로고침</button><button class="x" id="syncX" type="button" aria-label="닫기">×</button></div>
 <script>
 /* ================= 예시 데이터 (실제 값 아님) ================= */
@@ -2300,7 +2372,7 @@ function renderLedger(){
   else{var cs=rows.reduce(function(a,x){return a+x.cost},0);st.push(["손실비용",cs.toLocaleString(),"만원","발생 "+rows.filter(function(x){return x.cost}).length+"건 · 월별 추이",bdSpark(mser(function(x){return +x.cost||0}),"var(--wait)")])}
   var un=rows.filter(function(x){return x.site==="미분류"}).length;var dt=rows.length-sn-un,tt3=Math.max(1,rows.length);st.push(["성남 / 동탄",sn+" / "+dt,"",un?"미기재 "+un+"건 별도":"사업장별 건수",'<div class="sviz"><div class="sbar split"><i style="width:'+(sn/tt3*100)+'%;background:var(--st1)"></i><i style="width:'+(dt/tt3*100)+'%;background:var(--st2)"></i><i style="width:'+(un/tt3*100)+'%;background:var(--st3)"></i></div></div>']);
   st.push(["귀책 1위",tv||"-","",tv?vc[tv]+"건 · 전체의 비중":"",tv?shareV(vc[tv]/Math.max(1,rows.length)*100):""]);
-  $("lgStats").innerHTML=st.map(function(a){return '<div class="stat"><div class="l">'+a[0]+'</div><div class="v'+(a[0]==="귀책 1위"||String(a[1]).length>4?" lg":"")+'">'+a[1]+'<small>'+a[2]+'</small></div>'+(a[4]||"")+'<div class="s">'+a[3]+'</div></div>'}).join("");
+  $("lgStats").innerHTML=st.map(function(a){return '<div class="stat"><div class="l">'+a[0]+'</div><div class="v'+(String(a[1]).length>4?" lng":"")+'">'+a[1]+'<small>'+a[2]+'</small></div>'+(a[4]||"")+'<div class="s">'+a[3]+'</div></div>'}).join("");
   $("hlB").textContent=lab+" "+rows.length+"건";
   var vs=Object.keys(vc).sort(function(a,b){return vc[b]-vc[a]}).slice(0,6);
   var mfAll=SRC==="qc"||SRC==="f1"?rows.filter(function(x){return x.c1==="제조불량"}).length:0,mfBtn=SRC==="qc"||SRC==="f1"?'<button data-c1="제조불량" style="--p:100%" '+(S.f.c1==="제조불량"?'aria-current="true"':'')+' title="대분류가 제조불량인 건 전체 (기구 + 전장 + 그 외 제조 귀책)"><span class="l">제조불량 (전체)</span><span class="n">'+mfAll+'</span></button>':"";
@@ -2320,30 +2392,25 @@ function drawLedTrend(rows,baseRows){
   var SR=sel.length?sel.map(function(q){return{n:q,c:SC[q],g:function(o){return o[q]}}}):[{n:sites.length>1?"전체":sites[0],c:sites.length>1?"var(--accent)":SC[sites[0]],g:function(o){return o.t}}];
   var n=SR.length,mxv=1,S0=LS[SRC],G=null;
   if(baseRows&&n===1&&(qs||Object.keys(S0.f).some(function(k){return S0.f[k]}))){G=[0,0,0,0,0,0,0,0,0,0,0];baseRows.forEach(function(x){if(sites.indexOf(x.site)>=0&&x.m<11)G[x.m]++})}
-  M.forEach(function(o,i){SR.forEach(function(q){var v=q.g(o);if(v>mxv)mxv=v});if(G&&G[i]>mxv)mxv=G[i]});
-  var step=mxv<=20?5:mxv<=40?10:mxv<=80?20:50,mx=Math.ceil(mxv/step)*step;
+  M.forEach(function(o,i){SR.forEach(function(q){var v=q.g(o);if(v>mxv)mxv=v})});
+  var mx=bdNice4(mxv*1.12),step=mx/4;
   var done=M.slice(0,CM),avg=n===1&&done.length?Math.round(done.reduce(function(a,o){return a+SR[0].g(o)},0)/done.length):0;
   var bw=iw/11,gw=Math.min(bw*(n>1?.76:.62),n>1?66:46),w=(gw-(n-1)*3)/n,rr=Math.min(9,w/2.2),s="",tops=[];
   var defs=SR.map(function(q,k){return '<linearGradient id="lgG'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:'+q.c+';stop-opacity:.95"/><stop offset="1" style="stop-color:'+q.c+';stop-opacity:.28"/></linearGradient><linearGradient id="lgC'+k+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:'+q.c+';stop-opacity:1"/><stop offset="1" style="stop-color:'+q.c+';stop-opacity:.62"/></linearGradient>'}).join("");
-  for(var t=0;t<=mx;t+=step){var y=T+ih-t/mx*ih;s+='<line class="gridl" x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'"/><text x="'+(L-10)+'" y="'+(y+4)+'" text-anchor="end">'+t+'</text>'}
+  for(var t=0;t<=mx+.001;t+=step){var y=T+ih-t/mx*ih;s+='<line class="gridl" x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'"/><text x="'+(L-10)+'" y="'+(y+4)+'" text-anchor="end">'+t+'</text>'}
   M.forEach(function(o,i){var gx=L+i*bw+(bw-gw)/2,cl=(i===CM?" cur":"");
     s+='<g class="hh" data-i="'+i+'"><rect class="hb" x="'+(L+i*bw+2)+'" y="'+(T-6)+'" width="'+(bw-4)+'" height="'+(ih+6)+'" rx="8"/>';
-    if(G&&G[i]>SR[0].g(o)){var gh=G[i]/mx*ih;s+='<rect class="ghost" x="'+gx+'" y="'+(T+ih-gh)+'" width="'+gw+'" height="'+gh+'" rx="'+Math.min(7,gw/2.2)+'"/>'}
     SR.forEach(function(q,k){var v=q.g(o),h=v/mx*ih,x=gx+k*(w+3),y0=T+ih-h;
-      if(v){if(h>rr)s+='<path class="bar'+cl+'" d="M'+x+' '+(T+ih)+'V'+(y0+rr)+'Q'+x+' '+y0+' '+(x+rr)+' '+y0+'H'+(x+w-rr)+'Q'+(x+w)+' '+y0+' '+(x+w)+' '+(y0+rr)+'V'+(T+ih)+'Z" style="fill:url(#'+(i===CM?"lgC":"lgG")+k+')"/>';
-        else s+='<rect class="bar'+cl+'" x="'+x+'" y="'+(T+ih-Math.max(h,1.5))+'" width="'+w+'" height="'+Math.max(h,1.5)+'" rx="2" style="fill:url(#'+(i===CM?"lgC":"lgG")+k+')"/>';
-        if(n===1&&i<=CM)tops.push([x+w/2,y0])}
-      if(v&&n===1&&i===CM){var pw=String(v).length*8+16;s+='<rect class="pill" x="'+(x+w/2-pw/2)+'" y="'+(y0-30)+'" width="'+pw+'" height="21" rx="10.5"/>'}
-      s+='<text class="mv" x="'+(x+w/2)+'" y="'+(y0-(n===1&&i===CM?15.5:13))+'" text-anchor="middle" style="fill:'+(i===CM?"var(--fg)":"var(--fg3)")+';font-size:'+(n>1?10.5:(i===CM?12.5:11.5))+'px">'+(v||"")+'</text>'});
+      if(v){if(h>rr)s+='<path class="bar'+cl+'" d="M'+x+' '+(T+ih)+'V'+(y0+rr)+'Q'+x+' '+y0+' '+(x+rr)+' '+y0+'H'+(x+w-rr)+'Q'+(x+w)+' '+y0+' '+(x+w)+' '+(y0+rr)+'V'+(T+ih)+'Z" style="fill:'+q.c+';opacity:'+(i===CM?1:.5)+'"/>';
+        else s+='<rect class="bar'+cl+'" x="'+x+'" y="'+(T+ih-Math.max(h,1.5))+'" width="'+w+'" height="'+Math.max(h,1.5)+'" rx="2" style="fill:'+q.c+';opacity:'+(i===CM?1:.5)+'"/>'}
+      s+='<text class="mv" x="'+(x+w/2)+'" y="'+(y0-9)+'" text-anchor="middle" style="fill:'+(i===CM?"var(--fg)":"var(--fg3)")+';font-weight:'+(i===CM?700:500)+';font-size:'+(n>1?10.5:(i===CM?14:11.5))+'px">'+(v||"")+'</text>'});
     s+='<text x="'+(L+i*bw+bw/2)+'" y="'+(H-8)+'" text-anchor="middle" style="'+(i===CM?"fill:var(--fg);font-weight:600":"")+'">'+(i+1)+'월</text></g>'});
   if(avg){var ya=T+ih-avg/mx*ih;s+='<line class="avg" x1="'+L+'" x2="'+(W-R)+'" y1="'+ya+'" y2="'+ya+'"/><text class="avl" x="'+(L+6)+'" y="'+(ya-7)+'" text-anchor="start">월평균 '+avg+'건</text>'}
-  if(tops.length>2){var cv="M"+tops[0][0].toFixed(1)+" "+tops[0][1].toFixed(1);for(var q2=0;q2<tops.length-1;q2++){var p0=tops[Math.max(0,q2-1)],p1=tops[q2],p2=tops[q2+1],p3=tops[Math.min(tops.length-1,q2+2)];cv+=" C"+(p1[0]+(p2[0]-p0[0])/9).toFixed(1)+" "+(p1[1]+(p2[1]-p0[1])/9).toFixed(1)+" "+(p2[0]-(p3[0]-p1[0])/9).toFixed(1)+" "+(p2[1]-(p3[1]-p1[1])/9).toFixed(1)+" "+p2[0].toFixed(1)+" "+p2[1].toFixed(1)}
-    s+='<path class="crv" pathLength="1" d="'+cv+'"/>';tops.forEach(function(p,k){s+='<circle class="cdot'+(k===tops.length-1?" cur":"")+'" cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="'+(k===tops.length-1?4.5:2.6)+'"/>'})}
   svg.innerHTML='<defs>'+defs+'</defs>'+s;
   [].forEach.call(svg.querySelectorAll(".hh"),function(r){var i=+r.dataset.i;
     r.addEventListener("mousemove",function(e){tipShow(e,'<b>'+(i+1)+'월 '+M[i].t+'건</b>'+(G&&G[i]!==M[i].t?'<span>필터 전 '+G[i]+'건</span>':'')+(i===CM?'<span>진행 중</span>':'')+'<br>'+sites.map(function(q){return '<span style="margin:0 10px 0 0"><i style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+SC[q]+';margin-right:5px"></i>'+q+' '+M[i][q]+'</span>'}).join(""))});
     r.addEventListener("mouseleave",tipHide)});
-  $("lgLeg").innerHTML=(G?'<span class="lgh">연한 막대 = 필터 전 전체</span>':'')+(sites.length>1?(sel.length||G?"":'<span class="lgh">사업장을 누르면 나눠서 볼 수 있어요</span>')+sites.map(function(q){return '<button class="lgc" data-s="'+q+'" aria-pressed="'+(!!TS[q])+'"><i style="background:'+SC[q]+'"></i>'+q+'</button>'}).join(""):"");
+  $("lgLeg").innerHTML=(G?'<span class="lgh">걸러 본 결과예요 · 막대에 올리면 필터 전 건수도 나와요</span>':'')+(sites.length>1?(sel.length||G?"":'<span class="lgh">사업장을 누르면 나눠서 볼 수 있어요</span>')+sites.map(function(q){return '<button class="lgc" data-s="'+q+'" aria-pressed="'+(!!TS[q])+'"><i style="background:'+SC[q]+'"></i>'+q+'</button>'}).join(""):"");
   drawSpark(M)}
 
 function drawSpark(M){
@@ -2775,7 +2842,7 @@ $("drawer").addEventListener("click",function(e){var kb=e.target.closest("button
 $("lgTbl").addEventListener("click",function(e){var kb=e.target.closest("button.ck");if(kb){e.stopPropagation();toggleChk(kb.dataset.ck);return}var th=e.target.closest("th");if(th){var S=LS[SRC],k=th.dataset.k;S.sort=S.sort.k===k?{k:k,dir:-S.sort.dir}:{k:k,dir:(k==="d"||k==="qty"||k==="cost")?-1:1};renderLedger();return}
   var tr=e.target.closest("tr.lr");if(tr)openDrawer(tr.dataset.id)});
 $("lgMoreW").addEventListener("click",function(e){if(e.target.id==="lgMore"){LS[SRC].lim+=100;renderLedger()}});
-$("lgXls").onclick=xlsxOut;$("lgChkAll").onclick=chkAll;
+$("lgXls").onclick=xlsxOut;
 (function(){var b=$("toTop"),t=0;function up(){t=0;b.classList.toggle("on",scrollY>700)}addEventListener("scroll",function(){if(!t)t=requestAnimationFrame(up)},{passive:true});b.onclick=function(){scrollTo({top:0,behavior:"smooth"})}})();
 $("lgLeg").addEventListener("click",function(e){var b=e.target.closest("button[data-s]");if(!b)return;TS[b.dataset.s]=!TS[b.dataset.s];drawLedTrend(ledF(ledAll()))});
 $("lgView").addEventListener("click",function(e){var b=e.target.closest("button[data-v]");if(!b)return;LV=b.dataset.v;applyLV();if(LV==="an")drawAnalysis();scrollTo({top:0,behavior:"auto"});playIn()});
@@ -2854,30 +2921,34 @@ function bdSpark(vals,color){
   return '<div class="bd-spw"><svg class="bd-sp" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true"><path d="'+ar+'" fill="'+color+'" opacity=".12"/><path class="ln" pathLength="1" d="'+d+'" fill="none" stroke="'+color+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><i class="bd-dot" style="left:'+(x(n-1)/W*100).toFixed(1)+'%;top:'+(y(vals[n-1])/H*100).toFixed(1)+'%;background:'+color+'"></i></div>'}
 function bdKpi(o){
   return '<div class="bd-k'+(o.t?" "+o.t:"")+'" style="--i:'+o.i+'"><div class="bd-kl">'+o.l+'</div><div class="bd-kv">'+o.v+(o.u?'<small>'+o.u+'</small>':'')+'</div><div class="bd-kd">'+o.d+'</div><div class="bd-ks">'+o.s+'</div>'+(o.sp||"")+'</div>'}
+function bdNice4(v){if(v<=4)return 4;var raw=v/4,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p*4}
 function bdNice(v){if(v<=5)return 5;var p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p;return(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p}
+function mcN(v){return Number(v).toLocaleString('en-US')}
 function bdChart1(D){
-  var W=760,H=290,L=40,R=12,T=22,B=30,cm=D.cm,mx=bdNice(Math.max.apply(null,D.tq.concat(D.ti,[5]))*1.08),gw=(W-L-R)/12,bw=Math.min(15,gw*.3),
-      yy=function(v){return T+(H-T-B)*(1-v/mx)},s="",i;
-  for(i=0;i<=4;i++){var v=mx*i/4,y=yy(v);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="bd-g"/><text x="'+(L-8)+'" y="'+(y+4)+'" class="bd-ax" text-anchor="end">'+Math.round(v)+'</text>'}
-  var maxQ=Math.max.apply(null,D.tq);
+  var W=620,H=344,L=40,R=10,T=28,B=32,cm=D.cm,i;
+  var mx=bdNice4(Math.max.apply(null,D.tq.slice(0,cm+1).concat(D.ti.slice(0,cm+1),[5]))*1.1),gw=(W-L-R)/12,bw=Math.min(19,gw*.34),gap=3,ph=H-T-B,yy=function(v){return T+ph*(1-v/mx)},s="";
+  for(i=0;i<=4;i++){var v=mx*i/4,y=yy(v);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y.toFixed(1)+'" y2="'+y.toFixed(1)+'" class="'+(i?"mc-g":"mc-base")+'"/><text x="'+(L-10)+'" y="'+(y+4).toFixed(1)+'" class="mc-ax" text-anchor="end">'+mcN(Math.round(v))+'</text>'}
   for(i=0;i<12;i++){
-    var cx=L+gw*i+gw/2,on=i<=cm,cur=i===D.hi;
-    s+='<text x="'+cx+'" y="'+(H-9)+'" class="bd-ax'+(cur?" cur":"")+'" text-anchor="middle">'+(i+1)+'월</text>';
-    if(!on)continue;
-    var a=D.tq[i],b=D.ti[i],tip=(i+1)+'월<br><b>품질검수 '+a+'건</b><span>수입/공정 '+b+'건</span>';
-    [[a,-bw-1.5,"bd-b1"],[b,1.5,"bd-b2"]].forEach(function(p,k){var h=Math.max(p[0]?2:0,(H-T-B)*p[0]/mx);
-      s+='<g data-tip="'+tip.replace(/"/g,"&quot;")+'" class="bd-bg'+(cur?" cur":"")+'" style="--i:'+i+'"><rect x="'+(cx+p[1]).toFixed(1)+'" y="'+(H-B-h).toFixed(1)+'" width="'+bw+'" height="'+h.toFixed(1)+'" rx="3" class="'+p[2]+'"/></g>';
-      if(p[0]&&(cur||(k===0&&p[0]===maxQ)))s+='<text x="'+(cx+p[1]+bw/2).toFixed(1)+'" y="'+(H-B-h-6).toFixed(1)+'" class="bd-vl'+(cur?" cur":"")+'" text-anchor="middle">'+p[0]+'</text>'});
-    s+='<rect x="'+(cx-gw/2)+'" y="'+T+'" width="'+gw+'" height="'+(H-T-B)+'" fill="transparent" data-tip="'+tip.replace(/"/g,"&quot;")+'"/>'}
-  return '<svg viewBox="0 0 '+W+' '+H+'" class="bd-svg" role="img" aria-label="월별 부적합 건수"><defs><linearGradient id="bdg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:1"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:.3"/></linearGradient><linearGradient id="bdg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--wait);stop-opacity:1"/><stop offset="1" style="stop-color:var(--wait);stop-opacity:.3"/></linearGradient></defs>'+s+'</svg>'}
+    var cx=L+gw*i+gw/2,on=i<=cm,cur=i===D.hi,a=D.tq[i]||0,b=D.ti[i]||0;
+    s+='<text x="'+cx.toFixed(1)+'" y="'+(H-12)+'" class="mc-ax mc-m'+(cur?" cur":"")+(on?"":" off")+'" text-anchor="middle">'+(i+1)+'월</text>';
+    if(!on){s+='<rect x="'+(cx-bw-gap/2).toFixed(1)+'" y="'+(H-B-3)+'" width="'+(bw*2+gap).toFixed(1)+'" height="3" rx="1.5" class="mc-ph"/>';continue}
+    var tip=(i+1)+'월<br><b>품질검수 '+a+'건</b><span>수입/공정 '+b+'건</span>';
+    s+='<g class="mc-col'+(cur?" cur":"")+'" style="--i:'+i+'">';
+    [[a,cx-bw-gap/2,"mc-qc"],[b,cx+gap/2,"mc-in"]].forEach(function(p){if(!p[0])return;var h=Math.max(3,ph*p[0]/mx),r=Math.min(5,bw/2,h),x=p[1],y=H-B-h;
+      s+='<path class="'+p[2]+'" d="M'+x.toFixed(1)+' '+(H-B)+'V'+(y+r).toFixed(1)+'Q'+x.toFixed(1)+' '+y.toFixed(1)+' '+(x+r).toFixed(1)+' '+y.toFixed(1)+'H'+(x+bw-r).toFixed(1)+'Q'+(x+bw).toFixed(1)+' '+y.toFixed(1)+' '+(x+bw).toFixed(1)+' '+(y+r).toFixed(1)+'V'+(H-B)+'Z"/>'});
+    s+='</g>';
+    [[a,cx-bw/2-gap/2,"q"],[b,cx+bw/2+gap/2,"n"]].forEach(function(p){if(!p[0])return;var h=Math.max(3,ph*p[0]/mx);
+      s+='<text x="'+p[1].toFixed(1)+'" y="'+(H-B-h-6).toFixed(1)+'" class="mc-vl '+p[2]+(cur?" cur":"")+'" text-anchor="middle">'+mcN(p[0])+'</text>'});
+    s+='<rect x="'+(cx-gw/2).toFixed(1)+'" y="'+T+'" width="'+gw.toFixed(1)+'" height="'+ph+'" fill="transparent" class="mc-hit" data-tip="'+tip.replace(/"/g,"&quot;")+'"/>'}
+  return '<svg viewBox="0 0 '+W+' '+H+'" class="bd-svg mc" role="img" aria-label="월별 부적합 건수">'+s+'</svg>'}
 function bdChart2(D){
-  var A=D.A,W=400,H=290,L=40,R=16,T=22,B=30,cm=D.cm,tg=GOAL.target,rs=[],i;
+  var A=D.A,W=400,H=236,L=38,R=14,T=22,B=28,cm=D.cm,tg=GOAL.target,rs=[],i;
   for(i=0;i<=cm;i++)rs.push(A.mo[i].r);
   var vals=rs.filter(function(v){return v!=null}),mx=bdNice(Math.max.apply(null,vals.concat([tg*1.5,1]))*1.05),
       gw=(W-L-R)/Math.max(1,12-1),x=function(i){return L+i*gw},yy=function(v){return T+(H-T-B)*(1-v/mx)},s="";
-  for(i=0;i<=4;i++){var v=mx*i/4,y=yy(v);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="bd-g"/><text x="'+(L-8)+'" y="'+(y+4)+'" class="bd-ax" text-anchor="end">'+(mx<=10?v.toFixed(1):Math.round(v))+'</text>'}
+  for(i=0;i<=4;i++){var v=mx*i/4,y=yy(v);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="bd-g"/>'+(Math.abs(y-yy(tg))<12?'':'<text x="'+(L-8)+'" y="'+(y+4)+'" class="bd-ax" text-anchor="end">'+(mx<=10?v.toFixed(1):Math.round(v))+'</text>')}
   for(i=0;i<12;i++)s+='<text x="'+x(i)+'" y="'+(H-9)+'" class="bd-ax'+(i===D.hi?" cur":"")+'" text-anchor="middle">'+(i+1)+'월</text>';
-  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy(tg)+'" y2="'+yy(tg)+'" class="bd-tg"/><text x="'+(L+6)+'" y="'+(yy(tg)-6)+'" class="bd-tl">목표 '+f2(tg)+'</text>';
+  s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy(tg)+'" y2="'+yy(tg)+'" class="bd-tg"/><text x="'+(L-8)+'" y="'+(yy(tg)+4)+'" class="bd-tl bd-tly" text-anchor="end">'+f2(tg)+'</text>';
   var pts=[];rs.forEach(function(v,i){if(v!=null)pts.push([x(i),yy(v),v,i])});
   if(pts.length>1){var d="M"+pts.map(function(p){return p[0].toFixed(1)+" "+p[1].toFixed(1)}).join(" L"),ar=d+" L"+pts[pts.length-1][0].toFixed(1)+" "+(H-B)+" L"+pts[0][0].toFixed(1)+" "+(H-B)+" Z";
     s+='<path d="'+ar+'" class="bd-ar"/><path class="bd-ln" pathLength="1" d="'+d+'"/>'}
@@ -2886,6 +2957,9 @@ function bdChart2(D){
     if(cur||p[2]===Math.max.apply(null,vals))s+='<text x="'+p[0].toFixed(1)+'" y="'+(p[1]-11).toFixed(1)+'" class="bd-vl cur" text-anchor="middle">'+f2(p[2])+'</text>'});
   return '<svg viewBox="0 0 '+W+' '+H+'" class="bd-svg" role="img" aria-label="월별 대당 불량">'+s+'</svg>'}
 function bdGauge(D,Y){
+  var A=D.A,r=Y?A.cum.r:A.mo[D.sm].r,base=A.base,red=r==null?null:(base-r)/base*100,goal=GOAL.pct,full=goal*1.5,ok=red!=null&&red>=goal-0.05,w=red==null?0:Math.max(0,Math.min(100,red/full*100));
+  return '<div class="bd-red"><div class="t"><span>기준 '+f2(base)+'건/대 대비 감소율</span><b class="'+(red==null?"":ok?"ok":"bad")+'">'+(red==null?"-":Math.round(red)+'<small>%</small>')+'</b><em>목표 '+goal+'% '+(red==null?"":ok?"달성":"미달")+'</em></div><span class="tr"><i class="'+(ok?"ok":"bad")+'" style="width:'+w.toFixed(1)+'%"></i><u style="left:'+(goal/full*100).toFixed(1)+'%"></u></span></div>'}
+function bdGaugeOld(D,Y){
   var A=D.A,r=Y?A.cum.r:A.mo[D.sm].r,base=A.base,red=r==null?null:(base-r)/base*100,goal=GOAL.pct,prog=red==null?0:Math.max(0,Math.min(1,red/goal)),R=46,C=2*Math.PI*R,ok=r!=null&&r<=GOAL.target+0.005;
   return '<div class="bd-gauge"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="'+R+'" class="gb"/><circle cx="60" cy="60" r="'+R+'" class="gf '+(ok?"ok":"bad")+'" pathLength="1" stroke-dasharray="1" style="--p:'+(1-prog).toFixed(3)+'" transform="rotate(-90 60 60)"/></svg><div class="gt"><b>'+(red==null?"-":bdNum(Math.max(0,Math.round(red))))+(red==null?"":'<i>%</i>')+'</b><span>감소율</span></div></div>'}
 
@@ -2897,19 +2971,23 @@ function bdRoom(D,Y){
    +'<div class="rm-v '+(ok?"ok":"bad")+'"><i>'+(ok?"여유":"초과")+'</i><b>'+bdNum(Math.abs(r.left))+'</b><small>건</small></div>'
    +'<div class="rm-bar"><i class="'+(ok?(p>85?"warn":"ok"):"bad")+'" style="width:'+p.toFixed(1)+'%"></i></div>'
    +'<div class="rm-row"><span>현재 <b>'+r.used+'</b>건</span><span>허용 <b>'+r.allow+'</b>건</span></div>'
-   +'<p class="rm-s">검수장비 '+r.eq+'대 × '+f2(GOAL.target)+' = 허용 '+r.allow+'건이에요. '+(ok?(r.left<=3?'여유가 얼마 안 남았어요.':'이 안에서 마감하면 목표 달성이에요.'):'목표를 맞추려면 검수장비가 '+Math.ceil(r.used/GOAL.target-r.eq)+'대 더 필요해요.')+'</p></div>'}
+   +'<p class="rm-s">검수장비 '+r.eq+'대 × '+f2(GOAL.target)+' = 허용 '+r.allow+'건이에요. '+(ok?(r.left<=3?'여유가 얼마 안 남았어요.':'이 안에서 마감하면 목표 달성이에요.'):'목표를 맞추려면 검수장비가 '+Math.ceil(r.used/GOAL.target-r.eq)+'대 더 필요해요.')+'</p>'+bdPace(D,Y,r,ok)+'</div>'}
+function bdPace(D,Y,r,ok){var y=TODAY.getFullYear(),t0=new Date(y,TODAY.getMonth(),TODAY.getDate()),cur=!Y&&D.sm===D.cm;
+  if(!cur&&!Y)return '<div class="rm-t"><div><span>마감 결과</span><b class="'+(ok?"ok":"bad")+'">'+(ok?"목표 달성":"목표 초과")+'</b></div><div><span>허용 대비 사용</span><b>'+Math.round(r.used/Math.max(1,r.allow)*100)+'<small>%</small></b></div></div>';
+  var st=Y?new Date(y,0,1):new Date(y,TODAY.getMonth(),1),end=Y?new Date(y,11,31):new Date(y,TODAY.getMonth()+1,0),el=Math.round((t0-st)/864e5)+1,left=Math.max(0,Math.round((end-t0)/864e5)),proj=Math.round(r.used+r.used/Math.max(1,el)*left);
+  return '<div class="rm-t"><div><span>남은 기간</span><b>'+left+'<small>일</small></b></div><div><span>지금 속도면 '+(Y?"연말":"월말")+'</span><b class="'+(proj<=r.allow?"ok":"bad")+'">'+proj+'<small>건 예상</small></b></div></div>'}
 function bdRecur(D,Y){
   var sub=(D.recLo+1)+"~"+(D.recHi+1)+"월 제조불량 · 같은 프로젝트·소분류 반복";
   return '<div class="bd-card bd-rec"><div class="bd-ch2"><h3>재발 주의</h3><span>'+sub+'</span></div>'+(D.rec.length?'<div class="bd-rows">'+D.rec.map(function(o,i){var w=Object.keys(o.who);
     return '<button class="bd-rc" data-proj="'+esc(o.p)+'" style="--i:'+i+'"><span class="cnt">'+o.n+'<small>회</small></span><span class="tx"><b title="'+esc(o.p)+'">'+esc(o.p)+'</b><em>'+esc(o.c)+(w.length?' · '+esc(w.slice(0,2).join(", "))+(w.length>2?" 외":""):'')+'</em></span><span class="dt">'+(o.last.getMonth()+1)+'/'+o.last.getDate()+'</span></button>'}).join("")+'</div>':'<div class="bd-empty">반복된 불량이 없어요</div>')+'</div>'}
 function bdDaily(D){
-  var n=D.days.length,W=420,H=250,L=26,R=6,T=14,B=24,mx=bdNice(Math.max.apply(null,D.days.map(function(o){return o.q+o.i}).concat([4]))),bw=(W-L-R)/n,w=Math.max(3,bw-3),s="",yy=function(v){return T+(H-T-B)*(1-v/mx)},wd=["일","월","화","수","목","금","토"],yr=TODAY.getFullYear(),tot=0,peak=0,pk=-1;
-  [0,.5,1].forEach(function(f){var y=yy(mx*f);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="bd-g"/><text x="'+(L-6)+'" y="'+(y+3.5)+'" class="bd-ax" text-anchor="end">'+Math.round(mx*f)+'</text>'});
+  var n=D.days.length,W=420,H=250,L=26,R=6,T=14,B=24,mx=bdNice4(Math.max.apply(null,D.days.map(function(o){return o.q+o.i}).concat([4]))),bw=(W-L-R)/n,w=Math.max(4,bw-3.5),s="",yy=function(v){return T+(H-T-B)*(1-v/mx)},wd=["일","월","화","수","목","금","토"],yr=TODAY.getFullYear(),tot=0,peak=0,pk=-1;
+  [0,.5,1].forEach(function(f){var y=yy(mx*f);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="'+(f?"mc-g":"mc-base")+'"/><text x="'+(L-6)+'" y="'+(y+3.5)+'" class="bd-ax" text-anchor="end">'+Math.round(mx*f)+'</text>'});
   D.days.forEach(function(o,i){var v=o.q+o.i,x=L+bw*i+(bw-w)/2,dt=new Date(yr,D.dm,i+1),dw=dt.getDay(),today=D.dm===D.cm&&i+1===D.dc,fut=D.dm===D.cm&&i+1>D.dc;tot+=v;if(v>peak){peak=v;pk=i}
     var hq=(H-T-B)*o.q/mx,hi=(H-T-B)*o.i/mx,tip=(D.dm+1)+'/'+(i+1)+' ('+wd[dw]+')<br><b>'+v+'건</b><span>품질검수 '+o.q+' · 수입/공정 '+o.i+'</span>';
-    if(v)s+='<g class="bd-bg'+(today?" cur":"")+'" style="--i:'+Math.round(i/2.2)+'"><rect x="'+x.toFixed(1)+'" y="'+(H-B-hi-hq).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+(hi+hq).toFixed(1)+'" rx="'+Math.min(3,w/2)+'" class="bd-b2"/>'+(hq?'<rect x="'+x.toFixed(1)+'" y="'+(H-B-hq).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+hq.toFixed(1)+'" rx="'+Math.min(3,w/2)+'" class="bd-b1"/>':'')+'</g>';
+    if(v){var hv=Math.max(2,(H-T-B)*v/mx);s+='<g class="bd-bg dy'+(today?" cur":"")+'" style="--i:'+Math.round(i/2.2)+'"><rect x="'+x.toFixed(1)+'" y="'+(H-B-hv).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+hv.toFixed(1)+'" rx="'+Math.min(3,w/2)+'" class="dy-b"/></g>'}
     else if(!fut)s+='<rect x="'+x.toFixed(1)+'" y="'+(H-B-1.5)+'" width="'+w.toFixed(1)+'" height="1.5" class="bd-z"/>';
-    if(i===0||(i+1)%5===0||today)s+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(H-8)+'" class="bd-ax'+(today?" cur":"")+(dw===0||dw===6?" we":"")+'" text-anchor="middle">'+(i+1)+'</text>';
+    var dl=D.dm===D.cm&&!today&&Math.abs(i+1-D.dc)<=1;if(today||((i===0||(i+1)%5===0)&&!dl))s+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(H-8)+'" class="bd-ax'+(today?" cur":"")+(dw===0||dw===6?" we":"")+'" text-anchor="middle">'+(i+1)+'</text>';
     s+='<rect x="'+(L+bw*i).toFixed(1)+'" y="'+T+'" width="'+bw.toFixed(1)+'" height="'+(H-T-B)+'" fill="transparent" data-tip="'+tip.replace(/"/g,"&quot;")+'"/>'});
   return '<div class="bd-card bd-day"><div class="bd-ch2"><h3>일별 발생</h3><span>'+(D.dm+1)+'월 · 합계 '+tot+'건'+(pk>=0?' · 최다 '+(D.dm+1)+'/'+(pk+1)+' '+peak+'건':'')+'</span></div><svg viewBox="0 0 '+W+' '+H+'" class="bd-svg" role="img" aria-label="일별 발생 건수"><defs><linearGradient id="bdg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:1"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:.45"/></linearGradient><linearGradient id="bdg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--wait);stop-opacity:1"/><stop offset="1" style="stop-color:var(--wait);stop-opacity:.45"/></linearGradient></defs>'+s+'</svg></div>'}
 function bdRank(title,sub,rows,unit,Y,fk,src){
@@ -2945,8 +3023,8 @@ function drawBoard(){
   var h='<div class="bd-head"><div><h2>현황판</h2><p>'+TODAY.getFullYear()+'년 '+(cm+1)+'월 '+D.dc+'일 기준 · 성남+동탄 전체</p></div>'+'<div class="bd-ctl">'+per+'<button class="fbtn" id="bdXls">엑셀 내려받기</button></div><div class="bd-sum">'+sum+'</div></div>'
    +bdMe(D,mine)+bdUn(D)
    +'<div class="bd-kpis">'+k+'</div>'
-   +'<div class="bd-two"><div class="bd-card"><div class="bd-ch2"><h3>월별 부적합 건수</h3><span class="bd-lg"><i class="a"></i>품질검수 <i class="b"></i>수입/공정</span></div>'+bdChart1(D)+'</div>'
-   +'<div class="bd-card bd-gc"><div class="bd-ch2"><h3>대당 불량 vs 목표</h3><span>건/대 · 낮을수록 좋아요</span></div><div class="bd-gw">'+bdChart2(D)+bdGauge(D,Y)+'</div></div></div>'
+   +'<div class="bd-two"><div class="bd-card"><div class="bd-ch2"><h3>월별 부적합 건수</h3><span class="bd-lg mc-lg"><i class="mq"></i>품질검수<i class="mi"></i>수입/공정</span></div>'+bdChart1(D)+'</div>'
+   +'<div class="bd-card bd-gc"><div class="bd-ch2"><h3>대당 불량 vs 목표</h3><span>건/대 · 점선이 목표 '+f2(GOAL.target)+' · 낮을수록 좋아요</span></div><div class="bd-gw">'+bdChart2(D)+bdGauge(D,Y)+'</div></div></div>'
    +'<div class="bd-three bd-ins">'+bdRoom(D,Y)+bdRecur(D,Y)+bdDaily(D)+'</div>'
    +'<div class="bd-three">'+bdRank('제조 담당자',Y?'올해 제조불량 누계':mon+' 제조불량 · 전월'+gp+' 대비',Y?D.tpY:D.tp,'건',Y,"finder","qc")+bdRank('귀책 업체',Y?'올해 수입/공정 누계':mon+' 수입/공정 · 전월'+gp+' 대비',Y?D.tvY:D.tv,'건',Y,"ven","in")+bdRank('소분류',Y?'올해 제조불량 · 휴먼에러 상위':mon+' 제조불량 · 휴먼에러 상위',Y?D.thY:D.th,'건',Y,"c3","qc")+'</div>'
    +'<p class="bd-note">'+(Y?'올해 1월부터 오늘까지의 누계예요. 대당 불량 = (제조불량 수량 + 출하/부적합) ÷ 검수장비.':(cur?'같은 기간 비교는 이번 달 1일~'+D.dc+'일과 '+(pmn||"전달")+' 1일~'+D.dc+'일을 맞춰 보는 방식이에요(이번 달이 덜 지나서 생기는 착시를 막아요). ':'지난 달은 전월 전체와 비교해요. ')+'대당 불량 = (제조불량 수량 + 출하/부적합) ÷ 검수장비.')+'</p>';
@@ -3169,9 +3247,10 @@ function f1Daily(D){
   var n=D.days.length,W=520,H=210,L=24,R=6,T=12,B=24,mx=bdNice(Math.max.apply(null,D.days.map(function(o){return o.t}).concat([3]))),bw=(W-L-R)/n,w=Math.max(3,bw-3),s="",yy=function(v){return T+(H-T-B)*(1-v/mx)},yr=TODAY.getFullYear(),wd=["일","월","화","수","목","금","토"];
   [0,.5,1].forEach(function(f){var y=yy(mx*f);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" class="bd-g"/><text x="'+(L-6)+'" y="'+(y+3.5)+'" class="bd-ax" text-anchor="end">'+Math.round(mx*f)+'</text>'});
   D.days.forEach(function(o,i){var x=L+bw*i+(bw-w)/2,dt=new Date(yr,D.dm,i+1),dw=dt.getDay(),today=D.dm===D.cm&&i+1===D.dc,fut=D.dm===D.cm&&i+1>D.dc,y0=H-B,tip=(D.dm+1)+'/'+(i+1)+' ('+wd[dw]+')<br><b>'+o.t+'건</b>';
-    if(o.t){var g='<g class="bd-bg'+(today?" cur":"")+'" style="--i:'+Math.round(i/2)+'">';["기타불량","제조불량","업체불량"].concat(Object.keys(o.s).filter(function(k){return!F1C[k]})).forEach(function(k){var v=o.s[k];if(!v)return;var h=(H-T-B)*v/mx;y0-=h;g+='<rect x="'+x.toFixed(1)+'" y="'+y0.toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+(h-.6).toFixed(1)+'" rx="'+Math.min(2.5,w/2)+'" style="fill:'+(F1C[k]||"var(--fg4)")+'"/>';tip+='<span>'+k+' '+v+'</span>'});s+=g+'</g>'}
+    if(o.t){var ht=Math.max(2,(H-T-B)*o.t/mx);Object.keys(o.s).forEach(function(k){if(o.s[k])tip+='<span>'+k+' '+o.s[k]+'</span>'});
+      s+='<g class="bd-bg'+(today?" cur":"")+'" style="--i:'+Math.round(i/2)+'"><rect x="'+x.toFixed(1)+'" y="'+(H-B-ht).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+ht.toFixed(1)+'" rx="'+Math.min(3,w/2)+'" class="f1-db"/></g>'}
     else if(!fut)s+='<rect x="'+x.toFixed(1)+'" y="'+(H-B-1.5)+'" width="'+w.toFixed(1)+'" height="1.5" class="bd-z"/>';
-    if(i===0||(i+1)%5===0||today)s+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(H-7)+'" class="bd-ax'+(today?" cur":"")+(dw===0||dw===6?" we":"")+'" text-anchor="middle">'+(i+1)+'</text>';
+    var dl=D.dm===D.cm&&!today&&Math.abs(i+1-D.dc)<=1;if(today||((i===0||(i+1)%5===0)&&!dl))s+='<text x="'+(x+w/2).toFixed(1)+'" y="'+(H-7)+'" class="bd-ax'+(today?" cur":"")+(dw===0||dw===6?" we":"")+'" text-anchor="middle">'+(i+1)+'</text>';
     s+='<rect x="'+(L+bw*i).toFixed(1)+'" y="'+T+'" width="'+bw.toFixed(1)+'" height="'+(H-T-B)+'" fill="transparent" data-tip="'+tip.replace(/"/g,"&quot;")+'"/>'});
   return '<svg viewBox="0 0 '+W+' '+H+'" class="bd-svg" role="img" aria-label="일별 발생">'+s+'</svg>'}
 function f1Bars(m,unit,max,cls){
@@ -3195,7 +3274,7 @@ function drawF1(){
   var rec=D.recent.length?'<div class="f1-feed">'+D.recent.map(function(x,i){return '<button class="fd-r" data-id="'+esc(x.id)+'" style="--i:'+i+'"><span class="dt"><b>'+(x.d.getMonth()+1)+'/'+x.d.getDate()+'</b><em>NO. '+x.n+'</em></span><span class="tx"><b>'+esc(x.desc)+'</b><em>'+esc(x.proj)+' · '+esc(x.part)+' · '+esc(x.finder)+'</em></span><span class="fc '+(x.c1==="업체불량"?"fc-r":x.c1==="제조불량"?"fc-b":"fc-g")+'">'+esc(x.c3!=="-"?x.c3:x.c1)+'</span></button>'}).join("")+'</div>':'<div class="bd-empty">기록이 없어요</div>';
   var h='<div class="bd-head f1-head"><div><h2>1차 검수 부적합</h2><p>'+(SITE==="all"?"성남+동탄":SITE)+' · '+TODAY.getFullYear()+'년 '+(D.cm+1)+'월 '+D.dc+'일 기준 · 동탄 대시보드에서 입력한 기록</p></div><div class="bd-ctl">'+per+'</div><div class="bd-sum">'+sum+'</div></div>'
    +'<div class="bd-kpis">'+k+'</div>'
-   +'<div class="f1-row a"><div class="bd-card"><div class="bd-ch2"><h3>일별 발생</h3><span class="bd-lg"><i style="background:var(--bad)"></i>업체불량 <i style="background:var(--accent)"></i>제조불량 <i style="background:var(--fg4)"></i>기타 · '+(D.dm+1)+'월</span></div>'+f1Daily(D)+'</div>'
+   +'<div class="f1-row a"><div class="bd-card"><div class="bd-ch2"><h3>일별 발생</h3><span>'+(D.dm+1)+'월 · 막대에 올리면 귀책별 건수가 나와요</span></div>'+f1Daily(D)+'</div>'
    +'<div class="bd-card"><div class="bd-ch2"><h3>대분류</h3><span>'+(D.Y?"올해":mon)+' 기준</span></div>'+f1Donut(D)+'<div class="bd-ch2 sub"><h3>귀책</h3></div>'+f1Bars(D.ven,"건",4,"vv")+'</div></div>'
    +'<div class="f1-row b"><div class="bd-card"><div class="bd-ch2"><h3>장비별 부적합</h3><span>누르면 아래 목록이 걸러져요</span></div>'+eqH+'</div>'
    +'<div class="bd-card"><div class="bd-ch2"><h3>위치별</h3><span>어느 부위에서 많이 나왔는지</span></div>'+f1Bars(D.pos,"건",6,"pp")+'</div>'
@@ -3216,6 +3295,7 @@ function drawF1(){
     var r=e.target.closest(".fd-r");if(r){openLed(r.dataset.id);return}})})();
 /* ===== 업데이트 기록 (Rev) — 새 버전을 올릴 때 맨 위에 한 줄씩 추가 ===== */
 var REV=[
+ {n:11,d:"2026-11-14",t:"미확인 불량은 한 건씩 확인 · 연결 끊김 안내",i:["재발 방지를 위해 '모두 확인' 버튼을 없앴어요. 내용을 읽고 한 건씩 확인해 주세요","인터넷이나 서버 연결이 끊기면 화면 위에 알려 주고, 마지막으로 받은 데이터를 그대로 보여 줘요","연결이 돌아오면 자동으로 다시 이어져요","그래프를 겹치지 않게 다시 그려서 보기 편해졌어요"]},
  {n:10,d:"2026-11-14",t:"알림 · 미확인 불량 현황",i:["1차 검수 · 품질검수(제조) · 수입/공정(제조불량) 기록이 추가되거나 수정되면 알림이 와요","내가 담당자인 기록은 '내 담당'으로 따로 표시돼요","알림을 누르면 그 기록이 있는 목록으로 바로 가요","현황판에서 담당자별 미확인 불량과 확인률을 한눈에 볼 수 있어요","로그아웃 화면을 새로 꾸몄어요"]},
  {n:9,d:"2026-11-14",t:"쪽지 보내기",i:["오른쪽 위 쪽지 버튼으로 가입한 사람에게 쪽지를 보낼 수 있어요","받는 사람 이름을 입력하면 명단을 확인한 뒤에 내용을 쓸 수 있어요","새 쪽지가 오면 화면에 알림이 떠요","짧은 시간에 쪽지를 너무 많이 보내면 8시간 동안 보낼 수 없어요"]},
  {n:8,d:"2026-11-14",t:"PIN 찾기 개선",i:["가입할 때 본인 확인 질문을 정해요","PIN을 잊으면 질문에 답하고 바로 새 PIN으로 바꿀 수 있어요","이미 가입한 분은 로그인하면 질문을 정하는 창이 한 번 떠요"]},
@@ -3547,7 +3627,7 @@ var API=LIVE?rpc:function(fn,a){return new Promise(function(res){res(demoCall(fn
     $("lbyeG").textContent=h<11?"좋은 하루 보내세요.":h<14?"점심 맛있게 드세요.":h<18?"남은 오후도 힘내세요.":"오늘도 수고 많으셨어요.";
     var e=$("lbye");e.classList.remove("out");e.hidden=false;void e.offsetWidth;$("lsub").textContent="다시 들어오려면 본인 PIN 4자리를 입력해 주세요.";$("lsub").style.display=""}
   function byeHide(){var e=$("lbye");if(e.hidden||e.classList.contains("out"))return;e.classList.add("out");setTimeout(function(){e.hidden=true;e.classList.remove("out")},300)}
-  function logout(m){var who=!m&&ME&&ME.name?dn([ME.name,ME.role]):"";
+  function logout(m){var who=!m&&ME&&ME.name?dn([ME.name,ME.role]):"";netReset();
     if(LIVE&&TK){rpc("nc_logout",{p_token:TK}).catch(function(){});LED={qc:[],in:[],f1:[]}}TK="";BASE=null;PEND=null;hideBar();QA.shown=false;RQ.adm=false;RQ.n=null;RQ.data=null;EV.n=null;EV.last=null;EV.data=null;rqClose();rqBadge(0);ME={name:"",role:""};devSync();msClose();MS.n=null;MS.data=null;MS.ban=null;MS.bl=null;msReset();msBadge(0);msVis();$("rqT").classList.remove("on");
     st(SK,null);closeDrawer();document.body.classList.add("locked");document.body.classList.remove("entered");
     $("login").classList.remove("off");$("login").removeAttribute("aria-hidden");
@@ -3627,7 +3707,7 @@ $("mout").onclick=function(){logout()};
     $("syncMsg").textContent=pt.length?pt.join(" · ")+"이 새로 등록되었어요":"기록이 수정되었어요";
     $("syncGo").dataset.ver="";PEND=r.v;bar.classList.add("on")}
   /* ---- 앱 새 버전 알림 (index.html 이 바뀌면 열어둔 화면에 초록 알림) ---- */
-  var BUILD="20261115-0110",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
+  var BUILD="20261115-0400",VH=null,VERNEW=false,BRE=new RegExp('var BUI'+'LD="([^"]+)"');
   function vtxt(t){var e=$("verTxt");if(e)e.textContent=t}
   function hh(){var t=new Date(),z=function(n){return n<10?"0"+n:""+n};return z(t.getHours())+":"+z(t.getMinutes())}
   function verCheck(){if(VERNEW||document.hidden&&VH!==null)return;
@@ -3828,14 +3908,34 @@ $("mout").onclick=function(){logout()};
     if(!LIVE||!TK||polling||document.body.classList.contains("locked")||(document.hidden&&!("Notification" in window&&Notification.permission==="granted")))return;
     polling=true;
     rpc("nc_changes",{p_token:TK}).then(function(r){
-      polling=false;
+      polling=false;netOk();
       if(!r){logout("로그인 시간이 지나 다시 로그인해 주세요.");return}
       rqSync(r);msSync(r);qSync(r);
       refreshChecks();
       try{var ss=[localStorage,sessionStorage];ss.forEach(function(a){var v=a.getItem(SK);if(v){var o=JSON.parse(v);if(o.k===TK){o.t=Date.now();a.setItem(SK,JSON.stringify(o))}}})}catch(e){}
       if(BASE===null){BASE=r.v;return}
       if(r.v!==BASE&&r.v!==PEND)showBar(r)
-    }).catch(function(){polling=false})}
+    }).catch(function(){polling=false;netFail()})}
+  /* ---- 연결이 끊겼을 때: 마지막으로 받은 화면을 그대로 두고 알려 주기 + 자동 재연결 ---- */
+  var NET={down:false,fails:0,last:Date.now(),tm:0,cd:0,left:0};
+  function netHM(t){var d=new Date(t),z=function(n){return(n<10?"0":"")+n};return z(d.getHours())+":"+z(d.getMinutes())}
+  function netOk(){NET.fails=0;NET.last=Date.now();if(!NET.down)return;NET.down=false;clearInterval(NET.tm);clearInterval(NET.cd);document.body.classList.remove("netdown");
+    var e=$("netBar");e.classList.add("ok");$("netT").textContent="다시 연결됐어요";$("netS").textContent="최신 데이터를 확인하고 있어요.";$("netGo").hidden=true;
+    refreshChecks();setTimeout(function(){e.classList.remove("on");setTimeout(function(){e.hidden=true;e.classList.remove("ok")},300)},2600)}
+  function netFail(force){if(!TK||document.body.classList.contains("locked"))return;NET.fails++;if(NET.down){netTick(true);return}
+    if(!force&&NET.fails<2){setTimeout(poll,4000);return}
+    NET.down=true;document.body.classList.add("netdown");var e=$("netBar");e.classList.remove("ok");e.hidden=false;$("netGo").hidden=false;
+    $("netT").textContent=navigator.onLine===false?"인터넷 연결이 끊겼어요":"서버와 연결이 끊겼어요";requestAnimationFrame(function(){e.classList.add("on")});
+    clearInterval(NET.tm);NET.tm=setInterval(function(){if(document.hidden)return;netTry()},10000);netTick(true);clearInterval(NET.cd);NET.cd=setInterval(function(){netTick()},1000)}
+  function netTick(reset){if(reset)NET.left=10;else NET.left=Math.max(0,NET.left-1);
+    $("netS").textContent=netHM(NET.last)+"에 받은 데이터를 그대로 보여 주고 있어요. 새 기록 · 확인 처리 · 쪽지는 연결된 뒤에 반영돼요. "+(NET.left?NET.left+"초 뒤 다시 연결해 볼게요.":"다시 연결하는 중이에요.")}
+  function netTry(){if(!TK)return;NET.left=0;netTick();polling=true;
+    rpc("nc_changes",{p_token:TK}).then(function(r){polling=false;netOk();if(!r){logout("로그인 시간이 지나 다시 로그인해 주세요.");return}rqSync(r);msSync(r);if(BASE!==null&&r.v!==BASE&&r.v!==PEND)showBar(r)}).catch(function(){polling=false;netTick(true)})}
+  function netReset(){NET.down=false;NET.fails=0;clearInterval(NET.tm);clearInterval(NET.cd);document.body.classList.remove("netdown");var e=$("netBar");e.classList.remove("on","ok");e.hidden=true}
+  $("netGo").onclick=function(){var b=this;b.disabled=true;b.textContent="연결 중";netTry();setTimeout(function(){b.disabled=false;b.textContent="지금 다시 연결"},1500)};
+  addEventListener("offline",function(){netFail(true)});
+  addEventListener("online",function(){if(NET.down)netTry();else poll()});
+  window.netFail=netFail;
   $("syncGo").onclick=function(){
     if(this.dataset.ver==="1"){location.reload();return}
     var b=this;b.disabled=true;b.textContent="불러오는 중";
